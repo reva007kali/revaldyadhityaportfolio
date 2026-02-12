@@ -1,0 +1,117 @@
+<div>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Manage Services') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <!-- Form Section -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    <header>
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            {{ $isEditing ? 'Edit Service' : 'Add New Service' }}
+                        </h2>
+                    </header>
+
+                    <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}" class="mt-6 space-y-6">
+                        <div>
+                            <x-input-label for="title" :value="__('Title')" />
+                            <x-text-input wire:model="title" id="title" class="block mt-1 w-full" type="text"
+                                required />
+                            <x-input-error class="mt-2" :messages="$errors->get('title')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="description" :value="__('Description')" />
+                            <textarea wire:model="description" id="description"
+                                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                rows="4" required></textarea>
+                            <x-input-error class="mt-2" :messages="$errors->get('description')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="icon" :value="__('Icon Image')" />
+
+                            @if ($icon)
+                                <div class="mt-2 mb-2">
+                                    <img src="{{ $icon->temporaryUrl() }}"
+                                        class="w-16 h-16 object-cover rounded-lg border border-gray-300 dark:border-gray-700">
+                                    <p class="text-xs text-gray-500 mt-1">New icon preview</p>
+                                </div>
+                            @elseif ($isEditing && $currentIcon)
+                                <div class="mt-2 mb-2">
+                                    <img src="{{ asset('storage/' . $currentIcon) }}"
+                                        class="w-16 h-16 object-cover rounded-lg border border-gray-300 dark:border-gray-700">
+                                    <p class="text-xs text-gray-500 mt-1">Current icon</p>
+                                </div>
+                            @endif
+
+                            <input type="file" wire:model="icon" id="icon"
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                accept="image/*">
+                            <div wire:loading wire:target="icon" class="text-sm text-blue-500 mt-2">Uploading...</div>
+                            <x-input-error class="mt-2" :messages="$errors->get('icon')" />
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <x-primary-button wire:loading.attr="disabled"
+                                wire:target="icon">{{ $isEditing ? 'Update' : 'Save' }}</x-primary-button>
+                            @if($isEditing)
+                                <button type="button" wire:click="cancel"
+                                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">{{ __('Cancel') }}</button>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- List Section -->
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                @if (session()->has('message'))
+                    <div class="mb-4 text-green-600 dark:text-green-400">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Title</th>
+                                <th scope="col" class="px-6 py-3">Description</th>
+                                <th scope="col" class="px-6 py-3">Icon</th>
+                                <th scope="col" class="px-6 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($services as $service)
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $service->title }}
+                                    </td>
+                                    <td class="px-6 py-4">{{ Str::limit($service->description, 50) }}</td>
+                                    <td class="px-6 py-4">
+                                        @if($service->icon)
+                                            <img src="{{ asset('storage/' . $service->icon) }}"
+                                                class="w-8 h-8 rounded-full object-cover">
+                                        @else
+                                            <span class="text-xs text-gray-400">No Icon</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 space-x-2">
+                                        <button wire:click="edit({{ $service->id }})"
+                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
+                                        <button wire:click="delete({{ $service->id }})" wire:confirm="Are you sure?"
+                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

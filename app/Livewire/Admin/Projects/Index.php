@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Livewire\Admin\Projects;
+
+use App\Models\Project;
+use App\Models\ProjectMedia;
+use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
+use App\Traits\HandlesFileUploads;
+
+#[Layout('layouts.app')]
+class Index extends Component
+{
+    use WithFileUploads, HandlesFileUploads;
+
+    public $title;
+    public $description;
+    public $link;
+    public $projectId;
+    public $isEditing = false;
+
+    // Multiple file uploads
+    public $mediaFiles = []; // Temporary files
+    public $captions = []; // Captions for new files
+
+    // Existing media management
+    public $existingMedia = [];
+
+    public function render()
+    {
+        return view('livewire.admin.projects.index', [
+            'projects' => Project::with('media')->latest()->get(),
+        ]);
+    }
+
+    public function store()
+    {
+        $this->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'link' => 'nullable|string',
+            'mediaFiles.*' => 'nullable|file|max:51200', // Max 50MB per file
+        ]);
+
+        $project = Project::create([
+            'title' => $this->title,
+            'description' => $this->description,
+            'link' => $this->link,
+        ]);
+
+        foreach ($this->mediaFiles as $index => $file) {
+            $path = $this->handleFileUpload($file, 'projects');
+            $type = $this->isVideo($file) ? 'video' : 'image';
+
+            // Use the image from the first upload as the main thumbnail if not set (for backward compatibility)
+            if ($index === 0 && $type === 'image') {
+                $project->update(['image' => $path]);
+            }
+
+            $project->media()->create([
+                'file_path' => $path,
+                'file_type' => $type,
+                'caption' => $this->captions[$index] ?? null,
+            ]);
+        }
+
+        $this->reset(['title', 'description', 'link', 'mediaFiles', 'captions']);
+        session()->flash('message', 'Project created successfully.');
+    }
+
+    public function edit($id)
+    {
+        $project = Project::with('media')->findOrFail($id);
+        $this->projectId = $id;
+        $this->title = $project->title;
+        $this->description = $project->description;
+        $this->link = $project->link;
+        $this->existingMedia = $project->media;
+        $this->isEditing = true;
+        $this->mediaFiles = [];
+        $this->captions = [];
+    }
+
+    public function update()
+    {
+        $this->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'link' => 'nullable|string',
+            'mediaFiles.*' => 'nullable|file|max:51200',
+        ]);
+
+        $project = Project::findOrFail($this->projectId);
+        $project->update([
+            'title' => $this->title,
+            'description' => $this->description,
+            'link' => $this->link,
+        ]);
+
+        // Add new media
+        foreach ($this->mediaFiles as $index => $file) {
+            $path = $this->handleFileUpload($file, 'projects');
+            $type = $this->isVideo($file) ? 'video' : 'image';
+
+            $project->media()->create([
+                'file_path' => $path,
+                'file_type' => $type,
+                'caption' => $this->captions[$index] ?? null,
+            ]);
+        }
+
+        // Update main thumbnail if needed and not set
+        if (!$project->image && $project->media()->where('file_type', 'image')->exists()) {
+            $project->update(['image' => $project->media()->where('file_type', 'image')->first()->file_path]);
+        }
+
+        $this->reset(['title', 'description', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia']);
+        session()->flash('message', 'Project updated successfully.');
+    }
+
+    public function deleteMedia($mediaId)
+    {
+        $media = ProjectMedia::findOrFail($mediaId);
+        // Ideally delete file from storage here too
+        $media->delete();
+
+        // Refresh existing media list
+        if ($this->projectId) {
+            $this->existingMedia = Project::findOrFail($this->projectId)->media;
+        }
+    }
+
+    public function delete($id)
+    {
+        $project = Project::findOrFail($id);
+        // Delete all associated media files from storage could be done here
+        $project->delete();
+        session()->flash('message', 'Project deleted successfully.');
+    }
+
+    public function cancel()
+    {
+        $this->reset(['title', 'description', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia']);
+    }
+}
