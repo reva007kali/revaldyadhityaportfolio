@@ -4,11 +4,14 @@ namespace App\Livewire\Admin\Pricing;
 
 use App\Models\PricingPlan;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
+    use WithFileUploads;
+
     public $name;
     public $price;
     public $description;
@@ -16,6 +19,7 @@ class Index extends Component
     public $featuresInput;
     public $cta_text;
     public $cta_link;
+    public $image;
     public $planId;
     public $isEditing = false;
 
@@ -35,9 +39,15 @@ class Index extends Component
             'featuresInput' => 'nullable|string',
             'cta_text' => 'nullable|string',
             'cta_link' => 'nullable|string',
+            'image' => 'nullable|image|max:1024',
         ]);
 
         $featuresArray = array_map('trim', explode(',', $this->featuresInput));
+
+        $imagePath = null;
+        if ($this->image) {
+            $imagePath = $this->image->store('pricing', 'public');
+        }
 
         PricingPlan::create([
             'name' => $this->name,
@@ -46,9 +56,10 @@ class Index extends Component
             'features' => $featuresArray,
             'cta_text' => $this->cta_text,
             'cta_link' => $this->cta_link,
+            'image' => $imagePath,
         ]);
 
-        $this->reset(['name', 'price', 'description', 'featuresInput', 'cta_text', 'cta_link']);
+        $this->reset(['name', 'price', 'description', 'featuresInput', 'cta_text', 'cta_link', 'image']);
         session()->flash('message', 'Pricing plan created successfully.');
     }
 
@@ -74,11 +85,18 @@ class Index extends Component
             'featuresInput' => 'nullable|string',
             'cta_text' => 'nullable|string',
             'cta_link' => 'nullable|string',
+            'image' => 'nullable|image|max:1024',
         ]);
 
         $featuresArray = array_map('trim', explode(',', $this->featuresInput));
 
         $plan = PricingPlan::findOrFail($this->planId);
+
+        $imagePath = $plan->image;
+        if ($this->image) {
+            $imagePath = $this->image->store('pricing', 'public');
+        }
+
         $plan->update([
             'name' => $this->name,
             'price' => $this->price,
@@ -86,9 +104,10 @@ class Index extends Component
             'features' => $featuresArray,
             'cta_text' => $this->cta_text,
             'cta_link' => $this->cta_link,
+            'image' => $imagePath,
         ]);
 
-        $this->reset(['name', 'price', 'description', 'featuresInput', 'cta_text', 'cta_link', 'planId', 'isEditing']);
+        $this->reset(['name', 'price', 'description', 'featuresInput', 'cta_text', 'cta_link', 'image', 'planId', 'isEditing']);
         session()->flash('message', 'Pricing plan updated successfully.');
     }
 

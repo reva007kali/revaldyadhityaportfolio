@@ -43,6 +43,18 @@
                         <x-input-error class="mt-2" :messages="$errors->get('featuresInput')" />
                     </div>
 
+                    <div>
+                        <x-input-label for="image" :value="__('Image (Optional)')" />
+                        <input type="file" wire:model="image" id="image" class="block mt-1 w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                        <div wire:loading wire:target="image" class="text-sm text-blue-500 mt-2">Uploading...</div>
+                        @if ($image) 
+                            <img src="{{ $image->temporaryUrl() }}" class="w-20 h-20 object-cover mt-2 rounded-lg">
+                        @elseif ($isEditing && $planId && \App\Models\PricingPlan::find($planId)->image)
+                            <img src="{{ asset('storage/' . \App\Models\PricingPlan::find($planId)->image) }}" class="w-20 h-20 object-cover mt-2 rounded-lg">
+                        @endif
+                        <x-input-error class="mt-2" :messages="$errors->get('image')" />
+                    </div>
+
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <x-input-label for="cta_text" :value="__('Button Text')" />

@@ -15,6 +15,7 @@ class About extends Component
 
     public $title;
     public $description;
+    public $content;
     public $image;
     public $currentImage;
     public $button_text;
@@ -26,10 +27,12 @@ class About extends Component
         if ($about) {
             $this->title = $about->title;
             $this->description = $about->description;
+            $this->content = $about->content;
             $this->currentImage = $about->image;
             $this->button_text = $about->button_text;
             $this->button_link = $about->button_link;
         }
+        $this->dispatch('contentUpdated', $this->content);
     }
 
     public function save()
@@ -37,6 +40,7 @@ class About extends Component
         $this->validate([
             'title' => 'nullable|string',
             'description' => 'nullable|string',
+            'content' => 'nullable|string',
             'image' => 'nullable|image|max:10240',
             'button_text' => 'nullable|string',
             'button_link' => 'nullable|string',
@@ -52,6 +56,7 @@ class About extends Component
         $data = [
             'title' => $this->title,
             'description' => $this->description,
+            'content' => $this->content,
             'image' => $imagePath,
             'button_text' => $this->button_text,
             'button_link' => $this->button_link,

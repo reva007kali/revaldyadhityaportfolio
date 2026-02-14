@@ -9,7 +9,9 @@ use App\Models\HeroSection;
 use App\Models\AboutSection;
 use App\Models\Feature;
 use App\Models\PricingPlan;
+use App\Models\Testimonial;
 use App\Models\ContactMessage;
+use App\Models\SocialLink;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -31,7 +33,9 @@ class Home extends Component
             'projects' => Project::with('media')->latest()->get(),
             'features' => Feature::all(),
             'pricing_plans' => PricingPlan::all(),
+            'testimonials' => Testimonial::where('is_active', true)->latest()->get(),
             'footer' => FooterSetting::first(),
+            'social_links' => SocialLink::where('is_active', true)->orderBy('sort_order')->get(),
         ]);
     }
 

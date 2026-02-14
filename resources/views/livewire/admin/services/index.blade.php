@@ -32,6 +32,14 @@
                             <x-input-error class="mt-2" :messages="$errors->get('description')" />
                         </div>
 
+                        <div wire:ignore>
+                            <x-input-label for="content" :value="__('Rich Content (Details)')" />
+                            <div id="editor-container"
+                                class="h-64 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"></div>
+                            <input type="hidden" id="content" wire:model="content">
+                        </div>
+                        <x-input-error class="mt-2" :messages="$errors->get('content')" />
+
                         <div>
                             <x-input-label for="icon" :value="__('Icon Image')" />
 
@@ -59,7 +67,7 @@
                         <div class="flex items-center gap-4">
                             <x-primary-button wire:loading.attr="disabled"
                                 wire:target="icon">{{ $isEditing ? 'Update' : 'Save' }}</x-primary-button>
-                            @if($isEditing)
+                            @if ($isEditing)
                                 <button type="button" wire:click="cancel"
                                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">{{ __('Cancel') }}</button>
                             @endif
@@ -87,13 +95,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($services as $service)
+                            @foreach ($services as $service)
                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $service->title }}
+                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                        {{ $service->title }}
                                     </td>
                                     <td class="px-6 py-4">{{ Str::limit($service->description, 50) }}</td>
                                     <td class="px-6 py-4">
-                                        @if($service->icon)
+                                        @if ($service->icon)
                                             <img src="{{ asset('storage/' . $service->icon) }}"
                                                 class="w-8 h-8 rounded-full object-cover">
                                         @else
@@ -114,4 +123,59 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('livewire:navigated', function() {
+            initializeQuill();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeQuill();
+        });
+
+        function initializeQuill() {
+            if (document.getElementById('editor-container')) {
+                var quill = new Quill('#editor-container', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{
+                                'header': [1, 2, 3, false]
+                            }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{
+                                'list': 'ordered'
+                            }, {
+                                'list': 'bullet'
+                            }],
+                            [{
+                                'color': []
+                            }, {
+                                'background': []
+                            }],
+                            ['link', 'image', 'video'],
+                            ['clean']
+                        ]
+                    }
+                });
+
+                // Sync with Livewire
+                quill.on('text-change', function() {
+                    var html = document.querySelector('.ql-editor').innerHTML;
+                    @this.set('content', html);
+                });
+
+                // Load initial content if editing
+                window.addEventListener('contentUpdated', event => {
+                    quill.root.innerHTML = event.detail;
+                });
+
+                // Set initial content if available (for page refresh/first load)
+                if (@this.content) {
+                    quill.root.innerHTML = @this.content;
+                }
+            }
+        }
+    </script>
 </div>

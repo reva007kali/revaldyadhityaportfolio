@@ -15,6 +15,7 @@ class Index extends Component
 
     public $title;
     public $description;
+    public $content;
     public $icon;
     public $currentIcon;
     public $serviceId;
@@ -32,6 +33,7 @@ class Index extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'content' => 'nullable|string',
             'icon' => 'nullable|image|max:5120', // Icon image max 5MB
         ]);
 
@@ -43,10 +45,11 @@ class Index extends Component
         Service::create([
             'title' => $this->title,
             'description' => $this->description,
+            'content' => $this->content,
             'icon' => $iconPath,
         ]);
 
-        $this->reset(['title', 'description', 'icon']);
+        $this->reset(['title', 'description', 'content', 'icon']);
         session()->flash('message', 'Service created successfully.');
     }
 
@@ -56,8 +59,10 @@ class Index extends Component
         $this->serviceId = $id;
         $this->title = $service->title;
         $this->description = $service->description;
+        $this->content = $service->content;
         $this->currentIcon = $service->icon;
         $this->isEditing = true;
+        $this->dispatch('contentUpdated', $this->content);
     }
 
     public function update()
@@ -65,6 +70,7 @@ class Index extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'content' => 'nullable|string',
             'icon' => 'nullable|image|max:5120',
         ]);
 
@@ -78,6 +84,7 @@ class Index extends Component
         $service->update([
             'title' => $this->title,
             'description' => $this->description,
+            'content' => $this->content,
             'icon' => $iconPath,
         ]);
 
@@ -93,6 +100,7 @@ class Index extends Component
 
     public function cancel()
     {
-        $this->reset(['title', 'description', 'icon', 'currentIcon', 'serviceId', 'isEditing']);
+        $this->reset(['title', 'description', 'content', 'icon', 'currentIcon', 'serviceId', 'isEditing']);
+        $this->dispatch('contentUpdated', '');
     }
 }

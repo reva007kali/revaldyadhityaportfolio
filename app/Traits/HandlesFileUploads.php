@@ -40,31 +40,41 @@ trait HandlesFileUploads
                                         return in_array($file->getMimeType(), $mimeTypes);
                     }
 
-                    protected function compressAndStoreImage($file, $path, $disk)
-                    {
-                                        // Skip compression for SVGs
-                                        if ($file->getMimeType() === 'image/svg+xml') {
-                                                            return $file->store($path, $disk);
-                                        }
+    protected function compressAndStoreImage($file, $path, $disk)
+    {
+        // Skip compression for SVGs
+        if ($file->getMimeType() === 'image/svg+xml') {
+            return $file->store($path, $disk);
+        }
 
-                                        $manager = new ImageManager(new Driver());
-                                        $image = $manager->read($file->getRealPath());
+        // Check if GD extension is loaded
+        if (!extension_loaded('gd')) {
+            return $file->store($path, $disk);
+        }
 
-                                        // Resize if too large (max width 1920px)
-                                        if ($image->width() > 1920) {
-                                                            $image->scale(width: 1920);
-                                        }
+        try {
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($file->getRealPath());
 
-                                        // Generate unique filename
-                                        $filename = $file->hashName();
-                                        $fullPath = $path . '/' . $filename;
+            // Resize if too large (max width 1920px)
+            if ($image->width() > 1920) {
+                $image->scale(width: 1920);
+            }
 
-                                        // Encode to WebP with 80% quality for better compression
-                                        $encoded = $image->toWebp(quality: 80);
+            // Generate unique filename
+            $filename = $file->hashName();
+            $fullPath = $path . '/' . $filename;
 
-                                        // Store the compressed image
-                                        Storage::disk($disk)->put($fullPath, (string) $encoded);
+            // Encode to WebP with 80% quality for better compression
+            $encoded = $image->toWebp(quality: 80);
 
-                                        return $fullPath;
-                    }
+            // Store the compressed image
+            Storage::disk($disk)->put($fullPath, (string) $encoded);
+
+            return $fullPath;
+        } catch (\Exception $e) {
+            // Fallback to simple storage if image processing fails
+            return $file->store($path, $disk);
+        }
+    }
 }

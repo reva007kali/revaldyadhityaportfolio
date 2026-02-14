@@ -35,43 +35,43 @@
         </div>
 
         <!-- Grid Layout -->
-        <div class="grid grid-cols-3 gap-1 sm:gap-8" x-data="{ 
-            modalOpen: false, 
+        <div class="grid grid-cols-3 gap-1 sm:gap-8" x-data="{
+            modalOpen: false,
             activeProject: null,
             activeMediaIndex: 0,
-            
+        
             openModal(project) {
                 this.activeProject = project;
                 this.activeMediaIndex = 0;
                 this.modalOpen = true;
                 document.body.style.overflow = 'hidden';
             },
-            
+        
             closeModal() {
                 this.modalOpen = false;
                 this.activeProject = null;
                 document.body.style.overflow = 'auto';
             },
-
+        
             nextMedia() {
                 if (this.activeProject && this.activeProject.media.length > 0) {
                     this.activeMediaIndex = (this.activeMediaIndex + 1) % this.activeProject.media.length;
                 }
             },
-
+        
             prevMedia() {
                 if (this.activeProject && this.activeProject.media.length > 0) {
                     this.activeMediaIndex = (this.activeMediaIndex - 1 + this.activeProject.media.length) % this.activeProject.media.length;
                 }
             }
         }">
-            @foreach($projects as $project)
+            @foreach ($projects as $project)
                 <div class="relative group aspect-[3/4] bg-gray-100 cursor-pointer overflow-hidden"
-                    @click="openModal({{ json_encode($project->load('media')) }})">
+                    @click="window.location.href = '{{ route('works.show', '') }}/' + '{{ $project->slug }}'">
 
-                    @if($project->media->count() > 0)
+                    @if ($project->media->count() > 0)
                         @php $firstMedia = $project->media->first(); @endphp
-                        @if($firstMedia->file_type === 'video')
+                        @if ($firstMedia->file_type === 'video')
                             <video src="{{ asset('storage/' . $firstMedia->file_path) }}"
                                 class="w-full h-full object-cover"></video>
                             <div class="absolute top-2 right-2 text-white">
@@ -81,11 +81,11 @@
                                 </svg>
                             </div>
                         @else
-                            <img src="{{ asset('storage/' . $firstMedia->file_path) }}" class="w-full h-full object-cover"
-                                alt="{{ $project->title }}">
+                            <img src="{{ asset('storage/' . $firstMedia->file_path) }}"
+                                class="w-full h-full object-cover" alt="{{ $project->title }}">
                         @endif
 
-                        @if($project->media->count() > 1)
+                        @if ($project->media->count() > 1)
                             <div class="absolute top-2 right-2 text-white">
                                 <svg class="w-6 h-6 drop-shadow-md" fill="currentColor" viewBox="0 0 20 20">
                                     <path
@@ -153,7 +153,8 @@
                         </template>
                         <template
                             x-if="activeProject && (!activeProject.media || activeProject.media.length === 0) && activeProject.image">
-                            <img :src="activeProject.image.startsWith('http') ? activeProject.image : '/storage/' + activeProject.image"
+                            <img :src="activeProject.image.startsWith('http') ? activeProject.image : '/storage/' + activeProject
+                                .image"
                                 class="max-w-full max-h-full object-contain">
                         </template>
                     </div>
@@ -188,7 +189,8 @@
                                     <span class="font-bold mr-1">revaldyadhitya</span>
                                     <span x-text="activeProject?.description"></span>
                                     <div class="mt-2 text-blue-900 text-xs" x-show="activeProject?.link">
-                                        <a :href="activeProject?.link" target="_blank" class="hover:underline">View Live
+                                        <a :href="activeProject?.link" target="_blank" class="hover:underline">View
+                                            Live
                                             Project ↗</a>
                                     </div>
                                 </div>

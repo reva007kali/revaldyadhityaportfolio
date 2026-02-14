@@ -7,118 +7,233 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <title>{{ config('app.name', 'Portfolio') }}</title>
+    <title>Reva Adhitya | Portfolio</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
 </head>
 
-<body class="font-sans antialiased text-swiss-dark bg-white selection:bg-swiss-blue selection:text-white">
-    <div class="min-h-screen flex flex-col">
-        <!-- Navbar -->
-        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50" x-data="{ open: false }">
-            <div class=" mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20 items-center">
-                    <div class="flex">
-                        <div class="shrink-0 flex items-center">
-                            <a href="/" wire:navigate
-                                class="font-black text-2xl tracking-tighter text-black hover:text-swiss-blue transition-colors">
-                                revaldyadhitya<span class="text-swiss-blue">.</span>
-                            </a>
+<body
+    class="font-sans antialiased text-swiss-dark bg-white selection:bg-swiss-blue selection:text-white lg:bg-[#000000] lg:flex lg:items-center lg:justify-center lg:h-screen lg:overflow-hidden"
+    x-data="{ scale: 1, isDesktop: false }" x-init="isDesktop = window.innerWidth >= 1024;
+    scale = isDesktop ? 0.75 : 1">
+
+    <!-- Zoom Controls -->
+    <div
+        class="hidden lg:flex fixed bottom-8 right-8 z-[100] gap-2 bg-[#1c1c1e] p-2 rounded-full border border-white/10 shadow-xl">
+        <button @click="scale = Math.max(0.5, scale - 0.1)"
+            class="w-10 h-10 rounded-full bg-black hover:bg-white/10 text-white flex items-center justify-center transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+            </svg>
+        </button>
+        <div class="w-16 flex items-center justify-center text-white font-mono text-sm">
+            <span x-text="Math.round(scale * 100) + '%'"></span>
+        </div>
+        <button @click="scale = Math.min(1.2, scale + 0.1)"
+            class="w-10 h-10 rounded-full bg-black hover:bg-white/10 text-white flex items-center justify-center transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Phone Container Wrapper for Centering and Scaling -->
+    <div class="relative transition-transform duration-300 ease-out origin-center"
+        :style="isDesktop ? `transform: scale(${scale})` : ''">
+        <div
+            class="relative w-full lg:w-[400px] lg:h-[850px] lg:bg-black lg:rounded-[60px] lg:border-[8px] lg:border-[#0a0a0a] lg:shadow-[0_0_100px_rgba(0,0,0,1),0_0_40px_rgba(0,0,0,0.6),0_0_20px_rgba(0,0,0,0.4)] lg:overflow-hidden bg-white lg:ring-[6px] lg:ring-[#D56718] lg:ring-opacity-60">
+
+            <!-- Dynamic Notch / Status Bar Area for Desktop -->
+            <div
+                class="hidden lg:block absolute top-4 left-1/2 transform -translate-x-1/2 w-[120px] h-[36px] bg-[#000000] rounded-[20px] z-[60] p-[10px]">
+                <!-- Glass-like camera circle -->
+                <div class="w-3 h-3 ml-auto rounded-full bg-gradient-to-br from-blue-500/30 to-white/10 border border-white/20 shadow-inner backdrop-blur-sm"></div>
+            </div>
+
+            <!-- Scrollable Container -->
+            <div class="w-full overflow-x-hidden lg:h-full lg:overflow-y-auto scrollbar-hide">
+
+                <!-- Navbar -->
+                <nav
+                    class="fixed top-0 left-0 w-full z-50 bg-gradient-to-b from-black via-black/50 to-transparent lg:absolute">
+                    <div class="max-w-sm mx-auto flex justify-between items-center h-16 px-6 relative z-50">
+
+                        <a href="/" class="text-xl font-black text-white">
+                            Reva<span class="text-swiss-blue">.</span>
+                        </a>
+
+                        <!-- Hamburger / Close Button -->
+                        <button id="menu-toggle"
+                            class="relative w-8 h-8 flex flex-col justify-center items-center focus:outline-none z-50">
+                            <span class="line block absolute w-6 h-0.5 bg-white transition-all duration-300"></span>
+                            <span class="line block absolute w-6 h-0.5 bg-white transition-all duration-300"></span>
+                            <span class="line block absolute w-6 h-0.5 bg-white transition-all duration-300"></span>
+                        </button>
+
+                    </div>
+                </nav>
+
+                <!-- Fullscreen Menu -->
+                <div id="mobile-menu"
+                    class="fixed inset-0 bg-black/70 backdrop-blur-md text-white flex flex-col justify-center items-center space-y-10 
+               transform translate-y-full opacity-0 transition-all duration-500 ease-in-out z-40 lg:absolute">
+
+                    @php
+                        $navItems = \App\Models\NavigationItem::where('is_active', true)->orderBy('sort_order')->get();
+                    @endphp
+
+                    @forelse($navItems as $item)
+                        <a href="{{ $item->url }}"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">{{ $item->label }}</a>
+                    @empty
+                        <a href="#home"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Home</a>
+                        <a href="#works"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Works</a>
+                        <a href="#services"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Services</a>
+                        <a href="#about"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">About</a>
+                        <a href="#pricing"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Pricing</a>
+                        <a href="#contact"
+                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Contact</a>
+                    @endforelse
+
+                </div>
+
+                <script>
+                    const toggle = document.getElementById('menu-toggle');
+                    const menu = document.getElementById('mobile-menu');
+                    const lines = toggle.querySelectorAll('.line');
+                    let isOpen = false;
+
+                    // Set initial positions
+                    lines[0].style.transform = "translateY(-6px)";
+                    lines[2].style.transform = "translateY(6px)";
+
+                    toggle.addEventListener('click', () => {
+                        isOpen = !isOpen;
+
+                        if (isOpen) {
+                            // Open menu
+                            menu.classList.remove('translate-y-full', 'opacity-0');
+                            menu.classList.add('translate-y-0', 'opacity-100');
+                            document.body.classList.add('overflow-hidden');
+
+                            // Morph to X
+                            lines[0].style.transform = "rotate(45deg)";
+                            lines[1].style.opacity = "0";
+                            lines[2].style.transform = "rotate(-45deg)";
+                        } else {
+                            // Close menu
+                            menu.classList.add('translate-y-full', 'opacity-0');
+                            menu.classList.remove('translate-y-0', 'opacity-100');
+                            document.body.classList.remove('overflow-hidden');
+
+                            // Back to hamburger
+                            lines[0].style.transform = "translateY(-6px)";
+                            lines[1].style.opacity = "1";
+                            lines[2].style.transform = "translateY(6px)";
+                        }
+                    });
+
+                    // Auto close when clicking menu link
+                    document.querySelectorAll('#mobile-menu a').forEach(link => {
+                        link.addEventListener('click', () => {
+                            toggle.click();
+                        });
+                    });
+                </script>
+
+
+
+
+
+                <!-- Page Content -->
+                <main class="">
+                    {{ $slot }}
+                </main>
+
+                <footer class="bg-black text-white py-12 border-t-4 border-swiss-blue">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 gap-8">
+                        <div>
+                            <h3 class="font-black text-2xl mb-4">RevaldyAdhitya<span class="text-swiss-blue">.</span>
+                            </h3>
+                            <p class="text-gray-400 text-sm">Crafting digital experiences with precision and clarity.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold uppercase tracking-widest mb-4 text-xs text-gray-500">Links</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li><a href="#services" class="hover:text-swiss-blue transition-colors">Services</a>
+                                </li>
+                                <li><a href="#projects" class="hover:text-swiss-blue transition-colors">Works</a></li>
+                                <li><a href="#about" class="hover:text-swiss-blue transition-colors">About</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold uppercase tracking-widest mb-4 text-xs text-gray-500">Contact</h4>
+                            <p class="text-sm text-gray-400">le.revaldy@gmail.com</p>
+
+                            @php
+                                $footerSocialLinks = \App\Models\SocialLink::where('is_active', true)
+                                    ->orderBy('sort_order')
+                                    ->get();
+                            @endphp
+
+                            @if ($footerSocialLinks->count() > 0)
+                                <div class="flex gap-4 mt-6">
+                                    @foreach ($footerSocialLinks as $link)
+                                        <a href="{{ $link->url }}" target="_blank"
+                                            class="text-gray-400 hover:text-white transition-colors group">
+                                            @if ($link->icon)
+                                                <img src="{{ asset('storage/' . $link->icon) }}"
+                                                    class="w-5 h-5 object-contain filter invert opacity-60 group-hover:opacity-100 transition-opacity">
+                                            @else
+                                                {{ $link->platform }}
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
-                    <div class="hidden sm:flex items-center space-x-8">
-                        <a href="/#services"
-                            class="text-sm font-semibold uppercase tracking-wide hover:text-swiss-blue transition-colors">Services</a>
-                        <a href="/#projects"
-                            class="text-sm font-semibold uppercase tracking-wide hover:text-swiss-blue transition-colors">Works</a>
-                        <a href="/#about"
-                            class="text-sm font-semibold uppercase tracking-wide hover:text-swiss-blue transition-colors">About</a>
-                        <a href="/#contact"
-                            class="text-sm font-semibold uppercase tracking-wide hover:text-swiss-blue transition-colors">Contact</a>
-
-                        <a href="/#contact"
-                            class="px-4 py-2 bg-black text-white text-sm font-bold uppercase hover:bg-swiss-blue transition-colors"
-                            wire:navigate>Contact Me</a>
+                    <div
+                        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-xs text-gray-500 uppercase tracking-widest">
+                        &copy; {{ date('Y') }} revaldyadhitya.com
                     </div>
+                </footer>
 
-                    <!-- Mobile Menu Button -->
-                    <div class="flex items-center sm:hidden">
-                        <button @click="open = !open"
-                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-swiss-blue"
-                            aria-expanded="false">
-                            <span class="sr-only">Open main menu</span>
-                            <!-- Icon when menu is closed. -->
-                            <svg :class="{'hidden': open, 'block': !open }" class="h-6 w-6"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <!-- Icon when menu is open. -->
-                            <svg :class="{'block': open, 'hidden': !open }" class="hidden h-6 w-6"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
             </div>
-
-            <!-- Mobile Menu -->
-            <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden bg-white border-t border-gray-200">
-                <div class="pt-2 pb-3 space-y-1">
-                    <a href="#services" @click="open = false"
-                        class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-bold uppercase text-gray-600 hover:bg-gray-50 hover:border-swiss-blue hover:text-swiss-blue transition-colors">Services</a>
-                    <a href="#projects" @click="open = false"
-                        class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-bold uppercase text-gray-600 hover:bg-gray-50 hover:border-swiss-blue hover:text-swiss-blue transition-colors">Works</a>
-                    <a href="#about" @click="open = false"
-                        class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-bold uppercase text-gray-600 hover:bg-gray-50 hover:border-swiss-blue hover:text-swiss-blue transition-colors">About</a>
-                    <a href="#contact" @click="open = false"
-                        class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-bold uppercase text-gray-600 hover:bg-gray-50 hover:border-swiss-blue hover:text-swiss-blue transition-colors">Contact</a>
-                    <a href="#contact" @click="open = false"
-                        class="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-bold uppercase text-swiss-blue hover:bg-gray-50 hover:border-swiss-blue transition-colors">Contact
-                        Me</a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Page Content -->
-        <main class="flex-grow">
-            {{ $slot }}
-        </main>
-
-        <footer class="bg-black text-white py-12 border-t-4 border-swiss-blue">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="font-black text-2xl mb-4">RevaldyAdhitya<span class="text-swiss-blue">.</span></h3>
-                    <p class="text-gray-400 text-sm">Crafting digital experiences with precision and clarity.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold uppercase tracking-widest mb-4 text-xs text-gray-500">Links</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#services" class="hover:text-swiss-blue transition-colors">Services</a></li>
-                        <li><a href="#projects" class="hover:text-swiss-blue transition-colors">Works</a></li>
-                        <li><a href="#about" class="hover:text-swiss-blue transition-colors">About</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold uppercase tracking-widest mb-4 text-xs text-gray-500">Contact</h4>
-                    <p class="text-sm text-gray-400">le.revaldy@gmail.com</p>
-                </div>
-            </div>
-            <div
-                class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-xs text-gray-500 uppercase tracking-widest">
-                &copy; {{ date('Y') }} revaldyadhitya.com
-            </div>
-        </footer>
+        </div>
     </div>
 </body>
 

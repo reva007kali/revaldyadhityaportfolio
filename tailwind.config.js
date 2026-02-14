@@ -29,16 +29,7 @@ export default {
                     dark: "#111111",
                 },
             },
-            borderRadius: {
-                none: "0",
-                sm: "0", // Force sharp edges
-                md: "0",
-                lg: "0",
-                xl: "0",
-                "2xl": "0",
-                "3xl": "0",
-                full: "9999px", // Keep pills available if needed
-            },
+          
             boxShadow: {
                 swiss: "0 0 0 1px rgba(0,0,0,0.1)", // Subtle borders instead of shadows
                 "swiss-hover": "0 0 0 2px #0055FF",

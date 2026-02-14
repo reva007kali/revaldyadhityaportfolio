@@ -16,6 +16,7 @@ class Index extends Component
 
     public $title;
     public $description;
+    public $content;
     public $link;
     public $projectId;
     public $isEditing = false;
@@ -39,6 +40,7 @@ class Index extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'content' => 'nullable|string',
             'link' => 'nullable|string',
             'mediaFiles.*' => 'nullable|file|max:51200', // Max 50MB per file
         ]);
@@ -46,6 +48,7 @@ class Index extends Component
         $project = Project::create([
             'title' => $this->title,
             'description' => $this->description,
+            'content' => $this->content,
             'link' => $this->link,
         ]);
 
@@ -75,11 +78,13 @@ class Index extends Component
         $this->projectId = $id;
         $this->title = $project->title;
         $this->description = $project->description;
+        $this->content = $project->content;
         $this->link = $project->link;
         $this->existingMedia = $project->media;
         $this->isEditing = true;
         $this->mediaFiles = [];
         $this->captions = [];
+        $this->dispatch('contentUpdated', $this->content);
     }
 
     public function update()
@@ -87,6 +92,7 @@ class Index extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'content' => 'nullable|string',
             'link' => 'nullable|string',
             'mediaFiles.*' => 'nullable|file|max:51200',
         ]);
@@ -95,6 +101,7 @@ class Index extends Component
         $project->update([
             'title' => $this->title,
             'description' => $this->description,
+            'content' => $this->content,
             'link' => $this->link,
         ]);
 
@@ -108,9 +115,15 @@ class Index extends Component
                 'file_type' => $type,
                 'caption' => $this->captions[$index] ?? null,
             ]);
+
+            // If this is the first image uploaded in this batch, update the main project thumbnail
+            // This ensures the main image is updated when new media is added
+            if ($index === 0 && $type === 'image') {
+                $project->update(['image' => $path]);
+            }
         }
 
-        // Update main thumbnail if needed and not set
+        // Update main thumbnail if needed and not set (fallback)
         if (!$project->image && $project->media()->where('file_type', 'image')->exists()) {
             $project->update(['image' => $project->media()->where('file_type', 'image')->first()->file_path]);
         }
@@ -141,6 +154,7 @@ class Index extends Component
 
     public function cancel()
     {
-        $this->reset(['title', 'description', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia']);
+        $this->reset(['title', 'description', 'content', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia']);
+        $this->dispatch('contentUpdated', '');
     }
 }

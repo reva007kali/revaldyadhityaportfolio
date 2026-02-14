@@ -13,7 +13,7 @@
                         {{ __('Update About Content') }}
                     </h2>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        {{ __("Tell your visitors a bit about yourself.") }}
+                        {{ __('Tell your visitors a bit about yourself.') }}
                     </p>
                 </header>
 
@@ -31,15 +31,23 @@
                     </div>
 
                     <div>
-                        <x-input-label for="description" :value="__('Description')" />
+                        <x-input-label for="description" :value="__('Short Description')" />
                         <textarea wire:model="description" id="description"
                             class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            rows="5"></textarea>
+                            rows="3"></textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('description')" />
                     </div>
 
+                    <div wire:ignore>
+                        <x-input-label for="content" :value="__('Rich Content (Full Story)')" />
+                        <div id="editor-container"
+                            class="h-96 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"></div>
+                        <input type="hidden" id="content" wire:model="content">
+                    </div>
+                    <x-input-error class="mt-2" :messages="$errors->get('content')" />
+
                     <div>
-                        <x-input-label for="image" :value="__('Profile Image')" />
+                        <x-input-label for="image" :value="__('Hero Image')" />
 
                         @if ($image)
                             <div class="mt-2 mb-2">
@@ -85,4 +93,59 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('livewire:navigated', function() {
+            initializeQuill();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeQuill();
+        });
+
+        function initializeQuill() {
+            if (document.getElementById('editor-container')) {
+                var quill = new Quill('#editor-container', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{
+                                'header': [1, 2, 3, false]
+                            }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{
+                                'list': 'ordered'
+                            }, {
+                                'list': 'bullet'
+                            }],
+                            [{
+                                'color': []
+                            }, {
+                                'background': []
+                            }],
+                            ['link', 'image', 'video'],
+                            ['clean']
+                        ]
+                    }
+                });
+
+                // Sync with Livewire
+                quill.on('text-change', function() {
+                    var html = document.querySelector('.ql-editor').innerHTML;
+                    @this.set('content', html);
+                });
+
+                // Load initial content if editing
+                window.addEventListener('contentUpdated', event => {
+                    quill.root.innerHTML = event.detail;
+                });
+
+                // Set initial content if available (for page refresh/first load)
+                if (@this.content) {
+                    quill.root.innerHTML = @this.content;
+                }
+            }
+        }
+    </script>
 </div>
