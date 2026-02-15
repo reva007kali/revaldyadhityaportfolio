@@ -32,7 +32,7 @@
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $message->name }}</td>
                                 <td class="px-6 py-4">{{ $message->email }}</td>
                                 <td class="px-6 py-4">{{ $message->subject }}</td>
-                                <td class="px-6 py-4">{{ Str::limit($message->message, 50) }}</td>
+                                <td class="px-6 py-4">{{ $message->message}}</td>
                                 <td class="px-6 py-4">{{ $message->created_at->format('M d, Y') }}</td>
                                 <td class="px-6 py-4 space-x-2">
                                     @if(!$message->is_read)
