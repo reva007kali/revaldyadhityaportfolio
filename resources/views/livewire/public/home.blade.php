@@ -9,7 +9,7 @@
     <div class="relative rounded-b-[40px] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
 
         <img src="{{ asset('storage/' . ($hero->image ?? 'default.jpg')) }}" alt="Profile"
-            class="hero-img w-full h-screen object-cover object-top scale-105">
+            class="hero-img w-full h-svh object-cover object-top scale-105">
 
         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
 
