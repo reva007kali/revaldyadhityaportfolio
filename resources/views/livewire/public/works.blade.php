@@ -1,56 +1,145 @@
-<div class="min-h-screen bg-[#0b0b0d] text-white antialiased selection:bg-white selection:text-black">
+<div class="min-h-screen bg-[#0b0b0d] text-white antialiased selection:bg-orange-500 selection:text-white">
 
-    {{-- Backdrop Ambient Glow --}}
+    {{-- 1. Premium Ambient Background --}}
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-[10%] -left-[10%] w-[70%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full"></div>
-        <div class="absolute top-[20%] -right-[10%] w-[60%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full"></div>
+        <div class="absolute -top-[10%] -left-[10%] w-[70%] h-[50%] bg-orange-600/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-orange-900/10 blur-[120px] rounded-full"></div>
+
+        {{-- Large Background Text --}}
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[25vw] font-black text-white/[0.01] select-none uppercase leading-none">
+            Gallery
+        </div>
     </div>
 
-    <header class="relative pt-16 pb-12 px-6 flex flex-col items-center">
-
-        <h1 class="text-3xl font-bold tracking-tight text-white mb-2">{{ config('portfolio.name') }}</h1>
-        <p class="text-sm text-zinc-400 text-center max-w-[280px] leading-relaxed mb-6">{{ config('portfolio.bio') }}</p>
-        
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md">
+    {{-- 2. Refined Header --}}
+    <header class="relative pt-32 pb-20 px-6 flex flex-col items-center">
+        <div
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md mb-8">
             <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span
+                    class="relative inline-flex rounded-full h-2 w-2 bg-orange-500 shadow-[0_0_10px_rgba(255,107,0,1)]"></span>
             </span>
-            <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-300">Available for Projects</span>
+            <span class="text-[10px] uppercase tracking-[0.3em] font-black text-white/60">Live Portfolio</span>
         </div>
+
+        <h1 class="text-5xl md:text-8xl font-black tracking-tighter text-white mb-6 text-center leading-none">
+            Selected <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Works.</span>
+        </h1>
+
+        <p class="text-lg md:text-xl text-white/40 text-center max-w-xl leading-relaxed">
+            A collection of digital experiences built with precision, focusing on aesthetic impact and technical
+            performance.
+        </p>
     </header>
 
+    {{-- 3. Projects Grid --}}
     <main class="relative px-6 pb-32 max-w-7xl mx-auto">
-        <h2 class="text-[16px] uppercase tracking-[0.3em] font-black text-zinc-500 mb-6 text-center">Featured Works</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
-            @foreach ($projects as $project)
-                <a href="{{ route('works.show', $project->slug) }}"
-                    class="relative h-[200px] rounded-[12px] overflow-hidden group border border-white/20 bg-[#111113] block transition-transform duration-300 hover:-translate-y-1">
 
-                    @if ($project->image)
-                        @if (Str::startsWith($project->image, 'http'))
-                            <img src="{{ $project->image }}"
-                                class="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
-                        @else
-                            <img src="{{ asset('storage/' . $project->image) }}"
-                                class="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
-                        @endif
-                    @endif
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+            @foreach ($projects as $index => $project)
+                <div class="group h-full perspective-1000"> {{-- Perspective adds depth --}}
+                    <a href="{{ route('works.show', $project->slug) }}"
+                        class="relative flex flex-col h-full rounded-[48px] overflow-hidden bg-[#161618] border border-white/5 
+                       {{-- Hardware Acceleration & Smoothness --}}
+                       transform-gpu will-change-transform 
+                       transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
+                       hover:border-orange-500/40 hover:-translate-y-3 hover:shadow-[0_30px_60px_-15px_rgba(255,107,0,0.2)] block">
 
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-6 flex flex-col justify-end">
-                        <h4 class="text-sm font-semibold leading-tight mb-1 text-white">
-                            {{ $project->title }}
-                        </h4>
-                        <p class="text-[10px] text-white/60 line-clamp-2">
-                            {{ $project->description }}
-                        </p>
-                    </div>
+                        {{-- Image Container --}}
+                        <div class="relative aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-t-[48px]">
+                            @if ($project->image)
+                                <img src="{{ Str::startsWith($project->image, 'http') ? $project->image : asset('storage/' . $project->image) }}"
+                                    class="w-full h-full object-cover 
+                                   {{-- Match duration with parent for sync --}}
+                                   transform-gpu transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
+                                   group-hover:scale-105 opacity-80 group-hover:opacity-100">
+                            @endif
 
-                </a>
+                            {{-- Case Study Tag --}}
+                            <div
+                                class="absolute top-6 right-6 z-20 translate-y-0 group-hover:-translate-y-1 transition-transform duration-500">
+                                <span
+                                    class="px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase tracking-widest text-white/60 group-hover:text-orange-500 transition-colors">
+                                    Full Case
+                                </span>
+                            </div>
+
+                            {{-- Gradient Overlay --}}
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-[#161618] via-transparent to-transparent opacity-60">
+                            </div>
+                        </div>
+
+                        {{-- Card Content --}}
+                        <div class="p-8 md:p-10 flex flex-col flex-grow relative z-10 bg-[#161618]">
+                            <div class="mb-4 flex items-center gap-3">
+                                <span class="text-orange-500 font-black text-[10px] uppercase tracking-widest">
+                                    {{ sprintf('%02d', $index + 1) }}
+                                </span>
+                                <div class="h-[1px] w-0 group-hover:w-8 bg-orange-500/50 transition-all duration-500">
+                                </div>
+                            </div>
+
+                            <h4
+                                class="text-2xl md:text-3xl font-black text-white mb-4 tracking-tighter group-hover:text-orange-500 transition-colors duration-500">
+                                {{ $project->title }}
+                            </h4>
+
+                            <p
+                                class="text-sm md:text-base text-white/40 line-clamp-2 leading-relaxed mb-8 flex-grow group-hover:text-white/60 transition-colors duration-500">
+                                {{ $project->description }}
+                            </p>
+
+                            {{-- Bottom Link Indicator --}}
+                            <div class="flex items-center gap-3 mt-auto">
+                                <span
+                                    class="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 group-hover:text-orange-500 transition-colors duration-500">Discover</span>
+                                <div
+                                    class="h-[1px] flex-grow bg-white/5 group-hover:bg-orange-500/20 transition-colors duration-500">
+                                </div>
+                                <div
+                                    class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/30 
+                                    group-hover:bg-orange-500 group-hover:text-black group-hover:border-orange-500 
+                                    transform-gpu transition-all duration-500">
+                                    →
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             @endforeach
         </div>
+
+        {{-- 4. Bottom Call-to-Action --}}
+        <section
+            class="mt-32 p-12 md:p-20 rounded-[60px] bg-white/5 border border-white/10 overflow-hidden relative text-center">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 blur-[80px] -mr-32 -mt-32"></div>
+
+            <h3 class="text-3xl md:text-5xl font-black tracking-tighter text-white mb-8">Have a project in mind?</h3>
+            <a href="#contact" class="inline-flex items-center gap-6 group">
+                <div
+                    class="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center text-black text-xl transition-transform group-hover:scale-110">
+                    →
+                </div>
+                <span
+                    class="text-xl md:text-2xl font-black text-white border-b-2 border-white/10 group-hover:border-orange-500 transition-all pb-1">Let's
+                    build it together</span>
+            </a>
+        </section>
     </main>
+
+    <style>
+        /* Prevent image stretching in staggered grids if needed */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
 
 </div>

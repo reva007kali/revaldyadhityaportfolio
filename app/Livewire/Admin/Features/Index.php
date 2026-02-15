@@ -5,13 +5,17 @@ namespace App\Livewire\Admin\Features;
 use App\Models\Feature;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
+    use WithFileUploads;
+
     public $title;
     public $description;
     public $icon;
+    public $existingIcon;
     public $featureId;
     public $isEditing = false;
 
@@ -27,16 +31,21 @@ class Index extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'icon' => 'nullable|string',
+            'icon' => 'nullable|image|max:1024',
         ]);
+
+        $iconPath = null;
+        if ($this->icon) {
+            $iconPath = $this->icon->store('features', 'public');
+        }
 
         Feature::create([
             'title' => $this->title,
             'description' => $this->description,
-            'icon' => $this->icon,
+            'icon' => $iconPath,
         ]);
 
-        $this->reset(['title', 'description', 'icon']);
+        $this->reset(['title', 'description', 'icon', 'existingIcon']);
         session()->flash('message', 'Feature created successfully.');
     }
 
@@ -46,7 +55,8 @@ class Index extends Component
         $this->featureId = $id;
         $this->title = $feature->title;
         $this->description = $feature->description;
-        $this->icon = $feature->icon;
+        $this->existingIcon = $feature->icon;
+        $this->icon = null;
         $this->isEditing = true;
     }
 
@@ -55,17 +65,23 @@ class Index extends Component
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'icon' => 'nullable|string',
+            'icon' => 'nullable|image|max:1024',
         ]);
 
         $feature = Feature::findOrFail($this->featureId);
-        $feature->update([
+        
+        $data = [
             'title' => $this->title,
             'description' => $this->description,
-            'icon' => $this->icon,
-        ]);
+        ];
 
-        $this->reset(['title', 'description', 'icon', 'featureId', 'isEditing']);
+        if ($this->icon) {
+            $data['icon'] = $this->icon->store('features', 'public');
+        }
+
+        $feature->update($data);
+
+        $this->reset(['title', 'description', 'icon', 'existingIcon', 'featureId', 'isEditing']);
         session()->flash('message', 'Feature updated successfully.');
     }
 
@@ -77,6 +93,6 @@ class Index extends Component
 
     public function cancel()
     {
-        $this->reset(['title', 'description', 'icon', 'featureId', 'isEditing']);
+        $this->reset(['title', 'description', 'icon', 'existingIcon', 'featureId', 'isEditing']);
     }
 }

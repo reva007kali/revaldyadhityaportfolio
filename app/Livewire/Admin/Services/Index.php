@@ -16,6 +16,8 @@ class Index extends Component
     public $title;
     public $description;
     public $content;
+    public $features; // JSON string or array
+    public $turnaround_time;
     public $icon;
     public $currentIcon;
     public $serviceId;
@@ -34,22 +36,29 @@ class Index extends Component
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'content' => 'nullable|string',
-            'icon' => 'nullable|image|max:5120', // Icon image max 5MB
+            'features' => 'nullable|string', // Comma separated
+            'turnaround_time' => 'nullable|string|max:255',
+            'icon' => 'nullable|image|max:5120',
         ]);
 
         $iconPath = null;
         if ($this->icon) {
-            $iconPath = $this->handleFileUpload($this->icon, 'services');
+            $iconPath = $this->icon->store('services', 'public');
         }
+
+        // Convert comma-separated string to array
+        $featuresArray = $this->features ? array_map('trim', explode(',', $this->features)) : null;
 
         Service::create([
             'title' => $this->title,
             'description' => $this->description,
             'content' => $this->content,
+            'features' => $featuresArray,
+            'turnaround_time' => $this->turnaround_time,
             'icon' => $iconPath,
         ]);
 
-        $this->reset(['title', 'description', 'content', 'icon']);
+        $this->reset(['title', 'description', 'content', 'features', 'turnaround_time', 'icon']);
         session()->flash('message', 'Service created successfully.');
     }
 
@@ -60,6 +69,8 @@ class Index extends Component
         $this->title = $service->title;
         $this->description = $service->description;
         $this->content = $service->content;
+        $this->features = $service->features ? implode(', ', $service->features) : '';
+        $this->turnaround_time = $service->turnaround_time;
         $this->currentIcon = $service->icon;
         $this->isEditing = true;
         $this->dispatch('contentUpdated', $this->content);
@@ -71,24 +82,28 @@ class Index extends Component
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'content' => 'nullable|string',
+            'features' => 'nullable|string',
+            'turnaround_time' => 'nullable|string|max:255',
             'icon' => 'nullable|image|max:5120',
         ]);
 
         $service = Service::findOrFail($this->serviceId);
-        $iconPath = $this->currentIcon;
-
-        if ($this->icon) {
-            $iconPath = $this->handleFileUpload($this->icon, 'services');
-        }
-
-        $service->update([
+        
+        $data = [
             'title' => $this->title,
             'description' => $this->description,
             'content' => $this->content,
-            'icon' => $iconPath,
-        ]);
+            'features' => $this->features ? array_map('trim', explode(',', $this->features)) : null,
+            'turnaround_time' => $this->turnaround_time,
+        ];
 
-        $this->reset(['title', 'description', 'icon', 'currentIcon', 'serviceId', 'isEditing']);
+        if ($this->icon) {
+            $data['icon'] = $this->icon->store('services', 'public');
+        }
+
+        $service->update($data);
+
+        $this->reset(['title', 'description', 'content', 'features', 'turnaround_time', 'icon', 'currentIcon', 'serviceId', 'isEditing']);
         session()->flash('message', 'Service updated successfully.');
     }
 
@@ -100,7 +115,7 @@ class Index extends Component
 
     public function cancel()
     {
-        $this->reset(['title', 'description', 'content', 'icon', 'currentIcon', 'serviceId', 'isEditing']);
+        $this->reset(['title', 'description', 'content', 'features', 'turnaround_time', 'icon', 'currentIcon', 'serviceId', 'isEditing']);
         $this->dispatch('contentUpdated', '');
     }
 }

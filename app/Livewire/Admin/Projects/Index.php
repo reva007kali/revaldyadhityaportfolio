@@ -17,6 +17,10 @@ class Index extends Component
     public $title;
     public $description;
     public $content;
+    public $category;
+    public $role;
+    public $year;
+    public $client;
     public $link;
     public $projectId;
     public $isEditing = false;
@@ -41,6 +45,10 @@ class Index extends Component
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'content' => 'nullable|string',
+            'category' => 'nullable|string|max:255',
+            'role' => 'nullable|string|max:255',
+            'year' => 'nullable|string|max:4',
+            'client' => 'nullable|string|max:255',
             'link' => 'nullable|string',
             'mediaFiles.*' => 'nullable|file|max:51200', // Max 50MB per file
         ]);
@@ -49,6 +57,10 @@ class Index extends Component
             'title' => $this->title,
             'description' => $this->description,
             'content' => $this->content,
+            'category' => $this->category,
+            'role' => $this->role,
+            'year' => $this->year,
+            'client' => $this->client,
             'link' => $this->link,
         ]);
 
@@ -68,7 +80,7 @@ class Index extends Component
             ]);
         }
 
-        $this->reset(['title', 'description', 'link', 'mediaFiles', 'captions']);
+        $this->reset(['title', 'description', 'link', 'mediaFiles', 'captions', 'category', 'role', 'year', 'client']);
         session()->flash('message', 'Project created successfully.');
     }
 
@@ -79,6 +91,10 @@ class Index extends Component
         $this->title = $project->title;
         $this->description = $project->description;
         $this->content = $project->content;
+        $this->category = $project->category;
+        $this->role = $project->role;
+        $this->year = $project->year;
+        $this->client = $project->client;
         $this->link = $project->link;
         $this->existingMedia = $project->media;
         $this->isEditing = true;
@@ -93,6 +109,10 @@ class Index extends Component
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'content' => 'nullable|string',
+            'category' => 'nullable|string|max:255',
+            'role' => 'nullable|string|max:255',
+            'year' => 'nullable|string|max:4',
+            'client' => 'nullable|string|max:255',
             'link' => 'nullable|string',
             'mediaFiles.*' => 'nullable|file|max:51200',
         ]);
@@ -102,6 +122,10 @@ class Index extends Component
             'title' => $this->title,
             'description' => $this->description,
             'content' => $this->content,
+            'category' => $this->category,
+            'role' => $this->role,
+            'year' => $this->year,
+            'client' => $this->client,
             'link' => $this->link,
         ]);
 
@@ -128,7 +152,7 @@ class Index extends Component
             $project->update(['image' => $project->media()->where('file_type', 'image')->first()->file_path]);
         }
 
-        $this->reset(['title', 'description', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia']);
+        $this->reset(['title', 'description', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia', 'category', 'role', 'year', 'client']);
         session()->flash('message', 'Project updated successfully.');
     }
 
@@ -154,7 +178,7 @@ class Index extends Component
 
     public function cancel()
     {
-        $this->reset(['title', 'description', 'content', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia']);
+        $this->reset(['title', 'description', 'content', 'link', 'projectId', 'isEditing', 'mediaFiles', 'captions', 'existingMedia', 'category', 'role', 'year', 'client']);
         $this->dispatch('contentUpdated', '');
     }
 }

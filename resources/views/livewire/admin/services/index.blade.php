@@ -40,6 +40,19 @@
                         </div>
                         <x-input-error class="mt-2" :messages="$errors->get('content')" />
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <x-input-label for="features" :value="__('Included Features (Comma separated)')" />
+                                <x-text-input wire:model="features" id="features" class="block mt-1 w-full" type="text" placeholder="e.g. Design, Development, Support" />
+                                <x-input-error class="mt-2" :messages="$errors->get('features')" />
+                            </div>
+                            <div>
+                                <x-input-label for="turnaround_time" :value="__('Turnaround Time')" />
+                                <x-text-input wire:model="turnaround_time" id="turnaround_time" class="block mt-1 w-full" type="text" placeholder="e.g. 2-4 Weeks" />
+                                <x-input-error class="mt-2" :messages="$errors->get('turnaround_time')" />
+                            </div>
+                        </div>
+
                         <div>
                             <x-input-label for="icon" :value="__('Icon Image')" />
 

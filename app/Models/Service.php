@@ -9,6 +9,10 @@ class Service extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'features' => 'array',
+    ];
+
     protected static function boot()
     {
         parent::boot();

@@ -31,8 +31,17 @@
                     </div>
 
                     <div>
-                        <x-input-label for="icon" :value="__('Icon (Class or SVG)')" />
-                        <x-text-input wire:model="icon" id="icon" class="block mt-1 w-full" type="text" />
+                        <x-input-label for="icon" :value="__('Icon')" />
+                        @if ($icon)
+                            <div class="mt-2 mb-2">
+                                <img src="{{ $icon->temporaryUrl() }}" class="w-20 h-20 object-contain rounded">
+                            </div>
+                        @elseif ($existingIcon)
+                            <div class="mt-2 mb-2">
+                                <img src="{{ asset('storage/' . $existingIcon) }}" class="w-20 h-20 object-contain rounded">
+                            </div>
+                        @endif
+                        <input type="file" wire:model="icon" id="icon" class="block mt-1 w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" accept="image/*" />
                         <x-input-error class="mt-2" :messages="$errors->get('icon')" />
                     </div>
 
@@ -70,7 +79,13 @@
                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $feature->title }}</td>
                                 <td class="px-6 py-4">{{ Str::limit($feature->description, 50) }}</td>
-                                <td class="px-6 py-4">{{ $feature->icon }}</td>
+                                <td class="px-6 py-4">
+                                    @if($feature->icon)
+                                        <img src="{{ asset('storage/' . $feature->icon) }}" class="w-10 h-10 object-contain">
+                                    @else
+                                        <span class="text-gray-400">No Icon</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 space-x-2">
                                     <button wire:click="edit({{ $feature->id }})"
                                         class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>

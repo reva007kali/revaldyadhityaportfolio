@@ -41,6 +41,29 @@
                         </div>
                         <x-input-error class="mt-2" :messages="$errors->get('content')" />
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <x-input-label for="category" :value="__('Category')" />
+                                <x-text-input wire:model="category" id="category" class="block mt-1 w-full" type="text" placeholder="e.g. Digital Design" />
+                                <x-input-error class="mt-2" :messages="$errors->get('category')" />
+                            </div>
+                            <div>
+                                <x-input-label for="role" :value="__('Role')" />
+                                <x-text-input wire:model="role" id="role" class="block mt-1 w-full" type="text" placeholder="e.g. Creative Lead" />
+                                <x-input-error class="mt-2" :messages="$errors->get('role')" />
+                            </div>
+                            <div>
+                                <x-input-label for="year" :value="__('Year')" />
+                                <x-text-input wire:model="year" id="year" class="block mt-1 w-full" type="text" placeholder="e.g. 2024" />
+                                <x-input-error class="mt-2" :messages="$errors->get('year')" />
+                            </div>
+                            <div>
+                                <x-input-label for="client" :value="__('Client')" />
+                                <x-text-input wire:model="client" id="client" class="block mt-1 w-full" type="text" placeholder="e.g. Acme Corp" />
+                                <x-input-error class="mt-2" :messages="$errors->get('client')" />
+                            </div>
+                        </div>
+
                         <div>
                             <x-input-label for="link" :value="__('Link URL')" />
                             <x-text-input wire:model="link" id="link" class="block mt-1 w-full" type="text" />

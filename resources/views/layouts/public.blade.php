@@ -24,219 +24,216 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <style>
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+        [x-cloak] { display: none !important; }
+
+        /* Smooth Navbar Transition */
+        #navbar {
+            transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                        background-color 0.4s ease, 
+                        backdrop-filter 0.4s ease,
+                        border-color 0.4s ease;
+            will-change: padding, background-color, backdrop-filter;
         }
 
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            /* IE and Edge */
-            scrollbar-width: none;
-            /* Firefox */
+        /* Scrolled State */
+        .nav-scrolled {
+            padding-top: 1rem !important;    /* Equivalent to py-4 */
+            padding-bottom: 1rem !important;
+            background-color: rgba(11, 11, 13, 0.85) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Mobile Menu Animation */
+        #mobile-menu {
+            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        ::selection {
+            background: #f97316;
+            color: white;
         }
     </style>
 </head>
 
-<body
-    class="font-sans antialiased text-swiss-dark bg-white selection:bg-swiss-blue selection:text-white lg:bg-[#000000] lg:flex lg:items-center lg:justify-center lg:h-screen lg:overflow-hidden"
-    x-data="{ scale: 1, isDesktop: false }" x-init="isDesktop = window.innerWidth >= 1024;
-    scale = isDesktop ? 0.75 : 1">
+<body class="font-sans antialiased text-white bg-[#0b0b0d]">
 
-    <!-- Zoom Controls -->
-    <div
-        class="hidden lg:flex fixed bottom-8 right-8 z-[100] gap-2 bg-[#1c1c1e] p-2 rounded-full border border-white/10 shadow-xl">
-        <button @click="scale = Math.max(0.5, scale - 0.1)"
-            class="w-10 h-10 rounded-full bg-black hover:bg-white/10 text-white flex items-center justify-center transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-            </svg>
-        </button>
-        <div class="w-16 flex items-center justify-center text-white font-mono text-sm">
-            <span x-text="Math.round(scale * 100) + '%'"></span>
-        </div>
-        <button @click="scale = Math.min(1.2, scale + 0.1)"
-            class="w-10 h-10 rounded-full bg-black hover:bg-white/10 text-white flex items-center justify-center transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-        </button>
-    </div>
+    <!-- ================= NAVBAR ================= -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-[100] py-7 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
 
-    <!-- Phone Container Wrapper for Centering and Scaling -->
-    <div class="relative transition-transform duration-300 ease-out origin-center"
-        :style="isDesktop ? `transform: scale(${scale})` : ''">
-        <div
-            class="relative w-full lg:w-[400px] lg:h-[850px] lg:bg-black lg:rounded-[60px] lg:border-[8px] lg:border-[#0a0a0a] lg:shadow-[0_0_100px_rgba(0,0,0,1),0_0_40px_rgba(0,0,0,0.6),0_0_20px_rgba(0,0,0,0.4)] lg:overflow-hidden bg-white lg:ring-[6px] lg:ring-[#D56718] lg:ring-opacity-60">
+            <!-- Logo -->
+            <a href="/" class="relative z-[110] text-2xl font-black tracking-tighter group transition-transform duration-300 hover:scale-105">
+                REVA<span class="text-orange-500 group-hover:animate-pulse">.</span>
+            </a>
 
-            <!-- Dynamic Notch / Status Bar Area for Desktop -->
-            <div
-                class="hidden lg:block absolute top-4 left-1/2 transform -translate-x-1/2 w-[120px] h-[36px] bg-[#000000] rounded-[20px] z-[60] p-[10px]">
-                <!-- Glass-like camera circle -->
-                <div
-                    class="w-3 h-3 ml-auto rounded-full bg-gradient-to-br from-blue-500/30 to-white/10 border border-white/20 shadow-inner backdrop-blur-sm">
-                </div>
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-10">
+                @php
+                    $navItems = \App\Models\NavigationItem::where('is_active', true)->orderBy('sort_order')->get();
+                @endphp
+
+                @forelse($navItems as $item)
+                    <a href="{{ $item->url }}"
+                        class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">
+                        {{ $item->label }}
+                    </a>
+                @empty
+                    <a href="#works" class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">Works</a>
+                    <a href="#services" class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">Services</a>
+                    <a href="#about" class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">About</a>
+                @endforelse
+
+                <a href="#contact"
+                    class="px-8 py-3 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-orange-500 hover:text-white transition-all duration-300">
+                    Let's Talk
+                </a>
             </div>
 
-            <!-- Scrollable Container -->
-            <div class="w-full overflow-x-hidden lg:h-full lg:overflow-y-auto scrollbar-hide">
+            <!-- Hamburger Button -->
+            <button id="menu-toggle"
+                class="relative w-11 h-11 flex flex-col justify-center items-center focus:outline-none z-[110] md:hidden bg-white/5 rounded-full border border-white/10 transition-colors hover:bg-white/10">
+                <span class="line block w-5 h-0.5 bg-white transition-all duration-300 pointer-events-none" style="transform: translateY(-3px)"></span>
+                <span class="line block w-5 h-0.5 bg-white transition-all duration-300 pointer-events-none" style="transform: translateY(3px)"></span>
+            </button>
+        </div>
+    </nav>
 
-                <!-- Navbar -->
-                <nav
-                    class="fixed top-0 left-0 w-full z-50 bg-gradient-to-b from-black via-black/50 to-transparent lg:absolute">
-                    <div class="max-w-sm mx-auto flex justify-between items-center h-16 px-6 relative z-50">
+    <!-- Fullscreen Mobile Menu -->
+    <div id="mobile-menu"
+        class="fixed inset-0 bg-[#0b0b0d] z-[105] flex flex-col justify-center items-center space-y-8 
+               transform translate-x-full md:hidden">
+        
+        <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-black">MENU</div>
+        </div>
 
-                        <a href="/" class="text-xl font-black text-white">
-                            Reva<span class="text-swiss-blue">.</span>
-                        </a>
+        @forelse($navItems as $item)
+            <a href="{{ $item->url }}" class="text-5xl font-black tracking-tighter hover:text-orange-500 transition-all duration-300 active:scale-90">
+                {{ $item->label }}<span class="text-orange-500">.</span>
+            </a>
+        @empty
+            <a href="#works" class="text-5xl font-black tracking-tighter">Works</a>
+        @endforelse
+    </div>
 
-                        <!-- Hamburger / Close Button -->
-                        <button id="menu-toggle"
-                            class="relative w-8 h-8 flex flex-col justify-center items-center focus:outline-none z-50">
-                            <span class="line block absolute w-6 h-0.5 bg-white transition-all duration-300"></span>
-                            <span class="line block absolute w-6 h-0.5 bg-white transition-all duration-300"></span>
-                            <span class="line block absolute w-6 h-0.5 bg-white transition-all duration-300"></span>
-                        </button>
+    <!-- Page Content -->
+    <main class="min-h-screen">
+        {{ $slot }}
+    </main>
 
+    <!-- ================= FOOTER ================= -->
+    <footer class="relative bg-[#0b0b0d] pt-32 pb-12 overflow-hidden border-t border-white/5">
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 text-[25vw] font-black text-white/[0.02] select-none pointer-events-none leading-none">
+            REVALDY
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
+                <div class="md:col-span-5">
+                    <a href="/" class="text-3xl font-black tracking-tighter mb-8 block group">
+                        REVA<span class="text-orange-500 group-hover:animate-pulse">.</span>
+                    </a>
+                    <p class="text-white/40 text-lg leading-relaxed max-w-sm mb-10">
+                        Crafting high-performance digital experiences that merge aesthetic precision with technical excellence.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                        <span class="text-xs font-black uppercase tracking-widest text-white/60">Available for projects</span>
                     </div>
-                </nav>
+                </div>
 
-                <!-- Fullscreen Menu -->
-                <div id="mobile-menu"
-                    class="fixed inset-0 bg-black/70 backdrop-blur-md text-white flex flex-col justify-center items-center space-y-10 
-               transform translate-y-full opacity-0 transition-all duration-500 ease-in-out z-40 lg:absolute">
+                <div class="md:col-span-3">
+                    <h4 class="text-orange-500 font-black text-[10px] uppercase tracking-[0.4em] mb-8">Navigation</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#works" class="text-white/60 hover:text-orange-500 font-bold transition-colors">Portfolio</a></li>
+                        <li><a href="#services" class="text-white/60 hover:text-orange-500 font-bold transition-colors">Expertise</a></li>
+                        <li><a href="#about" class="text-white/60 hover:text-orange-500 font-bold transition-colors">My Story</a></li>
+                    </ul>
+                </div>
 
+                <div class="md:col-span-4">
+                    <h4 class="text-orange-500 font-black text-[10px] uppercase tracking-[0.4em] mb-8">Connect</h4>
+                    <p class="text-xl font-bold mb-8 hover:text-orange-500 transition-colors cursor-pointer">le.revaldy@gmail.com</p>
+                    
                     @php
-                        $navItems = \App\Models\NavigationItem::where('is_active', true)->orderBy('sort_order')->get();
+                        $footerSocialLinks = \App\Models\SocialLink::where('is_active', true)->orderBy('sort_order')->get();
                     @endphp
 
-                    @forelse($navItems as $item)
-                        <a href="{{ $item->url }}"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">{{ $item->label }}</a>
-                    @empty
-                        <a href="#home"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Home</a>
-                        <a href="#works"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Works</a>
-                        <a href="#services"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Services</a>
-                        <a href="#about"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">About</a>
-                        <a href="#pricing"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Pricing</a>
-                        <a href="#contact"
-                            class="text-3xl font-bold tracking-wide hover:text-swiss-blue transition">Contact</a>
-                    @endforelse
-
+                    <div class="flex flex-wrap gap-4">
+                        @foreach ($footerSocialLinks as $link)
+                            <a href="{{ $link->url }}" target="_blank"
+                                class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group hover:bg-orange-500 hover:border-orange-500 transition-all duration-500">
+                                @if ($link->icon)
+                                    <img src="{{ asset('storage/' . $link->icon) }}"
+                                        class="w-5 h-5 object-contain filter invert opacity-60 group-hover:brightness-0 transition-all">
+                                @else
+                                    <span class="text-[10px] font-black text-white group-hover:text-black">{{ substr($link->platform, 0, 2) }}</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
+            </div>
 
-                <script>
-                    const toggle = document.getElementById('menu-toggle');
-                    const menu = document.getElementById('mobile-menu');
-                    const lines = toggle.querySelectorAll('.line');
-                    let isOpen = false;
-
-                    // Set initial positions
-                    lines[0].style.transform = "translateY(-6px)";
-                    lines[2].style.transform = "translateY(6px)";
-
-                    toggle.addEventListener('click', () => {
-                        isOpen = !isOpen;
-
-                        if (isOpen) {
-                            // Open menu
-                            menu.classList.remove('translate-y-full', 'opacity-0');
-                            menu.classList.add('translate-y-0', 'opacity-100');
-                            document.body.classList.add('overflow-hidden');
-
-                            // Morph to X
-                            lines[0].style.transform = "rotate(45deg)";
-                            lines[1].style.opacity = "0";
-                            lines[2].style.transform = "rotate(-45deg)";
-                        } else {
-                            // Close menu
-                            menu.classList.add('translate-y-full', 'opacity-0');
-                            menu.classList.remove('translate-y-0', 'opacity-100');
-                            document.body.classList.remove('overflow-hidden');
-
-                            // Back to hamburger
-                            lines[0].style.transform = "translateY(-6px)";
-                            lines[1].style.opacity = "1";
-                            lines[2].style.transform = "translateY(6px)";
-                        }
-                    });
-
-                    // Auto close when clicking menu link
-                    document.querySelectorAll('#mobile-menu a').forEach(link => {
-                        link.addEventListener('click', () => {
-                            toggle.click();
-                        });
-                    });
-                </script>
-
-
-
-
-
-                <!-- Page Content -->
-                <main class="">
-                    {{ $slot }}
-                </main>
-
-                <footer class="bg-black text-white py-12 border-t-4 border-swiss-blue">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 gap-8">
-                        <div>
-                            <h3 class="font-black text-2xl mb-4">RevaldyAdhitya<span class="text-swiss-blue">.</span>
-                            </h3>
-                            <p class="text-gray-400 text-sm">Crafting digital experiences with precision and clarity.
-                            </p>
-                        </div>
-                        <div>
-                            <h4 class="font-bold uppercase tracking-widest mb-4 text-xs text-gray-500">Links</h4>
-                            <ul class="space-y-2 text-sm">
-                                <li><a href="#services" class="hover:text-swiss-blue transition-colors">Services</a>
-                                </li>
-                                <li><a href="#projects" class="hover:text-swiss-blue transition-colors">Works</a></li>
-                                <li><a href="#about" class="hover:text-swiss-blue transition-colors">About</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold uppercase tracking-widest mb-4 text-xs text-gray-500">Contact</h4>
-                            <p class="text-sm text-gray-400">le.revaldy@gmail.com</p>
-
-                            @php
-                                $footerSocialLinks = \App\Models\SocialLink::where('is_active', true)
-                                    ->orderBy('sort_order')
-                                    ->get();
-                            @endphp
-
-                            @if ($footerSocialLinks->count() > 0)
-                                <div class="flex gap-4 mt-6">
-                                    @foreach ($footerSocialLinks as $link)
-                                        <a href="{{ $link->url }}" target="_blank"
-                                            class="text-gray-400 hover:text-white transition-colors group">
-                                            @if ($link->icon)
-                                                <img src="{{ asset('storage/' . $link->icon) }}"
-                                                    class="w-5 h-5 object-contain filter invert opacity-60 group-hover:opacity-100 transition-opacity">
-                                            @else
-                                                {{ $link->platform }}
-                                            @endif
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                    <div
-                        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-xs text-gray-500 uppercase tracking-widest">
-                        &copy; {{ date('Y') }} revaldyadhitya.com
-                    </div>
-                </footer>
-
+            <div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+                <div>&copy; {{ date('Y') }} REVALDY ADHITYA.</div>
+                <div class="flex gap-8">
+                    <a href="#" class="hover:text-white transition">Privacy</a>
+                    <a href="#" class="hover:text-white transition">Terms</a>
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </footer>
 
+    <!-- Scripts -->
+    <script>
+        // --- Smooth Navbar Logic ---
+        const navbar = document.getElementById('navbar');
+        let isScrolled = false;
+
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.scrollY > 30;
+            // Only update DOM if the state actually changes
+            if (scrollPos !== isScrolled) {
+                isScrolled = scrollPos;
+                if (isScrolled) {
+                    navbar.classList.add('nav-scrolled');
+                } else {
+                    navbar.classList.remove('nav-scrolled');
+                }
+            }
+        }, { passive: true }); // Improved scroll performance
+
+        // --- Mobile Menu Toggle ---
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        const lines = toggle.querySelectorAll('.line');
+        let isOpen = false;
+
+        toggle.addEventListener('click', () => {
+            isOpen = !isOpen;
+            if (isOpen) {
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                document.body.style.overflow = 'hidden';
+                lines[0].style.transform = "rotate(45deg) translateY(0px)";
+                lines[1].style.transform = "rotate(-45deg) translateY(0px)";
+                toggle.classList.add('bg-orange-500');
+            } else {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+                document.body.style.overflow = '';
+                lines[0].style.transform = "translateY(-3px)";
+                lines[1].style.transform = "translateY(3px)";
+                toggle.classList.remove('bg-orange-500');
+            }
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => { if (isOpen) toggle.click(); });
+        });
+    </script>
+</body>
 </html>
