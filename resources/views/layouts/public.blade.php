@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="shortcut icon" href="/img/logo.png" type="image/x-icon">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <title>Reva Adhitya | Portfolio</title>
 
     <!-- Fonts -->
@@ -74,7 +74,9 @@
             <div
                 class="hidden lg:block absolute top-4 left-1/2 transform -translate-x-1/2 w-[120px] h-[36px] bg-[#000000] rounded-[20px] z-[60] p-[10px]">
                 <!-- Glass-like camera circle -->
-                <div class="w-3 h-3 ml-auto rounded-full bg-gradient-to-br from-blue-500/30 to-white/10 border border-white/20 shadow-inner backdrop-blur-sm"></div>
+                <div
+                    class="w-3 h-3 ml-auto rounded-full bg-gradient-to-br from-blue-500/30 to-white/10 border border-white/20 shadow-inner backdrop-blur-sm">
+                </div>
             </div>
 
             <!-- Scrollable Container -->
