@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Public\Home;
 use App\Livewire\Public\Works;
 use App\Livewire\Public\About;
+use App\Livewire\Public\PrivacyPolicy;
+use App\Livewire\Public\TermsOfService;
 use App\Livewire\Public\ProjectDetail;
 use App\Livewire\Public\ServiceDetail;
 use App\Livewire\Admin\Services\Index as ServicesIndex;
@@ -23,6 +25,8 @@ Route::get('/works', Works::class)->name('works');
 Route::get('/works/{slug}', ProjectDetail::class)->name('works.show');
 Route::get('/services/{slug}', ServiceDetail::class)->name('services.show');
 Route::get('/about', About::class)->name('about');
+Route::get('/privacy-policy', PrivacyPolicy::class)->name('privacy-policy');
+Route::get('/terms-of-service', TermsOfService::class)->name('terms-of-service');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

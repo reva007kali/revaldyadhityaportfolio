@@ -41,7 +41,8 @@
                 </div>
 
                 {{-- Main Heading: Poster Style --}}
-                <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] text-white mb-4 md:mb-8">
+                <h1
+                    class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] text-white mb-4 md:mb-8">
                     @php
                         $titleParts = explode(' ', $hero->title ?? 'Reva Adhitya');
                         $lastWord = array_pop($titleParts);
@@ -63,23 +64,23 @@
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                     {{-- Main CTA --}}
                     <a href="{{ $hero->cta_link ?? '#' }}"
-                        class="group relative px-10 py-5 rounded-full overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_20px_40px_-10px_rgba(255,107,0,0.3)]">
+                        class="group relative px-10 py-5 rounded-full overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_20px_40px_-10px_rgba(255,107,0,0.3)] hover:shadow-[0_25px_50px_-10px_rgba(255,107,0,0.5)]">
                         <div
                             class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:scale-110 transition-transform duration-500">
                         </div>
-                        <span class="relative z-10 text-black font-black uppercase tracking-widest text-xs">
+                        <span
+                            class="relative z-10 text-black font-black uppercase tracking-widest text-xs group-hover:tracking-[0.25em] transition-all duration-500">
                             {{ $hero->cta_text ?? 'Start a Project' }}
+                        </span>
                     </a>
-                    </a>
-
                     {{-- Social Icons: Refined --}}
                     <div class="flex items-center gap-5 pl-2 sm:border-l sm:border-white/10 sm:pl-8">
                         @foreach ($social_links as $link)
                             <a href="{{ $link->url }}" target="_blank"
-                                class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-orange-500 hover:border-orange-500 group transition-all duration-500">
+                                class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:border-orange-500 group transition-all duration-500">
                                 @if ($link->icon)
                                     <img src="{{ asset('storage/' . $link->icon) }}"
-                                        class="w-4 h-4 object-contain filter invert opacity-50 group-hover:brightness-0 transition-all">
+                                        class="w-4 h-4 object-contain  transition-all">
                                 @else
                                     <span
                                         class="text-[10px] font-black text-white/50 group-hover:text-black transition-colors">{{ substr($link->platform, 0, 1) }}</span>
@@ -123,7 +124,7 @@
                 <div class="flex items-end justify-between mb-12">
                     <div>
                         <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-2">Portfolio</p>
-                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight">Featured Work</h3>
+                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight">Creative Highlights</h3>
                     </div>
                     <a href="{{ route('works') }}" wire:navigate
                         class="text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1">
@@ -177,8 +178,7 @@
                         </h3>
                     </div>
                     <p class="text-white/40 text-lg max-w-xs leading-relaxed border-l border-white/10 pl-6">
-                        Turning complex requirements into seamless digital interactions.
-                    </p>
+                        I build digital solutions that simplify, streamline, and strengthen brands. </p>
                 </div>
 
                 {{-- Services Grid --}}
@@ -188,7 +188,7 @@
 
                             {{-- The Card --}}
                             <div
-                                class="relative h-full min-h-[420px] p-10 rounded-[40px] bg-[#161618] border border-white/5 overflow-hidden transition-all duration-700 group-hover:border-orange-500/30 group-hover:-translate-y-3 shadow-2xl">
+                                class="relative h-full min-h-[320px] p-10 rounded-[40px] bg-[#161618] border border-white/5 overflow-hidden transition-all duration-700 group-hover:border-orange-500/30 group-hover:-translate-y-3 shadow-2xl">
 
                                 {{-- 1. Background Image Layer (Service Icon) --}}
                                 @if ($service->icon)
@@ -210,24 +210,6 @@
 
                                 {{-- 4. Top Decorative Elements (Numbering) --}}
                                 <div class="relative z-10 flex justify-between items-start mb-12">
-                                    {{-- Foreground Icon / Graphic --}}
-                                    <div class="relative w-16 h-16">
-                                        {{-- Rotating Diamond Border --}}
-                                        <div
-                                            class="absolute inset-0 border border-orange-500/30 rounded-2xl rotate-45 group-hover:rotate-90 group-hover:border-orange-500 transition-all duration-700">
-                                        </div>
-
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            @if ($service->icon)
-                                                {{-- Small clean version of the icon --}}
-                                                <img src="{{ asset('storage/' . $service->icon) }}"
-                                                    class="w-7 h-7 object-contain group-hover:scale-110 transition-transform duration-500">
-                                            @else
-                                                <span class="text-orange-500 text-xl font-black">✦</span>
-                                            @endif
-                                        </div>
-                                    </div>
-
                                     {{-- Dynamic Numbering --}}
                                     <div
                                         class="text-5xl font-black text-white/[0.05] group-hover:text-orange-500/20 transition-colors duration-500 italic">
@@ -249,7 +231,7 @@
 
                                 {{-- 6. Bottom Interaction Reveal --}}
                                 <div
-                                    class="absolute bottom-10 left-10 right-10 flex items-center justify-between opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                                    class="absolute bottom-7 left-10 right-10 flex items-center justify-between opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
                                     <div class="flex items-center gap-3">
                                         <span
                                             class="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">Learn
@@ -296,8 +278,8 @@
                                 class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Precision.</span>
                         </h3>
                         <p class="mt-8 text-white/50 leading-relaxed text-lg">
-                            My approach combines strategic thinking with pixel-perfect execution to ensure your brand
-                            stands out in a crowded digital landscape.
+                            Every decision is intentional. From strategy to execution, I design systems that don’t just
+                            look refined — they perform, adapt, and create measurable impact.
                         </p>
                     </div>
 
@@ -323,7 +305,7 @@
                                         class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-orange-500 transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(255,107,0,0.4)] group-hover:scale-110">
                                         @if ($feature->icon)
                                             <img src="{{ asset('storage/' . $feature->icon) }}"
-                                                class="w-7 h-7 filter invert opacity-70 group-hover:brightness-0 group-hover:invert-0 transition-all">
+                                                class="w-7 h-7 opacity-70 transition-all">
                                         @else
                                             <span class="text-2xl group-hover:scale-110 transition-transform">✦</span>
                                         @endif
@@ -397,31 +379,12 @@
                                 class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
                             </div>
                         </div>
-
-                        {{-- Floating Experience Badge --}}
-                        <div
-                            class="absolute -bottom-6 -left-6 md:-left-12 bg-white p-6 md:p-8 rounded-[32px] shadow-2xl shadow-orange-500/20 animate-bounce-slow">
-                            <div class="flex flex-col items-center justify-center">
-                                <span class="text-4xl md:text-5xl font-black text-black leading-none">5+</span>
-                                <span
-                                    class="text-[10px] font-black text-orange-600 uppercase tracking-widest mt-2 text-center">Years
-                                    of<br />Crafting</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
                 {{-- 2. Text Side (Occupies 7 columns on desktop) --}}
                 <div class="lg:col-span-7 order-1 lg:order-2 lg:pl-10">
                     <div class="max-w-xl">
-                        {{-- Label Badge --}}
-                        <div
-                            class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-orange-500/20 bg-orange-500/5 mb-8">
-                            <span
-                                class="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(255,107,0,1)]"></span>
-                            <span class="text-orange-500 font-black tracking-[0.3em] uppercase text-[10px]">Creative
-                                Mindset</span>
-                        </div>
 
                         {{-- Heading --}}
                         <h2 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-white mb-10">
@@ -528,48 +491,26 @@
 
         {{-- Pricing Grid --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-
             @foreach ($pricing_plans as $index => $plan)
-                @php
-                    $isFeatured = $index === 1; // Middle card
-                    // Strategic Copy Mapping (Fallback if not in DB)
-                    $labels = ['LaunchPad', 'Signature', 'Elite Scale'];
-                    $valueStatements = [
-                        'Perfect for individuals & startups.',
-                        'The ultimate choice for growing brands.',
-                        'Full-scale digital transformation.',
-                    ];
-                @endphp
-
                 <div
-                    class="group relative flex flex-col p-1 bg-[#161618] rounded-[48px] border border-white/5 transition-all duration-700 hover:border-orange-500/30 {{ $isFeatured ? 'lg:-translate-y-4 shadow-2xl shadow-orange-500/20' : '' }}">
-
-                    {{-- Featured Badge --}}
-                    @if ($isFeatured)
-                        <div class="absolute -top-5 left-1/2 -translate-x-1/2 z-20">
-                            <span
-                                class="px-6 py-2 rounded-full bg-gradient-to-r from-orange-600 to-orange-400 text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
-                                Recommended
-                            </span>
-                        </div>
-                    @endif
+                    class="group relative flex flex-col p-1 bg-[#161618] rounded-[48px] border border-white/5 transition-all duration-700 hover:border-orange-500/30">
 
                     {{-- Card Inner --}}
                     <div
-                        class="flex flex-col h-full p-10 rounded-[44px] bg-gradient-to-b {{ $isFeatured ? 'from-orange-500/[0.08] to-transparent' : 'from-white/[0.02] to-transparent' }}">
+                        class="flex flex-col h-full p-10 rounded-[44px] bg-gradient-to-b from-white/[0.02] to-transparent">
 
                         {{-- Plan Header --}}
                         <div class="mb-10">
-                            <h3 class="text-orange-500 font-black text-xs uppercase tracking-[0.3em] mb-4">
+                            <h3 class="text-orange-500 font-black text-lg uppercase tracking-[0.3em] mb-4">
                                 {{ $plan->name }}
                             </h3>
                             <div class="flex items-baseline gap-1">
-                                <span
-                                    class="text-5xl md:text-6xl font-black text-white tracking-tighter">{{ $plan->price }}</span>
-                                <span class="text-white/30 text-sm font-medium"></span>
+                                <span class="text-5xl md:text-4xl font-black text-white tracking-tighter">
+                                    {{ $plan->price }}
+                                </span>
                             </div>
                             <p class="mt-6 text-white/50 text-sm leading-relaxed">
-                                {{ $valueStatements[$index] ?? $plan->description }}
+                                {{ $plan->description }}
                             </p>
                         </div>
 
@@ -585,18 +526,16 @@
                                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
                                         </svg>
                                     </div>
-                                    <span
-                                        class="text-white/70 text-sm group-hover/item:text-white transition-colors">{{ $feature }}</span>
+                                    <span class="text-white/70 text-sm group-hover/item:text-white transition-colors">
+                                        {{ $feature }}
+                                    </span>
                                 </div>
                             @endforeach
                         </div>
 
                         {{-- CTA Button --}}
                         <a href="{{ $plan->cta_link ?? '#' }}"
-                            class="relative group/btn overflow-hidden block w-full text-center py-5 rounded-3xl font-black uppercase tracking-widest text-xs transition-all duration-500 
-                            {{ $isFeatured
-                                ? 'bg-orange-500 text-black hover:shadow-[0_0_30px_rgba(255,107,0,0.4)]'
-                                : 'bg-white/5 text-white hover:bg-orange-500 hover:text-black border border-white/10 hover:border-orange-500' }}">
+                            class="relative group/btn overflow-hidden block w-full text-center py-5 rounded-3xl font-black uppercase tracking-widest text-xs transition-all duration-500 bg-white/5 text-white hover:bg-orange-500 hover:text-black border border-white/10 hover:border-orange-500">
 
                             <span class="relative z-10">{{ $plan->cta_text ?? 'Get Started' }}</span>
 
@@ -605,15 +544,9 @@
                                 class="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-[-25deg] -translate-x-full group-hover/btn:translate-x-[250%] transition-transform duration-1000 ease-in-out">
                             </div>
                         </a>
-
-                        {{-- Trust Element --}}
-                        <p class="mt-6 text-center text-[10px] text-white/20 font-bold uppercase tracking-widest">
-                            No hidden costs • 100% Secure
-                        </p>
                     </div>
                 </div>
             @endforeach
-
         </div>
 
         {{-- Bottom Value Proposition --}}
@@ -641,36 +574,80 @@
 
 <!-- ================= TESTIMONIALS ================= -->
 <section
-    class="py-24 bg-gradient-to-br from-orange-50 to-white text-black rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
+    class="py-24 bg-gradient-to-b from-zinc-900 to-transparent text-white rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
-        <h3 class="text-3xl md:text-5xl font-bold tracking-tight mb-12 text-center">What Clients Say</h3>
+        <h3 class="text-3xl md:text-7xl font-extrabold tracking-tight mb-12 text-center">What <span
+                class="text-orange-500">Clients Say</span></h3>
         <div class="swiper testimonialSwiper !pb-12">
             <div class="swiper-wrapper">
                 @foreach ($testimonials as $testimonial)
-                    <div class="swiper-slide !h-auto">
-                        <div
-                            class="bg-white p-10 rounded-[40px] border border-orange-200 hover:border-orange-400 hover:shadow-xl hover:shadow-orange-500/10 transition-all h-full flex flex-col">
-                            <div class="flex gap-1 mb-6">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <span class="text-orange-500 text-xl">★</span>
-                                @endfor
+                    <div class="swiper-slide !h-auto py-10"> {{-- Added padding for hover lift --}}
+                        <div class="group relative h-full transition-all duration-500">
+
+                            {{-- 1. Hover Glow Effect (Behind the card) --}}
+                            <div
+                                class="absolute -inset-2 bg-gradient-to-r from-orange-600 to-orange-400 rounded-[45px] opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500">
                             </div>
-                            <p class="text-lg leading-relaxed mb-8 italic text-gray-700">
-                                "{{ $testimonial->content }}"</p>
-                            <div class="flex items-center gap-4 mt-auto">
+
+                            {{-- 2. Main Glass Card --}}
+                            <div
+                                class="relative h-full flex flex-col p-8 md:p-10 rounded-[40px] bg-white/[0.03] backdrop-blur-xl border border-white/10 group-hover:border-orange-500/50 group-hover:-translate-y-2 transition-all duration-500 shadow-2xl">
+
+                                {{-- Decorative Quote Icon --}}
                                 <div
-                                    class="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-500 overflow-hidden p-0.5">
-                                    <div class="w-full h-full rounded-full bg-gray-100 overflow-hidden">
-                                        @if ($testimonial->avatar)
-                                            <img src="{{ asset('storage/' . $testimonial->avatar) }}"
-                                                class="w-full h-full object-cover">
-                                        @endif
-                                    </div>
+                                    class="absolute top-8 right-10 text-orange-500/10 group-hover:text-orange-500/20 transition-colors">
+                                    <svg class="w-16 h-16 fill-currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V12C14.017 12.5523 13.5693 13 13.017 13H11.017C10.4647 13 10.017 12.5523 10.017 12V9C10.017 7.34315 11.3601 6 13.017 6H19.017C20.6738 6 22.017 7.34315 22.017 9V15C22.017 17.7614 19.7784 20 17.017 20H14.017V21ZM5.017 21L5.017 18C5.017 16.8954 5.91243 16 7.017 16H10.017C10.5693 16 11.017 15.5523 11.017 15V9C11.017 8.44772 10.5693 8 10.017 8H6.017C5.46472 8 5.017 8.44772 5.017 9V12C5.017 12.5523 4.56929 13 4.017 13H2.017C1.46472 13 1.017 12.5523 1.017 12V9C1.017 7.34315 2.36015 6 4.017 6H10.017C11.6738 6 13.017 7.34315 13.017 9V15C13.017 17.7614 10.7786 20 8.017 20H5.017V21Z" />
+                                    </svg>
                                 </div>
-                                <div>
-                                    <h4 class="font-bold">{{ $testimonial->name }}</h4>
-                                    <p class="text-xs text-orange-600 uppercase tracking-widest">
-                                        {{ $testimonial->position ?? 'CEO' }}</p>
+
+                                {{-- Star Rating --}}
+                                <div class="flex gap-1 mb-8">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <svg class="w-5 h-5 text-orange-500 group-hover:scale-110 transition-transform duration-300"
+                                            fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    @endfor
+                                </div>
+
+                                {{-- Testimonial Content --}}
+                                <p class="text-xl md:text-2xl leading-relaxed text-white/90 mb-10 font-medium italic">
+                                    "{{ $testimonial->content }}"
+                                </p>
+
+                                {{-- Author Info --}}
+                                <div class="flex items-center gap-5 mt-auto">
+                                    <div class="relative">
+                                        {{-- Avatar Ring --}}
+                                        <div
+                                            class="absolute -inset-1 bg-gradient-to-tr from-orange-600 to-orange-400 rounded-full opacity-50">
+                                        </div>
+                                        <div
+                                            class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#0b0b0d] bg-zinc-800">
+                                            @if ($testimonial->avatar)
+                                                <img src="{{ asset('storage/' . $testimonial->avatar) }}"
+                                                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                                            @else
+                                                <div
+                                                    class="w-full h-full flex items-center justify-center text-white/20 font-black">
+                                                    {{ substr($testimonial->name, 0, 1) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="text-lg font-black text-white group-hover:text-orange-500 transition-colors">
+                                            {{ $testimonial->name }}
+                                        </h4>
+                                        <p
+                                            class="text-[10px] text-orange-500/60 font-black uppercase tracking-[0.2em]">
+                                            {{ $testimonial->position ?? 'CEO & Founder' }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

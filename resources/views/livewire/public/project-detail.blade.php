@@ -1,16 +1,13 @@
 <div class="min-h-screen bg-[#0b0b0d] text-white antialiased selection:bg-orange-500 selection:text-white">
 
     {{-- 1. Floating Navigation --}}
-    <div class="fixed top-8 left-6 md:left-12 z-[100]">
+    <div class="fixed bottom-8 left-6 md:left-12 z-[100]">
         <a href="{{ route('home') }}"
-            class="group flex items-center gap-3 px-5 py-3 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 hover:border-orange-500/50 transition-all duration-500">
-            <svg class="w-5 h-5 text-orange-500 group-hover:-translate-x-1 transition-transform" fill="none"
+            class="group flex items-center justify-center w-14 h-14 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:scale-110 shadow-2xl">
+            <svg class="w-6 h-6 text-orange-500 group-hover:-translate-x-1 transition-transform" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-            <span
-                class="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 group-hover:text-white transition-colors">Back
-                to Works</span>
         </a>
     </div>
 

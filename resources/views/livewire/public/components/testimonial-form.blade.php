@@ -13,7 +13,6 @@
         
         {{-- Text & Icon --}}
         <div class="relative z-10 flex items-center gap-4">
-            <span class="text-black text-2xl">✍️</span>
             <h3 class="text-sm md:text-lg font-black uppercase tracking-[0.2em] text-black">Share Your Story</h3>
         </div>
         

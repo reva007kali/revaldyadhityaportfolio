@@ -50,7 +50,7 @@
                        hover:border-orange-500/40 hover:-translate-y-3 hover:shadow-[0_30px_60px_-15px_rgba(255,107,0,0.2)] block">
 
                         {{-- Image Container --}}
-                        <div class="relative aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-t-[48px]">
+                        <div class="relative aspect-[4/3] md:aspect-[4/3] overflow-hidden rounded-t-[48px]">
                             @if ($project->image)
                                 <img src="{{ Str::startsWith($project->image, 'http') ? $project->image : asset('storage/' . $project->image) }}"
                                     class="w-full h-full object-cover 
