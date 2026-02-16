@@ -160,6 +160,82 @@
     @endif
 
 
+    <!-- ================= FEATURED WEBSITES ================= -->
+    @if ($websites->count() > 0)
+        <section id="websites" class="py-24 bg-[#0b0b0d]">
+            <div class="max-w-7xl mx-auto px-6 md:px-12">
+                <div class="flex items-end justify-between mb-12">
+                    <div>
+                        <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-2">Showcase</p>
+                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight">Website Gallery</h3>
+                    </div>
+                    <a href="{{ route('websites') }}" wire:navigate
+                        class="text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1">
+                        View All Websites →
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach ($websites as $website)
+                        <div
+                            class="group relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[#161618] border border-white/5 transition-all duration-500 hover:border-orange-500/50 hover:shadow-[0_0_30px_rgba(249,115,22,0.2)]">
+
+                            {{-- Image Layer --}}
+                            <div class="absolute inset-0 w-full h-full">
+                                @if ($website->image)
+                                    <img src="{{ asset('storage/' . $website->image) }}"
+                                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:blur-[2px]">
+                                @else
+                                    <div
+                                        class="w-full h-full flex items-center justify-center bg-zinc-800 text-white/20 font-black text-4xl">
+                                        {{ substr($website->title, 0, 1) }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- Overlay Content (Visible on Hover) --}}
+                            <div
+                                class="absolute inset-0 z-10 flex flex-col justify-end p-6 bg-gradient-to-t from-black via-black/80 to-transparent 
+                    opacity-0 translate-y-4 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:translate-y-0">
+
+                                {{-- Tags --}}
+                                @if ($website->tags)
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        @foreach (array_slice($website->tags, 0, 2) as $tag)
+                                            <span
+                                                class="px-2 py-0.5 rounded-full bg-orange-500/20 border border-orange-500/30 text-[9px] font-bold uppercase tracking-wider text-orange-400">
+                                                {{ $tag }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <h3 class="text-xl font-black text-white mb-2 tracking-tight">
+                                    {{ $website->title }}
+                                </h3>
+
+                                <p class="text-xs text-white/70 line-clamp-2 leading-relaxed mb-4">
+                                    {{ $website->description }}
+                                </p>
+
+                                {{-- Action Button --}}
+                                <a href="{{ route('websites.show', $website->slug) }}" target="_blank"
+                                    class="w-full py-3 rounded-xl bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-colors text-center">
+                                    View Website
+                                </a>
+                            </div>
+
+                            {{-- Optional: Clickable link for the whole card --}}
+                            <a href="{{ route('websites.show', $website->slug) }}" class="absolute inset-0 z-20"
+                                aria-label="View {{ $website->title }}"></a>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+
     <!-- ================= SERVICES ================= -->
     @if ($services->count() > 0)
         <section id="services" class="py-12 bg-[#0b0b0d] relative">

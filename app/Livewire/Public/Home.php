@@ -12,6 +12,7 @@ use App\Models\PricingPlan;
 use App\Models\Testimonial;
 use App\Models\ContactMessage;
 use App\Models\SocialLink;
+use App\Models\Website;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -36,6 +37,7 @@ class Home extends Component
                 ->orderBy('sort_order')
                 ->latest()
                 ->get(),
+            'websites' => Website::latest()->take(10)->get(),
             'features' => Feature::all(),
             'pricing_plans' => PricingPlan::all(),
             'testimonials' => Testimonial::where('is_active', true)->latest()->get(),

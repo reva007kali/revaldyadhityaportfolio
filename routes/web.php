@@ -20,15 +20,20 @@ use App\Livewire\Admin\Messages\Index as MessagesIndex;
 use App\Livewire\Admin\Testimonials\Index as TestimonialsIndex;
 use App\Livewire\Admin\SocialLinks\Index as SocialLinksIndex;
 use App\Livewire\Admin\Navigation\Index as NavigationIndex;
+use App\Livewire\Admin\Websites\Index as WebsitesIndex;
+
+use App\Livewire\Public\Websites;
 
 Route::get('/', Home::class)->name('home');
 Route::get('/works', Works::class)->name('works');
+Route::get('/websites', Websites::class)->name('websites');
 Route::get('/archive', Archive::class)->name('archive');
 Route::get('/works/{slug}', ProjectDetail::class)->name('works.show');
 Route::get('/services/{slug}', ServiceDetail::class)->name('services.show');
 Route::get('/about', About::class)->name('about');
 Route::get('/privacy-policy', PrivacyPolicy::class)->name('privacy-policy');
 Route::get('/terms-of-service', TermsOfService::class)->name('terms-of-service');
+
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -46,7 +51,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('social-links', SocialLinksIndex::class)->name('social-links');
     Route::get('navigation', NavigationIndex::class)->name('navigation');
     Route::get('messages', MessagesIndex::class)->name('messages');
+    Route::get('websites', WebsitesIndex::class)->name('websites');
 });
+
+Route::get('/websites/{slug}', function ($slug) {
+    $website = \App\Models\Website::where('slug', $slug)->firstOrFail();
+    return view("websites.{$slug}", ['website' => $website]);
+})->name('websites.show');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])

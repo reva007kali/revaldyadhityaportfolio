@@ -94,6 +94,8 @@
                         class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">Works</a>
                     <a href="#services"
                         class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">Services</a>
+                    <a href="{{ route('websites') }}"
+                        class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">Websites</a>
                     <a href="#about"
                         class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">About</a>
                 @endforelse

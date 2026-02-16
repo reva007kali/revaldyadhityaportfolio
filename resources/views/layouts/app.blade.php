@@ -245,6 +245,19 @@
                     {{ __('Messages') }}
                 </x-nav-link>
 
+                <x-nav-link :href="route('admin.websites')" :active="request()->routeIs('admin.websites')"
+                    class="group flex items-center px-4 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-200 rounded-xl mb-1
+                    {{ request()->routeIs('admin.websites')
+                        ? 'bg-swiss-blue text-white shadow-lg shadow-swiss-blue/20'
+                        : 'text-gray-400 hover:bg-white/5 hover:text-white' }}">
+                    <svg class="w-5 h-5 mr-4 transition-colors duration-200 {{ request()->routeIs('admin.websites') ? 'text-white' : 'text-gray-500 group-hover:text-white' }}"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    {{ __('Websites') }}
+                </x-nav-link>
+
                 <x-nav-link :href="route('profile')" :active="request()->routeIs('profile')"
                     class="group flex items-center px-4 py-3 text-sm font-bold uppercase tracking-wide transition-all duration-200 rounded-xl mb-1
                     {{ request()->routeIs('profile')
