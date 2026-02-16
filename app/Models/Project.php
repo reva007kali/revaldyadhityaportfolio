@@ -10,6 +10,11 @@ class Project extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'is_archived' => 'boolean',
+    ];
+
     protected static function boot()
     {
         parent::boot();

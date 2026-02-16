@@ -30,7 +30,12 @@ class Home extends Component
             'hero' => HeroSection::first(),
             'about' => AboutSection::first(),
             'services' => Service::all(),
-            'projects' => Project::with('media')->latest()->get(),
+            'projects' => Project::with('media')
+                ->where('is_featured', true)
+                ->where('is_archived', false)
+                ->orderBy('sort_order')
+                ->latest()
+                ->get(),
             'features' => Feature::all(),
             'pricing_plans' => PricingPlan::all(),
             'testimonials' => Testimonial::where('is_active', true)->latest()->get(),

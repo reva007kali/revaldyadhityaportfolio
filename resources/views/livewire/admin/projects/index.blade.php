@@ -64,6 +64,26 @@
                             </div>
                         </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <x-input-label for="sort_order" :value="__('Sort Order')" />
+                                <x-text-input wire:model="sort_order" id="sort_order" class="block mt-1 w-full" type="number" placeholder="0" />
+                                <x-input-error class="mt-2" :messages="$errors->get('sort_order')" />
+                            </div>
+                            <div class="flex items-center pt-8">
+                                <label for="is_featured" class="inline-flex items-center">
+                                    <input id="is_featured" type="checkbox" wire:model="is_featured" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Show in Home Featured') }}</span>
+                                </label>
+                            </div>
+                            <div class="flex items-center pt-8">
+                                <label for="is_archived" class="inline-flex items-center">
+                                    <input id="is_archived" type="checkbox" wire:model="is_archived" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Archive Project') }}</span>
+                                </label>
+                            </div>
+                        </div>
+
                         <div>
                             <x-input-label for="link" :value="__('Link URL')" />
                             <x-text-input wire:model="link" id="link" class="block mt-1 w-full" type="text" />
@@ -175,6 +195,8 @@
                                 <th scope="col" class="px-6 py-3">Description</th>
                                 <th scope="col" class="px-6 py-3">Media Count</th>
                                 <th scope="col" class="px-6 py-3">Link</th>
+                                <th scope="col" class="px-6 py-3">Order</th>
+                                <th scope="col" class="px-6 py-3">Status</th>
                                 <th scope="col" class="px-6 py-3">Actions</th>
                             </tr>
                         </thead>
@@ -191,6 +213,15 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">{{ $project->link }}</td>
+                                    <td class="px-6 py-4">{{ $project->sort_order }}</td>
+                                    <td class="px-6 py-4">
+                                        @if($project->is_featured)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mr-1">Featured</span>
+                                        @endif
+                                        @if($project->is_archived)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Archived</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 space-x-2">
                                         <button wire:click="edit({{ $project->id }})"
                                             class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>

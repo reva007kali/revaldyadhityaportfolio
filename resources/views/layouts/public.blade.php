@@ -204,8 +204,12 @@
 
                 <div class="md:col-span-4">
                     <h4 class="text-orange-500 font-black text-[10px] uppercase tracking-[0.4em] mb-8">Connect</h4>
+                    <p class="text-xl font-bold mb-2 hover:text-orange-500 transition-colors cursor-pointer">
+                        le.revaldy@gmail.com
+                    </p>
                     <p class="text-xl font-bold mb-8 hover:text-orange-500 transition-colors cursor-pointer">
-                        le.revaldy@gmail.com</p>
+                        +62 822-6089-4009
+                    </p>
 
                     @php
                         $footerSocialLinks = \App\Models\SocialLink::where('is_active', true)

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Public\Home;
 use App\Livewire\Public\Works;
+use App\Livewire\Public\Archive;
 use App\Livewire\Public\About;
 use App\Livewire\Public\PrivacyPolicy;
 use App\Livewire\Public\TermsOfService;
@@ -22,6 +23,7 @@ use App\Livewire\Admin\Navigation\Index as NavigationIndex;
 
 Route::get('/', Home::class)->name('home');
 Route::get('/works', Works::class)->name('works');
+Route::get('/archive', Archive::class)->name('archive');
 Route::get('/works/{slug}', ProjectDetail::class)->name('works.show');
 Route::get('/services/{slug}', ServiceDetail::class)->name('services.show');
 Route::get('/about', About::class)->name('about');

@@ -6,7 +6,7 @@
     </div>
 
     <!-- ================= HERO ================= -->
-    <section class="relative min-h-screen flex items-end md:items-center overflow-hidden">
+    <section id="home" class="relative min-h-screen flex items-end md:items-center overflow-hidden">
 
         {{-- Hero Background Image logic preserved --}}
         <div class="absolute inset-0 overflow-hidden">
@@ -119,7 +119,7 @@
 
     <!-- ================= FEATURED WORK ================= -->
     @if ($projects->count() > 0)
-        <section class="py-24 bg-gradient-to-b from-[#111113] to-[#0b0b0d]">
+        <section id="works" class="py-24 bg-gradient-to-b from-[#111113] to-[#0b0b0d]">
             <div class="max-w-7xl mx-auto px-6 md:px-12">
                 <div class="flex items-end justify-between mb-12">
                     <div>
@@ -162,7 +162,7 @@
 
     <!-- ================= SERVICES ================= -->
     @if ($services->count() > 0)
-        <section class="py-12 bg-[#0b0b0d] relative">
+        <section id="services" class="py-12 bg-[#0b0b0d] relative">
             <div class="max-w-7xl mx-auto px-6 md:px-12">
 
                 {{-- Refined Header --}}
@@ -258,7 +258,7 @@
 
     <!-- ================= WHY CHOOSE ME ================= -->
     @if ($features->count() > 0)
-        <section class="py-24 relative overflow-hidden bg-zinc-950">
+        <section id="features" class="py-24 relative overflow-hidden bg-zinc-950">
             {{-- Section Background Ambient Glow --}}
             <div
                 class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-orange-600/10 blur-[120px] rounded-full pointer-events-none">
@@ -337,7 +337,7 @@
 
 
     <!-- ================= ABOUT ================= -->
-    <section class="relative py-32 overflow-hidden bg-[#0b0b0d]">
+    <section id="about" class="relative py-32 overflow-hidden bg-[#0b0b0d]">
 
         {{-- Large Decorative Background Text --}}
         <div
@@ -573,7 +573,7 @@
 
 
 <!-- ================= TESTIMONIALS ================= -->
-<section
+<section id="testimonials"
     class="py-24 bg-gradient-to-b from-zinc-900 to-transparent text-white rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
     <div class="max-w-7xl mx-auto px-6 md:px-12">
         <h3 class="text-3xl md:text-7xl font-extrabold tracking-tight mb-12 text-center">What <span

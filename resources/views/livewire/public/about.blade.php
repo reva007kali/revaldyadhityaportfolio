@@ -119,7 +119,7 @@
                     class="px-12 py-6 rounded-full bg-black text-white font-black uppercase tracking-widest text-sm hover:bg-orange-600 transition-all shadow-2xl">
                     Get in Touch
                 </a>
-                <a href="{{ route('home') }}#works"
+                <a href="{{ route('works') }}"
                     class="text-sm font-black uppercase tracking-[0.2em] border-b-2 border-black/10 hover:border-black transition-all pb-1">
                     See my works
                 </a>

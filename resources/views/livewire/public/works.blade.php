@@ -30,10 +30,64 @@
                 class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Works.</span>
         </h1>
 
-        <p class="text-lg md:text-xl text-white/40 text-center max-w-xl leading-relaxed">
+        <p class="text-lg md:text-xl text-white/40 text-center max-w-xl leading-relaxed mb-12">
             A collection of digital experiences built with precision, focusing on aesthetic impact and technical
             performance.
         </p>
+
+        {{-- Archive Link --}}
+        <div class="mb-12">
+            <a href="{{ route('archive') }}" wire:navigate
+                class="text-[10px] font-black uppercase tracking-[0.3em] text-orange-500 hover:text-white transition-colors border-b border-orange-500/30 hover:border-white pb-1">
+                View Archived Projects →
+            </a>
+        </div>
+
+        {{-- Filters Section --}}
+        <div class="w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-4">
+            {{-- Search --}}
+            <div class="relative flex-grow group">
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search projects..."
+                    class="w-full pl-12 pr-4 py-4 bg-[#161618] border border-white/10 rounded-full text-white placeholder-white/30 focus:outline-none focus:border-orange-500/50 transition-all duration-300">
+                <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-orange-500 transition-colors"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+
+            {{-- Category Filter --}}
+            <div class="relative min-w-[200px]">
+                <select wire:model.live="category"
+                    class="w-full appearance-none px-6 py-4 bg-[#161618] border border-white/10 rounded-full text-white focus:outline-none focus:border-orange-500/50 cursor-pointer transition-all duration-300">
+                    <option value="">All Categories</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat }}">{{ $cat }}</option>
+                    @endforeach
+                </select>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            {{-- Year Filter --}}
+            <div class="relative min-w-[150px]">
+                <select wire:model.live="year"
+                    class="w-full appearance-none px-6 py-4 bg-[#161618] border border-white/10 rounded-full text-white focus:outline-none focus:border-orange-500/50 cursor-pointer transition-all duration-300">
+                    <option value="">All Years</option>
+                    @foreach ($years as $y)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endforeach
+                </select>
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
     </header>
 
     {{-- 3. Projects Grid --}}
