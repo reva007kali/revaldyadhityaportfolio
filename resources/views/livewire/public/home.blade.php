@@ -533,72 +533,89 @@
             </p>
         </div>
 
-        {{-- Pricing Grid --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            @foreach ($pricing_plans as $index => $plan)
-                <div x-data="{ expanded: false }" @click="expanded = !expanded"
-                    class="group relative flex flex-col p-1 bg-[#161618] rounded-[48px] border border-white/5 transition-all duration-700 hover:border-orange-500/30 cursor-pointer">
+        {{-- Pricing Bento Grid --}}
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+                @foreach ($pricing_plans as $index => $plan)
+                    @php
+                        // Logic to make the middle/popular card stand out in the Bento Grid
+                        $isMain = $index === 1; // Assuming the 2nd plan is the "Pro" one
+                        $gridClass = $isMain
+                            ? 'lg:col-span-4'
+                            : ($index === 0
+                                ? 'lg:col-span-4'
+                                : 'lg:col-span-4');
+                    @endphp
 
-                    {{-- Card Inner --}}
                     <div
-                        class="flex flex-col h-full p-10 rounded-[44px] bg-gradient-to-b from-white/[0.02] to-transparent">
+                        class="{{ $gridClass }} group relative flex flex-col bg-[#111113] rounded-[32px] border border-white/5 overflow-hidden transition-all duration-500 hover:border-orange-500/40 hover:shadow-[0_0_40px_-15px_rgba(249,115,22,0.2)]">
 
-                        {{-- Plan Header --}}
-                        <div class="mb-10">
-                            <h3 class="text-orange-500 font-black text-lg uppercase tracking-[0.3em] mb-4">
-                                {{ $plan->name }}
-                            </h3>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-5xl md:text-4xl font-black text-white tracking-tighter">
-                                    {{ $plan->price }}
-                                </span>
-                            </div>
-                            <p class="mt-6 text-white/50 text-sm leading-relaxed">
-                                {{ $plan->description }}
-                            </p>
+                        {{-- Background Glow Decoration --}}
+                        <div
+                            class="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/10 blur-[80px] rounded-full group-hover:bg-orange-500/20 transition-all duration-700">
                         </div>
 
-                        {{-- Features List --}}
-                        <div x-show="expanded" x-collapse x-cloak class="space-y-5 mb-12 flex-grow">
-                            @foreach ($plan->features ?? [] as $feature)
-                                <div class="flex items-start gap-4 group/item">
-                                    <div
-                                        class="mt-1 flex-shrink-0 w-5 h-5 rounded-full border border-orange-500/30 flex items-center justify-center group-hover/item:border-orange-500 transition-colors">
-                                        <svg class="w-2.5 h-2.5 text-orange-500" fill="currentColor"
-                                            viewBox="0 0 20 20">
-                                            <path
-                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
-                                        </svg>
-                                    </div>
-                                    <span class="text-white/70 text-sm group-hover/item:text-white transition-colors">
-                                        {{ $feature }}
+                        {{-- Card Content --}}
+                        <div class="relative z-10 flex flex-col h-full p-8 md:p-10">
+
+                            {{-- Header --}}
+                            <div class="mb-8">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-orange-500 font-bold text-sm uppercase tracking-[0.2em]">
+                                        {{ $plan->name }}
+                                    </h3>
+                                    @if ($isMain)
+                                        <span
+                                            class="bg-orange-500 text-black text-[10px] font-black px-3 py-1 rounded-full uppercase">
+                                            Most Popular
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-4xl md:text-5xl font-black text-white tracking-tighter">
+                                        {{ $plan->price }}
                                     </span>
                                 </div>
-                            @endforeach
-                        </div>
 
-                        {{-- Click Hint (Visible when collapsed) --}}
-                        <div x-show="!expanded" class="flex-grow flex items-center justify-center mb-12">
-                            <span class="text-orange-500/50 text-xs font-bold uppercase tracking-widest animate-pulse">
-                                View Included Features
-                            </span>
-                        </div>
-
-                        {{-- CTA Button --}}
-                        <a href="{{ $plan->cta_link ?? '#' }}" @click.stop
-                            class="relative group/btn overflow-hidden block w-full text-center py-5 rounded-3xl font-black uppercase tracking-widest text-xs transition-all duration-500 bg-white/5 text-white hover:bg-orange-500 hover:text-black border border-white/10 hover:border-orange-500">
-
-                            <span class="relative z-10">{{ $plan->cta_text ?? 'Get Started' }}</span>
-
-                            {{-- Button Shine Effect --}}
-                            <div
-                                class="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-[-25deg] -translate-x-full group-hover/btn:translate-x-[250%] transition-transform duration-1000 ease-in-out">
+                                <p class="mt-4 text-white/50 text-sm leading-relaxed max-w-[280px]">
+                                    {{ $plan->description }}
+                                </p>
                             </div>
-                        </a>
+
+                            {{-- Bento Feature List (Visible by default in Bento style) --}}
+                           
+
+                            {{-- CTA Button --}}
+                            <div class="mt-auto">
+                                <a href="{{ $plan->cta_link ?? '#' }}"
+                                    class="relative group/btn overflow-hidden block w-full text-center py-4 rounded-2xl font-bold uppercase tracking-widest text-[11px] transition-all duration-300 {{ $isMain ? 'bg-orange-500 text-black' : 'bg-white/5 text-white hover:bg-white/10' }} border border-white/5">
+
+                                    <span class="relative z-10">{{ $plan->cta_text ?? 'Get Started' }}</span>
+
+                                    {{-- Shine effect on hover --}}
+                                    <div
+                                        class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-shine">
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
+
+        <style>
+            @keyframes shine {
+                100% {
+                    transform: translateX(100%);
+                }
+            }
+
+            .animate-shine {
+                animation: shine 0.8s forwards;
+            }
+        </style>
 
         {{-- Bottom Value Proposition --}}
         <div
@@ -764,6 +781,40 @@
     document.addEventListener('DOMContentLoaded', () => initAllSwipers());
 
     function initAllSwipers() {
+        // Pricing Swiper (Coverflow)
+        new Swiper('.pricingSwiper', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 'auto',
+            initialSlide: 1, // Start at the middle card (assuming 3 cards)
+            coverflowEffect: {
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2.5,
+                slideShadows: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            },
+            breakpoints: {
+                // When window width is <= 640px (Mobile)
+                320: {
+                    effect: 'slide', // Disable coverflow on mobile for better UX
+                    slidesPerView: 1.1,
+                    spaceBetween: 20,
+                    centeredSlides: true,
+                },
+                // Desktop
+                768: {
+                    effect: 'coverflow',
+                    slidesPerView: 'auto',
+                }
+            }
+        });
+
         // Projects Swiper
         new Swiper('.mySwiper', {
             slidesPerView: 1.2,
