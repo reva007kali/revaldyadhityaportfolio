@@ -99,23 +99,7 @@
         </div>
     </section>
 
-    <style>
-        @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fade-in-up 1s ease-out forwards;
-        }
-    </style>
 
     <!-- ================= FEATURED WORK ================= -->
     @if ($projects->count() > 0)
@@ -517,23 +501,7 @@
 </div>
 </section>
 
-<style>
-    @keyframes bounce-slow {
 
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    .animate-bounce-slow {
-        animation: bounce-slow 4s ease-in-out infinite;
-    }
-</style>
 
 
 <!-- ================= PRICING / INVESTMENT ================= -->
@@ -568,8 +536,8 @@
         {{-- Pricing Grid --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
             @foreach ($pricing_plans as $index => $plan)
-                <div
-                    class="group relative flex flex-col p-1 bg-[#161618] rounded-[48px] border border-white/5 transition-all duration-700 hover:border-orange-500/30">
+                <div x-data="{ expanded: false }" @click="expanded = !expanded"
+                    class="group relative flex flex-col p-1 bg-[#161618] rounded-[48px] border border-white/5 transition-all duration-700 hover:border-orange-500/30 cursor-pointer">
 
                     {{-- Card Inner --}}
                     <div
@@ -591,7 +559,7 @@
                         </div>
 
                         {{-- Features List --}}
-                        <div class="space-y-5 mb-12 flex-grow">
+                        <div x-show="expanded" x-collapse x-cloak class="space-y-5 mb-12 flex-grow">
                             @foreach ($plan->features ?? [] as $feature)
                                 <div class="flex items-start gap-4 group/item">
                                     <div
@@ -609,8 +577,15 @@
                             @endforeach
                         </div>
 
+                        {{-- Click Hint (Visible when collapsed) --}}
+                        <div x-show="!expanded" class="flex-grow flex items-center justify-center mb-12">
+                            <span class="text-orange-500/50 text-xs font-bold uppercase tracking-widest animate-pulse">
+                                View Included Features
+                            </span>
+                        </div>
+
                         {{-- CTA Button --}}
-                        <a href="{{ $plan->cta_link ?? '#' }}"
+                        <a href="{{ $plan->cta_link ?? '#' }}" @click.stop
                             class="relative group/btn overflow-hidden block w-full text-center py-5 rounded-3xl font-black uppercase tracking-widest text-xs transition-all duration-500 bg-white/5 text-white hover:bg-orange-500 hover:text-black border border-white/10 hover:border-orange-500">
 
                             <span class="relative z-10">{{ $plan->cta_text ?? 'Get Started' }}</span>
@@ -838,6 +813,42 @@
 </script>
 
 <style>
+    [x-cloak] {
+        display: none !important;
+    }
+
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 1s ease-out forwards;
+    }
+
+    @keyframes bounce-slow {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .animate-bounce-slow {
+        animation: bounce-slow 4s ease-in-out infinite;
+    }
+
     @keyframes blob {
         0% {
             transform: translate(0px, 0px) scale(1);

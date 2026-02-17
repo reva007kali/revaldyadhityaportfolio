@@ -21,6 +21,7 @@ use App\Livewire\Admin\Testimonials\Index as TestimonialsIndex;
 use App\Livewire\Admin\SocialLinks\Index as SocialLinksIndex;
 use App\Livewire\Admin\Navigation\Index as NavigationIndex;
 use App\Livewire\Admin\Websites\Index as WebsitesIndex;
+use App\Livewire\Admin\Dashboard;
 
 use App\Livewire\Public\Websites;
 
@@ -35,7 +36,7 @@ Route::get('/privacy-policy', PrivacyPolicy::class)->name('privacy-policy');
 Route::get('/terms-of-service', TermsOfService::class)->name('terms-of-service');
 
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -43,7 +44,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('hero', HeroSettings::class)->name('hero');
     Route::get('about', AboutSettings::class)->name('about');
     Route::get('services', ServicesIndex::class)->name('services');
+    Route::get('services/create', App\Livewire\Admin\Services\Create::class)->name('services.create');
+    Route::get('services/{id}/edit', App\Livewire\Admin\Services\Edit::class)->name('services.edit');
+    
     Route::get('projects', ProjectsIndex::class)->name('projects');
+    Route::get('projects/create', App\Livewire\Admin\Projects\Create::class)->name('projects.create');
+    Route::get('projects/{id}/edit', App\Livewire\Admin\Projects\Edit::class)->name('projects.edit');
     Route::get('features', FeaturesIndex::class)->name('features');
     Route::get('pricing', PricingIndex::class)->name('pricing');
     Route::get('testimonials', TestimonialsIndex::class)->name('testimonials');
@@ -52,6 +58,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('navigation', NavigationIndex::class)->name('navigation');
     Route::get('messages', MessagesIndex::class)->name('messages');
     Route::get('websites', WebsitesIndex::class)->name('websites');
+    Route::get('websites/create', App\Livewire\Admin\Websites\Create::class)->name('websites.create');
+    Route::get('websites/{id}/edit', App\Livewire\Admin\Websites\Edit::class)->name('websites.edit');
 });
 
 Route::get('/websites/{slug}', function ($slug) {

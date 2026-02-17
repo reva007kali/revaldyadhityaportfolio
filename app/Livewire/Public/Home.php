@@ -37,7 +37,7 @@ class Home extends Component
                 ->orderBy('sort_order')
                 ->latest()
                 ->get(),
-            'websites' => Website::latest()->take(10)->get(),
+            'websites' => Website::latest()->take(6)->get(),
             'features' => Feature::all(),
             'pricing_plans' => PricingPlan::all(),
             'testimonials' => Testimonial::where('is_active', true)->latest()->get(),

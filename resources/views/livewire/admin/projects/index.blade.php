@@ -1,294 +1,116 @@
-<div>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Manage Projects') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <!-- Form Section -->
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-2xl">
-                    <header>
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            {{ $isEditing ? 'Edit Project' : 'Add New Project' }}
-                        </h2>
-                    </header>
-
-                    <form wire:submit.prevent="{{ $isEditing ? 'update' : 'store' }}" class="mt-6 space-y-6"
-                        enctype="multipart/form-data">
-                        <div>
-                            <x-input-label for="title" :value="__('Title')" />
-                            <x-text-input wire:model="title" id="title" class="block mt-1 w-full" type="text"
-                                required />
-                            <x-input-error class="mt-2" :messages="$errors->get('title')" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="description" :value="__('Description')" />
-                            <textarea wire:model="description" id="description"
-                                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                rows="4" required></textarea>
-                            <x-input-error class="mt-2" :messages="$errors->get('description')" />
-                        </div>
-
-                        <div wire:ignore>
-                            <x-input-label for="content" :value="__('Rich Content (Details)')" />
-                            <div id="editor-container"
-                                class="h-64 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"></div>
-                            <input type="hidden" id="content" wire:model="content">
-                        </div>
-                        <x-input-error class="mt-2" :messages="$errors->get('content')" />
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <x-input-label for="category" :value="__('Category')" />
-                                <x-text-input wire:model="category" id="category" class="block mt-1 w-full" type="text" placeholder="e.g. Digital Design" />
-                                <x-input-error class="mt-2" :messages="$errors->get('category')" />
-                            </div>
-                            <div>
-                                <x-input-label for="role" :value="__('Role')" />
-                                <x-text-input wire:model="role" id="role" class="block mt-1 w-full" type="text" placeholder="e.g. Creative Lead" />
-                                <x-input-error class="mt-2" :messages="$errors->get('role')" />
-                            </div>
-                            <div>
-                                <x-input-label for="year" :value="__('Year')" />
-                                <x-text-input wire:model="year" id="year" class="block mt-1 w-full" type="text" placeholder="e.g. 2024" />
-                                <x-input-error class="mt-2" :messages="$errors->get('year')" />
-                            </div>
-                            <div>
-                                <x-input-label for="client" :value="__('Client')" />
-                                <x-text-input wire:model="client" id="client" class="block mt-1 w-full" type="text" placeholder="e.g. Acme Corp" />
-                                <x-input-error class="mt-2" :messages="$errors->get('client')" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <x-input-label for="sort_order" :value="__('Sort Order')" />
-                                <x-text-input wire:model="sort_order" id="sort_order" class="block mt-1 w-full" type="number" placeholder="0" />
-                                <x-input-error class="mt-2" :messages="$errors->get('sort_order')" />
-                            </div>
-                            <div class="flex items-center pt-8">
-                                <label for="is_featured" class="inline-flex items-center">
-                                    <input id="is_featured" type="checkbox" wire:model="is_featured" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Show in Home Featured') }}</span>
-                                </label>
-                            </div>
-                            <div class="flex items-center pt-8">
-                                <label for="is_archived" class="inline-flex items-center">
-                                    <input id="is_archived" type="checkbox" wire:model="is_archived" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Archive Project') }}</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <x-input-label for="link" :value="__('Link URL')" />
-                            <x-text-input wire:model="link" id="link" class="block mt-1 w-full" type="text" />
-                            <x-input-error class="mt-2" :messages="$errors->get('link')" />
-                        </div>
-
-                        <!-- Media Upload Section -->
-                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                            <h3 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-4">Project Media (Images
-                                & Videos)</h3>
-
-                            <!-- Existing Media -->
-                            @if ($isEditing && count($existingMedia) > 0)
-                                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                                    @foreach ($existingMedia as $media)
-                                        <div class="relative group">
-                                            @if ($media->file_type === 'video')
-                                                <video src="{{ asset('storage/' . $media->file_path) }}"
-                                                    class="w-full h-32 object-cover rounded-lg"></video>
-                                                <div
-                                                    class="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                                                    Video</div>
-                                            @else
-                                                <img src="{{ asset('storage/' . $media->file_path) }}"
-                                                    class="w-full h-32 object-cover rounded-lg">
-                                            @endif
-
-                                            <button type="button" wire:click="deleteMedia({{ $media->id }})"
-                                                class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-75 hover:opacity-100">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                </svg>
-                                            </button>
-                                            @if ($media->caption)
-                                                <p class="text-xs text-gray-500 mt-1 truncate">{{ $media->caption }}</p>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            <!-- Upload New Media -->
-                            <div>
-                                <x-input-label for="mediaFiles" :value="__('Add New Media (Select Multiple)')" />
-                                <input type="file" wire:model="mediaFiles" id="mediaFiles" multiple
-                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                                    accept="image/*,video/*">
-                                <div wire:loading wire:target="mediaFiles" class="text-sm text-blue-500 mt-2">
-                                    Uploading...</div>
-                                <x-input-error class="mt-2" :messages="$errors->get('mediaFiles')" />
-                                <x-input-error class="mt-2" :messages="$errors->get('mediaFiles.*')" />
-                            </div>
-
-                            <!-- Captions for New Media -->
-                            @if (count($mediaFiles) > 0)
-                                <div class="mt-4 space-y-4">
-                                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Captions for New
-                                        Files:</p>
-                                    @foreach ($mediaFiles as $index => $file)
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-16 h-16 flex-shrink-0">
-                                                @if (Str::startsWith($file->getMimeType(), 'video'))
-                                                    <div
-                                                        class="w-full h-full bg-gray-200 flex items-center justify-center rounded">
-                                                        Video</div>
-                                                @else
-                                                    <img src="{{ $file->temporaryUrl() }}"
-                                                        class="w-full h-full object-cover rounded">
-                                                @endif
-                                            </div>
-                                            <div class="flex-1">
-                                                <x-text-input wire:model="captions.{{ $index }}"
-                                                    placeholder="Caption for this file..." class="block w-full text-sm"
-                                                    type="text" />
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="flex items-center gap-4">
-                            <x-primary-button wire:loading.attr="disabled"
-                                wire:target="mediaFiles">{{ $isEditing ? 'Update' : 'Save' }}</x-primary-button>
-                            @if ($isEditing)
-                                <button type="button" wire:click="cancel"
-                                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">{{ __('Cancel') }}</button>
-                            @endif
-                        </div>
-                    </form>
-                </div>
+<div class="min-h-screen py-6 bg-[#0b0b0d]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{-- Header --}}
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="font-bold text-3xl text-white tracking-tight">
+                    {{ __('Manage Projects') }}
+                </h2>
+                <p class="text-sm text-gray-400 mt-2">Showcase your best work and case studies.</p>
             </div>
+            <a href="{{ route('admin.projects.create') }}" class="px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-wider rounded-xl hover:bg-gray-200 transition-all active:scale-95 shadow-lg shadow-white/10">
+                + Add Project
+            </a>
+        </div>
 
-            <!-- List Section -->
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                @if (session()->has('message'))
-                    <div class="mb-4 text-green-600 dark:text-green-400">
-                        {{ session('message') }}
-                    </div>
-                @endif
+        {{-- Flash Message --}}
+        @if (session()->has('message'))
+            <div class="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-2xl text-green-500 text-sm font-bold flex items-center shadow-lg shadow-green-900/10">
+                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ session('message') }}
+            </div>
+        @endif
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Title</th>
-                                <th scope="col" class="px-6 py-3">Description</th>
-                                <th scope="col" class="px-6 py-3">Media Count</th>
-                                <th scope="col" class="px-6 py-3">Link</th>
-                                <th scope="col" class="px-6 py-3">Order</th>
-                                <th scope="col" class="px-6 py-3">Status</th>
-                                <th scope="col" class="px-6 py-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($projects as $project)
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                        {{ $project->title }}</td>
-                                    <td class="px-6 py-4">{{ Str::limit($project->description, 50) }}</td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {{ $project->media->count() }} items
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">{{ $project->link }}</td>
-                                    <td class="px-6 py-4">{{ $project->sort_order }}</td>
-                                    <td class="px-6 py-4">
+        {{-- List Section --}}
+        <div class="bg-[#1c1c1e] border border-white/5 rounded-3xl overflow-hidden shadow-xl shadow-black/20">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-white/5 text-xs font-bold uppercase tracking-wider text-gray-500">
+                        <tr>
+                            <th class="px-6 py-4">Project</th>
+                            <th class="px-6 py-4">Category</th>
+                            <th class="px-6 py-4">Media</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        @forelse ($projects as $project)
+                            <tr class="hover:bg-white/[0.02] transition-colors group">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-lg bg-[#0b0b0d] border border-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                            @if ($project->image)
+                                                <img src="{{ asset('storage/' . $project->image) }}" class="w-full h-full object-cover">
+                                            @elseif ($project->media->where('file_type', 'image')->first())
+                                                <img src="{{ asset('storage/' . $project->media->where('file_type', 'image')->first()->file_path) }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-xs font-bold text-gray-600">N/A</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-white text-sm">{{ $project->title }}</span>
+                                            <span class="text-xs text-gray-500">{{ Str::limit($project->description, 40) }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="text-xs font-medium text-gray-400 bg-white/5 px-2 py-1 rounded">{{ $project->category ?? 'Uncategorized' }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-1 text-xs text-gray-400">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        {{ $project->media->count() }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col gap-1">
                                         @if($project->is_featured)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mr-1">Featured</span>
+                                            <span class="inline-flex items-center text-[10px] font-bold text-yellow-500 uppercase tracking-wide">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5"></span> Featured
+                                            </span>
                                         @endif
                                         @if($project->is_archived)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Archived</span>
+                                            <span class="inline-flex items-center text-[10px] font-bold text-gray-500 uppercase tracking-wide">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-500 mr-1.5"></span> Archived
+                                            </span>
                                         @endif
-                                    </td>
-                                    <td class="px-6 py-4 space-x-2">
-                                        <button wire:click="edit({{ $project->id }})"
-                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
-                                        <button wire:click="delete({{ $project->id }})" wire:confirm="Are you sure?"
-                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                        @if(!$project->is_featured && !$project->is_archived)
+                                            <span class="inline-flex items-center text-[10px] font-bold text-green-500 uppercase tracking-wide">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span> Active
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <a href="{{ route('admin.projects.edit', $project->id) }}" 
+                                            class="p-2 rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </a>
+                                        <button wire:click="delete({{ $project->id }})" wire:confirm="Delete project?"
+                                            class="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                    No projects found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('livewire:navigated', function() {
-            initializeQuill();
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeQuill();
-        });
-
-        function initializeQuill() {
-            if (document.getElementById('editor-container')) {
-                var quill = new Quill('#editor-container', {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [
-                            [{
-                                'header': [1, 2, 3, false]
-                            }],
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            [{
-                                'list': 'ordered'
-                            }, {
-                                'list': 'bullet'
-                            }],
-                            [{
-                                'color': []
-                            }, {
-                                'background': []
-                            }],
-                            ['link', 'image', 'video'],
-                            ['clean']
-                        ]
-                    }
-                });
-
-                // Sync with Livewire
-                quill.on('text-change', function() {
-                    var html = document.querySelector('.ql-editor').innerHTML;
-                    @this.set('content', html);
-                });
-
-                // Load initial content if editing
-                window.addEventListener('contentUpdated', event => {
-                    quill.root.innerHTML = event.detail;
-                });
-
-                // Set initial content if available (for page refresh/first load)
-                if (@this.content) {
-                    quill.root.innerHTML = @this.content;
-                }
-            }
-        }
-    </script>
 </div>
