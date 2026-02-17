@@ -72,7 +72,7 @@
     <!-- ================= NAVBAR ================= -->
     <nav id="navbar"
         class="fixed top-0 left-0 w-full z-[100] py-7 px-6 md:px-12 transition-all duration-300 pointer-events-none">
-        <div class="max-w-7xl mx-auto flex justify-between items-center pointer-events-auto">
+        <div class="max-w-7xl mx-auto flex justify-between md:px-8 items-center pointer-events-auto">
 
             <!-- Logo -->
             <a href="/"

@@ -70,8 +70,9 @@ class Create extends Component
             $path = $this->handleFileUpload($file, 'projects');
             $type = $this->isVideo($file) ? 'video' : 'image';
 
-            // Use the image from the first upload as the main thumbnail if not set (for backward compatibility)
-            if ($index === 0 && $type === 'image') {
+            // If it's the first file, set it as the main thumbnail regardless of type (image or video)
+            // The frontend is now updated to handle video thumbnails
+            if ($index === 0) {
                 $project->update(['image' => $path]);
             }
 

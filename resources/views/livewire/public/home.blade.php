@@ -23,7 +23,7 @@
             <div class="absolute top-1/4 -right-20 w-96 h-96 bg-orange-600/20 blur-[120px] rounded-full"></div>
         </div>
 
-        <div class="relative w-full max-w-7xl mx-auto px-6 md:px-12 pb-10 md:pb-12 md:pt-20">
+        <div class="relative w-full max-w-7xl mx-auto px-6 md:px-6 pb-10 md:pb-12 md:pt-20">
 
             {{-- Glass Content Box --}}
             <div class="max-w-3xl p-2 md:p-0">
@@ -103,12 +103,14 @@
 
     <!-- ================= FEATURED WORK ================= -->
     @if ($projects->count() > 0)
-        <section id="works" class="py-24 bg-gradient-to-b from-[#111113] to-[#0b0b0d]">
-            <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <section id="works" class="py-24 bg-[#111113]">
+            <div class="max-w-7xl mx-auto px-6 md:px-6">
                 <div class="flex items-end justify-between mb-12">
                     <div>
                         <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-2">Portfolio</p>
-                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight">Creative Highlights</h3>
+                        <h3
+                            class="text-3xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-50 to-orange-600">
+                            Creative Highlights</h3>
                     </div>
                     <a href="{{ route('works') }}" wire:navigate
                         class="text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1">
@@ -116,28 +118,65 @@
                     </a>
                 </div>
 
-                <div class="swiper mySwiper !pb-14">
-                    <div class="swiper-wrapper">
-                        @foreach ($projects as $project)
-                            <div class="swiper-slide !h-auto">
-                                <a href="{{ route('works.show', $project->slug) }}"
-                                    class="relative aspect-[4/5] md:aspect-[3/4] rounded-[32px] overflow-hidden group border border-orange-500/20 hover:border-orange-500/40 bg-[#111113] block transition-all">
-                                    @if ($project->image)
-                                        <img src="{{ Str::startsWith($project->image, 'http') ? $project->image : asset('storage/' . $project->image) }}"
-                                            class="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100">
-                                    @endif
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-8 flex flex-col justify-end">
-                                        <h4
-                                            class="text-2xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
-                                            {{ $project->title }}</h4>
-                                        <p class="text-sm text-white/60 line-clamp-2">{{ $project->description }}</p>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
+                <div class="relative">
+                    {{-- Side Gradients --}}
+                    <div
+                        class="absolute inset-y-0 right-0 z-10 w-12 md:w-32 bg-gradient-to-l from-[#111113] via-[#111113]/50 to-transparent pointer-events-none">
                     </div>
-                    <div class="swiper-pagination"></div>
+
+                    <div class="swiper mySwiper !pb-14">
+                        <div class="swiper-wrapper">
+                            @foreach ($projects as $project)
+                                <div class="swiper-slide !h-auto">
+                                    <a href="{{ route('works.show', $project->slug) }}"
+                                        class="relative aspect-[4/5] md:aspect-[5/3] rounded-[32px] overflow-hidden group border border-orange-500/20 hover:border-orange-500/40 bg-[#111113] block transition-all">
+                                        @if ($project->image)
+                                            @php
+                                                $fileUrl = Str::startsWith($project->image, 'http')
+                                                    ? $project->image
+                                                    : asset('storage/' . $project->image);
+                                                // Check extension more robustly
+                                                $extension = strtolower(pathinfo($project->image, PATHINFO_EXTENSION));
+                                                $videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+                                                $isVideo = in_array($extension, $videoExtensions);
+                                            @endphp
+
+                                            @if ($isVideo)
+                                                <video src="{{ $fileUrl }}" muted loop playsinline autoplay
+                                                    class="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"></video>
+                                            @else
+                                                <img src="{{ $fileUrl }}"
+                                                    class="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100">
+                                            @endif
+                                        @endif
+                                        <div
+                                            class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-8 flex flex-col justify-end">
+                                            <h4
+                                                class="text-2xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+                                                {{ $project->title }}</h4>
+                                            <p class="text-sm text-white/60 line-clamp-2">{{ $project->description }}
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+
+                    {{-- Navigation Buttons --}}
+                    <button
+                        class="swiper-button-prev-custom hidden md:flex absolute top-1/2 -left-4 md:-left-20 -translate-y-1/2 z-10 w-12 h-12 rounded-full border border-white/10 bg-[#111113] items-center justify-center text-white/50 hover:text-orange-500 hover:border-orange-500 transition-all disabled:opacity-0 disabled:pointer-events-none">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button
+                        class="swiper-button-next-custom hidden md:flex absolute top-1/2 -right-4 md:-right-20 -translate-y-1/2 z-10 w-12 h-12 rounded-full border border-white/10 bg-[#111113] items-center justify-center text-white/50 hover:text-orange-500 hover:border-orange-500 transition-all disabled:opacity-0 disabled:pointer-events-none">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>
@@ -147,7 +186,7 @@
     <!-- ================= FEATURED WEBSITES ================= -->
     @if ($websites->count() > 0)
         <section id="websites" class="py-24 bg-[#0b0b0d]">
-            <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="max-w-7xl mx-auto px-6 md:px-6">
                 <div class="flex items-end justify-between mb-12">
                     <div>
                         <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-2">Showcase</p>
@@ -222,8 +261,8 @@
 
     <!-- ================= SERVICES ================= -->
     @if ($services->count() > 0)
-        <section id="services" class="py-12 bg-[#0b0b0d] relative">
-            <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <section id="services" class="py-12 md:py-24 bg-[#0b0b0d] relative">
+            <div class="max-w-7xl mx-auto px-6 md:px-6">
 
                 {{-- Refined Header --}}
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-20 gap-8">
@@ -318,17 +357,17 @@
 
     <!-- ================= WHY CHOOSE ME ================= -->
     @if ($features->count() > 0)
-        <section id="features" class="py-24 relative overflow-hidden bg-zinc-950">
+        <section id="features" class="py-24 relative bg-zinc-950">
             {{-- Section Background Ambient Glow --}}
             <div
                 class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-orange-600/10 blur-[120px] rounded-full pointer-events-none">
             </div>
 
             <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-16 items-center">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:items-start">
 
                     {{-- Left Content --}}
-                    <div class="lg:col-span-1">
+                    <div class="lg:col-span-1 lg:sticky lg:top-32">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="w-8 h-[2px] bg-orange-500"></span>
                             <p class="text-orange-500 font-black tracking-[0.3em] uppercase text-xs">Advantage</p>
@@ -405,7 +444,7 @@
             STORY
         </div>
 
-        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 md:px-6 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 
                 {{-- 1. Image Side (Occupies 5 columns on desktop) --}}
@@ -515,7 +554,7 @@
         class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-900/5 blur-[120px] rounded-full pointer-events-none">
     </div>
 
-    <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+    <div class="max-w-7xl mx-auto px-6 md:px-6 relative z-10">
 
         {{-- Header with Strategic Copy --}}
         <div class="text-center max-w-3xl mx-auto mb-24">
@@ -540,11 +579,7 @@
                     @php
                         // Logic to make the middle/popular card stand out in the Bento Grid
                         $isMain = $index === 1; // Assuming the 2nd plan is the "Pro" one
-                        $gridClass = $isMain
-                            ? 'lg:col-span-4'
-                            : ($index === 0
-                                ? 'lg:col-span-4'
-                                : 'lg:col-span-4');
+                        $gridClass = $isMain ? 'lg:col-span-4' : ($index === 0 ? 'lg:col-span-4' : 'lg:col-span-4');
                     @endphp
 
                     <div
@@ -584,7 +619,7 @@
                             </div>
 
                             {{-- Bento Feature List (Visible by default in Bento style) --}}
-                           
+
 
                             {{-- CTA Button --}}
                             <div class="mt-auto">
@@ -643,7 +678,7 @@
 <!-- ================= TESTIMONIALS ================= -->
 <section id="testimonials"
     class="py-24 bg-gradient-to-b from-zinc-900 to-transparent text-white rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
+    <div class="max-w-7xl mx-auto px-6 md:px-6">
         <h3 class="text-3xl md:text-7xl font-extrabold tracking-tight mb-12 text-center">What <span
                 class="text-orange-500">Clients Say</span></h3>
         <div class="swiper testimonialSwiper !pb-12">
@@ -733,7 +768,7 @@
 
 <!-- ================= CONTACT ================= -->
 <section id="contact" class="py-24">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
+    <div class="max-w-7xl mx-auto px-6 md:px-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
             <div>
                 <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-4">Contact</p>
@@ -820,12 +855,16 @@
             slidesPerView: 1.2,
             spaceBetween: 20,
             grabCursor: true,
-            autoplay: {
-                delay: 4000
-            },
+            speed: 1200,
+            effect: 'slide',
+            easing: 'ease-in-out',
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true
+            },
+            navigation: {
+                nextEl: '.swiper-button-next-custom',
+                prevEl: '.swiper-button-prev-custom',
             },
             breakpoints: {
                 640: {
@@ -833,7 +872,7 @@
                     spaceBetween: 30
                 },
                 1024: {
-                    slidesPerView: 3,
+                    slidesPerView: 1.5,
                     spaceBetween: 40
                 }
             }

@@ -100,10 +100,9 @@ class Edit extends Component
                 'caption' => $this->captions[$index] ?? null,
             ]);
 
-            // If this is the first image uploaded in this batch, update the main project thumbnail
-            // This ensures the main image is updated when new media is added
-            if ($index === 0 && $type === 'image') {
-                $project->update(['image' => $path]);
+            // If project has no main image, set this new file (video or image) as main
+            if (!$project->image && $index === 0) {
+                 $project->update(['image' => $path]);
             }
         }
 
@@ -119,7 +118,24 @@ class Edit extends Component
     public function deleteMedia($mediaId)
     {
         $media = ProjectMedia::findOrFail($mediaId);
-        // Ideally delete file from storage here too
+        
+        // Delete file from storage
+        if ($media->file_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($media->file_path)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($media->file_path);
+        }
+
+        // Check if this was the main image for the project
+        $project = Project::findOrFail($this->projectId);
+        if ($project->image === $media->file_path) {
+             $project->update(['image' => null]);
+             
+             // Try to set another media as main if available
+             $nextMedia = $project->media()->where('id', '!=', $mediaId)->first();
+             if ($nextMedia) {
+                 $project->update(['image' => $nextMedia->file_path]);
+             }
+        }
+
         $media->delete();
 
         // Refresh existing media list
