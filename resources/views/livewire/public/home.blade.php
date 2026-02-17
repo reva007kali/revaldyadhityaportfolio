@@ -1,12 +1,11 @@
 <div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 4000)">
 
     {{-- Loading Screen --}}
-    <div x-show="loading" 
-         x-transition:leave="transition ease-in-out duration-1000"
-         x-transition:leave-start="opacity-100 transform translate-y-0"
-         x-transition:leave-end="opacity-0 transform -translate-y-full"
-         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0b0b0d] text-white">
-        
+    <div x-show="loading" x-transition:leave="transition ease-in-out duration-1000"
+        x-transition:leave-start="opacity-100 transform translate-y-0"
+        x-transition:leave-end="opacity-0 transform -translate-y-full"
+        class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0b0b0d] text-white">
+
         {{-- Big Header Text --}}
         <h1 class="text-6xl md:text-9xl font-black tracking-tighter mb-8 animate-pulse">
             REVALDY<span class="text-orange-500">.</span>
@@ -447,11 +446,11 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="features-grid">
                     {{-- Feature Cards Grid --}}
-                    @foreach ($features as $feature)
+                    @foreach ($features as $index => $feature)
                         <div
-                            class="group relative p-10 rounded-[40px] border border-white/10 bg-[#1c1c1e]/50 backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-orange-500/40 hover:-translate-y-2">
+                            class="feature-card group relative p-10 rounded-[40px] border border-white/10 bg-[#1c1c1e]/50 backdrop-blur-sm overflow-hidden transition-all duration-700 ease-out hover:border-orange-500/40 hover:-translate-y-2 opacity-0 {{ $index % 2 == 0 ? 'translate-x-[-100px] translate-y-[100px]' : 'translate-x-[100px] translate-y-[100px]' }}">
 
                             {{-- Animated Blobs --}}
                             {{-- Blob 1 --}}
@@ -918,7 +917,8 @@
                     and collaborations. Send me a message and let's talk.</p>
             </div>
 
-            <div class="lg:col-span-2 max-w-3xl mx-auto w-full
+            <div
+                class="lg:col-span-2 max-w-3xl mx-auto w-full
                 bg-gradient-to-br from-orange-500/5 to-orange-600/5 p-8 md:p-12 rounded-[40px] border border-orange-500/20 backdrop-blur-xl">
                 @if (session()->has('message'))
                     <div
@@ -956,12 +956,63 @@
         initAllSwipers();
         initParallaxStack();
         initRevealText();
+        initFeaturesScroll();
     });
     document.addEventListener('DOMContentLoaded', () => {
         initAllSwipers();
         initParallaxStack();
         initRevealText();
+        initFeaturesScroll();
     });
+
+    function initFeaturesScroll() {
+        const grid = document.getElementById('features-grid');
+        if (!grid) return;
+
+        const cards = grid.querySelectorAll('.feature-card');
+
+        // Helper to check if element is odd/even in grid context for direction
+        // In grid-cols-2: 
+        // Index 0 (Left) -> Slide in from Bottom-Left
+        // Index 1 (Right) -> Slide in from Bottom-Right
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const el = entry.target;
+                const isLeft = Array.from(cards).indexOf(el) % 2 === 0;
+
+                if (entry.isIntersecting) {
+                    // ENTRY: Reset transforms to 0
+                    el.classList.remove('opacity-0', 'translate-y-[100px]', 'translate-x-[-100px]',
+                        'translate-x-[100px]');
+                    el.classList.add('opacity-100', 'translate-y-0', 'translate-x-0');
+                } else {
+                    // EXIT: Apply transforms based on position
+                    // We check if we scrolled PAST it (it went up) or BEFORE it (it went down)
+                    const rect = el.getBoundingClientRect();
+
+                    // Only animate out if we are significantly away to avoid flickering
+                    // Logic: Reset to initial state so it can animate in again
+                    el.classList.remove('opacity-100', 'translate-y-0', 'translate-x-0');
+                    el.classList.add('opacity-0', 'translate-y-[100px]');
+
+                    // Add directional offset back
+                    if (isLeft) {
+                        el.classList.add('translate-x-[-100px]');
+                    } else {
+                        el.classList.add('translate-x-[100px]');
+                    }
+                }
+            });
+        }, {
+            threshold: 0.15, // 15% visibility triggers entry
+            rootMargin: '0px 0px -10% 0px' // Offset bottom slightly so it triggers "inside" view
+        });
+
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+    }
 
     function initRevealText() {
         const observer = new IntersectionObserver((entries) => {
@@ -1158,8 +1209,13 @@
     }
 
     @keyframes loading-bar {
-        0% { width: 0%; }
-        100% { width: 100%; }
+        0% {
+            width: 0%;
+        }
+
+        100% {
+            width: 100%;
+        }
     }
 
     .animate-loading-bar {
