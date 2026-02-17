@@ -102,6 +102,9 @@
                         class="text-[11px] font-black uppercase tracking-[0.3em] text-white/50 hover:text-orange-500 transition-colors">About</a>
                 @endforelse
 
+                <!-- Music Player -->
+                <livewire:public.components.music-player />
+
                 <a href="#contact"
                     class="px-8 py-3 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-orange-500 hover:text-white transition-all duration-300">
                     Let's Talk
@@ -381,6 +384,7 @@
             });
         });
     </script>
+    <livewire:public.components.music-player />
     @livewireScripts
     @livewireScriptConfig
 </body>

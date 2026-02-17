@@ -60,6 +60,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('websites', WebsitesIndex::class)->name('websites');
     Route::get('websites/create', App\Livewire\Admin\Websites\Create::class)->name('websites.create');
     Route::get('websites/{id}/edit', App\Livewire\Admin\Websites\Edit::class)->name('websites.edit');
+
+    Route::get('music', App\Livewire\Admin\Music\Index::class)->name('music.index');
+    Route::get('music/create', App\Livewire\Admin\Music\Create::class)->name('music.create');
+    Route::get('music/{music}/edit', App\Livewire\Admin\Music\Edit::class)->name('music.edit');
 });
 
 Route::get('/websites/{slug}', function ($slug) {

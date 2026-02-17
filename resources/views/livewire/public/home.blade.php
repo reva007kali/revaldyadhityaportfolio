@@ -1,4 +1,26 @@
-<div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative">
+<div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 4000)">
+
+    {{-- Loading Screen --}}
+    <div x-show="loading" 
+         x-transition:leave="transition ease-in-out duration-1000"
+         x-transition:leave-start="opacity-100 transform translate-y-0"
+         x-transition:leave-end="opacity-0 transform -translate-y-full"
+         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0b0b0d] text-white">
+        
+        {{-- Big Header Text --}}
+        <h1 class="text-6xl md:text-9xl font-black tracking-tighter mb-8 animate-pulse">
+            REVALDY<span class="text-orange-500">.</span>
+        </h1>
+
+        {{-- Loading Indicator --}}
+        <div class="w-64 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full bg-orange-500 animate-loading-bar"></div>
+        </div>
+
+        <p class="mt-4 text-white/40 text-sm font-bold tracking-[0.2em] uppercase animate-pulse">
+            Loading Experience...
+        </p>
+    </div>
 
     {{-- Global Ambient Glow - Orange --}}
     <div
@@ -105,16 +127,28 @@
     @if ($projects->count() > 0)
         <section id="works" class="py-24 bg-[#111113]">
             <div class="max-w-7xl mx-auto px-6 md:px-6">
-                <div class="flex items-end justify-between mb-12">
-                    <div>
-                        <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-2">Portfolio</p>
-                        <h3
-                            class="text-3xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-50 to-orange-600">
-                            Creative Highlights</h3>
+
+                {{-- Refined Header --}}
+                <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+                    <div
+                        class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                        </span>
+                        <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Portfolio</p>
                     </div>
+
+                    <h3
+                        class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                        Creative <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Highlights.</span>
+                    </h3>
+
                     <a href="{{ route('works') }}" wire:navigate
-                        class="text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1">
-                        All Projects →
+                        class="inline-block text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1 text-white/60">
+                        View All Projects →
                     </a>
                 </div>
 
@@ -187,13 +221,27 @@
     @if ($websites->count() > 0)
         <section id="websites" class="py-24 bg-[#0b0b0d]">
             <div class="max-w-7xl mx-auto px-6 md:px-6">
-                <div class="flex items-end justify-between mb-12">
-                    <div>
-                        <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-2">Showcase</p>
-                        <h3 class="text-3xl md:text-5xl font-bold tracking-tight">Website Gallery</h3>
+
+                {{-- Refined Header --}}
+                <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+                    <div
+                        class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                        </span>
+                        <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Showcase</p>
                     </div>
+
+                    <h3
+                        class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                        Website <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Gallery.</span>
+                    </h3>
+
                     <a href="{{ route('websites') }}" wire:navigate
-                        class="text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1">
+                        class="inline-block text-sm font-semibold border-b border-orange-500/40 hover:border-orange-500 hover:text-orange-500 transition pb-1 text-white/60">
                         View All Websites →
                     </a>
                 </div>
@@ -265,7 +313,7 @@
             <div class="max-w-7xl mx-auto px-6 md:px-6">
 
                 {{-- Refined Header --}}
-                <div class="text-center max-w-4xl mx-auto mb-24">
+                <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
                     <div
                         class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
                         <span class="relative flex h-2 w-2">
@@ -375,72 +423,76 @@
             </div>
 
             <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:items-start">
-
-                    {{-- Left Content --}}
-                    <div class="lg:col-span-1 lg:sticky lg:top-32">
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="w-8 h-[2px] bg-orange-500"></span>
-                            <p class="text-orange-500 font-black tracking-[0.3em] uppercase text-xs">Advantage</p>
-                        </div>
-                        <h3 class="text-4xl md:text-5xl font-black tracking-tighter leading-[1.1] text-white">
-                            Driven by Purpose & <span
-                                class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Precision.</span>
-                        </h3>
-                        <p class="mt-8 text-white/50 leading-relaxed text-lg">
-                            Every decision is intentional. From strategy to execution, I design systems that don’t just
-                            look refined — they perform, adapt, and create measurable impact.
-                        </p>
+                {{-- Refined Header --}}
+                <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+                    <div
+                        class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                        </span>
+                        <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Advantage</p>
                     </div>
 
-                    {{-- Feature Cards Grid --}}
-                    <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        @foreach ($features as $feature)
-                            <div
-                                class="group relative p-10 rounded-[40px] border border-white/10 bg-[#1c1c1e]/50 backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-orange-500/40 hover:-translate-y-2">
+                    <h3
+                        class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                        Driven by <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Purpose.</span>
+                    </h3>
 
-                                {{-- Animated Blobs --}}
-                                {{-- Blob 1 --}}
-                                <div
-                                    class="absolute -top-10 -right-10 w-40 h-40 bg-orange-600/20 rounded-full blur-[60px] group-hover:bg-orange-500/40 transition-colors duration-700 animate-blob">
-                                </div>
-                                {{-- Blob 2 --}}
-                                <div
-                                    class="absolute -bottom-10 -left-10 w-40 h-40 bg-orange-900/10 rounded-full blur-[60px] group-hover:bg-orange-600/30 transition-colors duration-700 animate-blob animation-delay-2000">
-                                </div>
-
-                                {{-- Card Content --}}
-                                <div class="relative z-10">
-                                    <div
-                                        class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-orange-500 transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(255,107,0,0.4)] group-hover:scale-110">
-                                        @if ($feature->icon)
-                                            <img src="{{ asset('storage/' . $feature->icon) }}"
-                                                class="w-7 h-7 opacity-70 transition-all">
-                                        @else
-                                            <span class="text-2xl group-hover:scale-110 transition-transform">✦</span>
-                                        @endif
-                                    </div>
-
-                                    <h4
-                                        class="text-2xl font-bold mb-4 text-white group-hover:text-orange-400 transition-colors">
-                                        {{ $feature->title }}
-                                    </h4>
-
-                                    <p
-                                        class="text-white/50 leading-relaxed group-hover:text-white/80 transition-colors">
-                                        {{ $feature->description }}
-                                    </p>
-                                </div>
-
-                                {{-- Subtle Bottom Glow Line --}}
-                                <div
-                                    class="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-transparent via-orange-500 to-transparent group-hover:w-full transition-all duration-700">
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
+                    <p class="text-white/40 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+                        Every decision is intentional. From strategy to execution, I design systems that perform, adapt,
+                        and create measurable impact.
+                    </p>
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {{-- Feature Cards Grid --}}
+                    @foreach ($features as $feature)
+                        <div
+                            class="group relative p-10 rounded-[40px] border border-white/10 bg-[#1c1c1e]/50 backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-orange-500/40 hover:-translate-y-2">
+
+                            {{-- Animated Blobs --}}
+                            {{-- Blob 1 --}}
+                            <div
+                                class="absolute -top-10 -right-10 w-40 h-40 bg-orange-600/20 rounded-full blur-[60px] group-hover:bg-orange-500/40 transition-colors duration-700 animate-blob">
+                            </div>
+                            {{-- Blob 2 --}}
+                            <div
+                                class="absolute -bottom-10 -left-10 w-40 h-40 bg-orange-900/10 rounded-full blur-[60px] group-hover:bg-orange-600/30 transition-colors duration-700 animate-blob animation-delay-2000">
+                            </div>
+
+                            {{-- Card Content --}}
+                            <div class="relative z-10">
+                                <div
+                                    class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:bg-orange-500 transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(255,107,0,0.4)] group-hover:scale-110">
+                                    @if ($feature->icon)
+                                        <img src="{{ asset('storage/' . $feature->icon) }}"
+                                            class="w-7 h-7 opacity-70 transition-all">
+                                    @else
+                                        <span class="text-2xl group-hover:scale-110 transition-transform">✦</span>
+                                    @endif
+                                </div>
+
+                                <h4
+                                    class="text-2xl font-bold mb-4 text-white group-hover:text-orange-400 transition-colors">
+                                    {{ $feature->title }}
+                                </h4>
+
+                                <p class="text-white/50 leading-relaxed group-hover:text-white/80 transition-colors">
+                                    {{ $feature->description }}
+                                </p>
+                            </div>
+
+                            {{-- Subtle Bottom Glow Line --}}
+                            <div
+                                class="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-transparent via-orange-500 to-transparent group-hover:w-full transition-all duration-700">
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
             </div>
         </section>
     @endif
@@ -456,6 +508,28 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-6 md:px-6 relative z-10">
+            {{-- Refined Header --}}
+            <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+                <div
+                    class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                    <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Story</p>
+                </div>
+
+                <h3 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                    Designing <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Precision.</span>
+                </h3>
+
+                <p class="text-white/40 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+                    Form follows function, but emotion leads the way. I create digital experiences that resonate.
+                </p>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 
                 {{-- 1. Image Side (Occupies 5 columns on desktop) --}}
@@ -496,10 +570,13 @@
                 <div class="lg:col-span-7 order-1 lg:order-2 lg:pl-10">
                     <div class="max-w-xl">
 
-                        {{-- Heading --}}
-                        <h2 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-white mb-10">
-                            {{ $about->title ?? 'Designing Digital Precision.' }}
-                        </h2>
+                        {{-- Heading (Hidden now as moved to top) --}}
+                        <div class="hidden">
+                            <h2
+                                class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-white mb-10">
+                                {{ $about->title ?? 'Designing Digital Precision.' }}
+                            </h2>
+                        </div>
 
                         {{-- Description with emphasis --}}
                         <div class="space-y-6">
@@ -568,16 +645,24 @@
     <div class="max-w-7xl mx-auto px-6 md:px-6 relative z-10">
 
         {{-- Header with Strategic Copy --}}
-        <div class="text-center max-w-3xl mx-auto mb-24">
-            <div class="inline-block px-4 py-1.5 mb-6 rounded-full border border-orange-500/20 bg-orange-500/5">
-                <p class="text-orange-500 font-black tracking-[0.3em] uppercase text-[10px]">Pricing & Plans</p>
+        <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+            <div
+                class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                <span class="relative flex h-2 w-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Pricing</p>
             </div>
-            <h2 class="text-5xl md:text-7xl font-black tracking-tighter text-white mb-8">
+
+            <h2 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
                 Ready to <span
                     class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Level
                     Up?</span>
             </h2>
-            <p class="text-white/50 text-xl leading-relaxed">
+
+            <p class="text-white/40 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
                 Choose a plan that fits your stage of growth. No hidden fees, just high-impact digital solutions
                 designed to convert.
             </p>
@@ -690,8 +775,29 @@
 <section id="testimonials"
     class="py-24 bg-gradient-to-b from-zinc-900 to-transparent text-white rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
     <div class="max-w-7xl mx-auto px-6 md:px-6">
-        <h3 class="text-3xl md:text-7xl font-extrabold tracking-tight mb-12 text-center">What <span
-                class="text-orange-500">Clients Say</span></h3>
+
+        {{-- Refined Header --}}
+        <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+            <div
+                class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                <span class="relative flex h-2 w-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Reviews</p>
+            </div>
+
+            <h3 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                Client <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Feedback.</span>
+            </h3>
+
+            <p class="text-white/40 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+                Trust is earned. Here's what my partners have to say about our collaboration.
+            </p>
+        </div>
+
         <div class="swiper testimonialSwiper !pb-12">
             <div class="swiper-wrapper">
                 @foreach ($testimonials as $testimonial)
@@ -780,8 +886,31 @@
 <!-- ================= CONTACT ================= -->
 <section id="contact" class="py-24">
     <div class="max-w-7xl mx-auto px-6 md:px-6">
+
+        {{-- Refined Header --}}
+        <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
+            <div
+                class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                <span class="relative flex h-2 w-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Contact</p>
+            </div>
+
+            <h3 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                Let's <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Connect.</span>
+            </h3>
+
+            <p class="text-white/40 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+                Ready to start your next project? I am currently available for new opportunities.
+            </p>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <div>
+            <div class="hidden">
                 <p class="text-orange-500 font-bold tracking-[0.3em] uppercase text-xs mb-4">Contact</p>
                 <h2 class="text-5xl md:text-7xl font-bold leading-tight mb-8">Let's build your <span
                         class="text-orange-500">vision.</span></h2>
@@ -789,8 +918,8 @@
                     and collaborations. Send me a message and let's talk.</p>
             </div>
 
-            <div
-                class="bg-gradient-to-br from-orange-500/5 to-orange-600/5 p-8 md:p-12 rounded-[40px] border border-orange-500/20 backdrop-blur-xl">
+            <div class="lg:col-span-2 max-w-3xl mx-auto w-full
+                bg-gradient-to-br from-orange-500/5 to-orange-600/5 p-8 md:p-12 rounded-[40px] border border-orange-500/20 backdrop-blur-xl">
                 @if (session()->has('message'))
                     <div
                         class="mb-8 p-4 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm shadow-lg">
@@ -826,11 +955,30 @@
     document.addEventListener('livewire:navigated', () => {
         initAllSwipers();
         initParallaxStack();
+        initRevealText();
     });
     document.addEventListener('DOMContentLoaded', () => {
         initAllSwipers();
         initParallaxStack();
+        initRevealText();
     });
+
+    function initRevealText() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, {
+            threshold: 0.2, // Trigger when 20% visible
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.reveal-text').forEach(el => {
+            observer.observe(el);
+        });
+    }
 
     function initParallaxStack() {
         const container = document.getElementById('services-container');
@@ -992,8 +1140,30 @@
 </script>
 
 <style>
+    .reveal-text {
+        opacity: 0.1;
+        filter: blur(8px);
+        transform: translateY(30px);
+        transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-text.is-visible {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
+
     [x-cloak] {
         display: none !important;
+    }
+
+    @keyframes loading-bar {
+        0% { width: 0%; }
+        100% { width: 100%; }
+    }
+
+    .animate-loading-bar {
+        animation: loading-bar 4s ease-in-out forwards;
     }
 
     @keyframes fade-in-up {
