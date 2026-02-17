@@ -265,89 +265,100 @@
             <div class="max-w-7xl mx-auto px-6 md:px-6">
 
                 {{-- Refined Header --}}
-                <div class="flex flex-col md:flex-row md:items-center justify-between mb-20 gap-8">
-                    <div class="max-w-xl">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                            <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-xs">Expertise</p>
-                        </div>
-                        <h3 class="text-4xl md:text-6xl font-black tracking-tighter text-white">
-                            Specialized <span
-                                class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Solutions.</span>
-                        </h3>
+                <div class="text-center max-w-4xl mx-auto mb-24">
+                    <div
+                        class="inline-flex items-center gap-3 mb-6 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                        </span>
+                        <p class="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px]">Expertise</p>
                     </div>
-                    <p class="text-white/40 text-lg max-w-xs leading-relaxed border-l border-white/10 pl-6">
-                        I build digital solutions that simplify, streamline, and strengthen brands. </p>
+
+                    <h3
+                        class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
+                        Specialized <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Solutions.</span>
+                    </h3>
+
+                    <p class="text-white/40 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto">
+                        I build digital solutions that simplify, streamline, and strengthen brands with precision and
+                        purpose.
+                    </p>
                 </div>
 
-                {{-- Services Grid --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {{-- Services Scroll List (Parallax Stack) --}}
+                <div class="relative space-y-22" id="services-container">
                     @foreach ($services as $index => $service)
-                        <a href="{{ route('services.show', $service->slug) }}" class="group relative">
+                        <div class="service-card sticky top-32 transition-all duration-700 ease-out">
+                            <a href="{{ route('services.show', $service->slug) }}"
+                                class="group relative block w-full max-w-7xl mx-auto">
 
-                            {{-- The Card --}}
-                            <div
-                                class="relative h-full min-h-[320px] p-10 rounded-[40px] bg-[#161618] border border-white/5 overflow-hidden transition-all duration-700 group-hover:border-orange-500/30 group-hover:-translate-y-3 shadow-2xl">
+                                {{-- The Card --}}
+                                <div
+                                    class="relative h-full min-h-[500px] p-10 rounded-[40px] bg-[#161618] border border-white/5 overflow-hidden transition-all duration-700 group-hover:border-orange-500/30 shadow-2xl">
 
-                                {{-- 1. Background Image Layer (Service Icon) --}}
-                                @if ($service->icon)
-                                    <div class="absolute inset-0 w-full h-full overflow-hidden">
-                                        <img src="{{ asset('storage/' . $service->icon) }}"
-                                            class="w-full h-full object-cover opacity-[0.75] group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out pointer-events-none">
+                                    {{-- 1. Background Image Layer (Service Icon) --}}
+                                    @if ($service->icon)
+                                        <div class="absolute inset-0 w-full h-full overflow-hidden">
+                                            <img src="{{ asset('storage/' . $service->icon) }}"
+                                                class="w-full h-full object-cover opacity-[0.75] group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000 ease-out pointer-events-none">
 
-                                        {{-- 2. Dark Gradient Overlay (Ensures Text Legibility) --}}
-                                        <div
-                                            class="absolute inset-0 bg-gradient-to-t from-[#161618] via-[#161618]/80 to-transparent">
+                                            {{-- 2. Dark Gradient Overlay (Ensures Text Legibility) --}}
+                                            <div
+                                                class="absolute inset-0 bg-gradient-to-t from-[#161618] via-[#161618]/80 to-transparent">
+                                            </div>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
 
-                                {{-- 3. Subtle Accent Glow --}}
-                                <div
-                                    class="absolute -bottom-20 -right-20 w-64 h-64 bg-orange-600/10 blur-[100px] group-hover:bg-orange-600/30 transition-all duration-700">
-                                </div>
-
-                                {{-- 4. Top Decorative Elements (Numbering) --}}
-                                <div class="relative z-10 flex justify-between items-start mb-12">
-                                    {{-- Dynamic Numbering --}}
+                                    {{-- 3. Subtle Accent Glow --}}
                                     <div
-                                        class="text-5xl font-black text-white/[0.05] group-hover:text-orange-500/20 transition-colors duration-500 italic">
-                                        {{ sprintf('%02d', $index + 1) }}
+                                        class="absolute -bottom-20 -right-20 w-64 h-64 bg-orange-600/10 blur-[100px] group-hover:bg-orange-600/30 transition-all duration-700">
                                     </div>
-                                </div>
 
-                                {{-- 5. Text Content --}}
-                                <div class="relative z-10">
-                                    <h4
-                                        class="text-3xl font-black text-white mb-4 tracking-tighter group-hover:text-orange-400 transition-colors">
-                                        {{ $service->title }}
-                                    </h4>
-                                    <p
-                                        class="text-white/50 leading-relaxed text-sm group-hover:text-white/80 transition-colors line-clamp-4">
-                                        {{ $service->description }}
-                                    </p>
-                                </div>
-
-                                {{-- 6. Bottom Interaction Reveal --}}
-                                <div
-                                    class="absolute bottom-7 left-10 right-10 flex items-center justify-between opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-                                    <div class="flex items-center gap-3">
-                                        <span
-                                            class="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">Learn
-                                            More</span>
+                                    {{-- 4. Top Decorative Elements (Numbering) --}}
+                                    <div class="relative z-10 flex justify-between items-start mb-12">
+                                        {{-- Dynamic Numbering --}}
                                         <div
-                                            class="w-12 h-[1px] bg-orange-500/50 group-hover:w-20 transition-all duration-700">
+                                            class="text-5xl lg:text-8xl font-black text-white/[0.05] group-hover:text-orange-500/20 transition-colors duration-500 italic">
+                                            {{ sprintf('%02d', $index + 1) }}
                                         </div>
                                     </div>
 
-                                    {{-- Tiny arrow indicator --}}
+                                    {{-- 5. Text Content --}}
+                                    <div class="relative z-10">
+                                        <h4
+                                            class="text-3xl lg:text-6xl font-black text-white mb-4 tracking-tighter group-hover:text-orange-400 transition-colors">
+                                            {{ $service->title }}
+                                        </h4>
+                                        <p
+                                            class="text-white/50 leading-relaxed text-sm lg:text-2xl max-w-lg group-hover:text-white/80 transition-colors line-clamp-4">
+                                            {{ $service->description }}
+                                        </p>
+                                    </div>
+
+                                    {{-- 6. Bottom Interaction Reveal --}}
                                     <div
-                                        class="w-8 h-8 rounded-full border border-orange-500/30 flex items-center justify-center text-orange-500 text-xs group-hover:bg-orange-500 group-hover:text-black transition-all">
-                                        →
+                                        class="absolute bottom-7 left-10 right-10 flex items-center justify-between opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                                        <div class="flex items-center gap-3">
+                                            <span
+                                                class="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">Learn
+                                                More</span>
+                                            <div
+                                                class="w-12 h-[1px] bg-orange-500/50 group-hover:w-20 transition-all duration-700">
+                                            </div>
+                                        </div>
+
+                                        {{-- Tiny arrow indicator --}}
+                                        <div
+                                            class="w-8 h-8 rounded-full border border-orange-500/30 flex items-center justify-center text-orange-500 text-xs group-hover:bg-orange-500 group-hover:text-black transition-all">
+                                            →
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -812,8 +823,57 @@
 
 <!-- ================= SCRIPTS ================= -->
 <script>
-    document.addEventListener('livewire:navigated', () => initAllSwipers());
-    document.addEventListener('DOMContentLoaded', () => initAllSwipers());
+    document.addEventListener('livewire:navigated', () => {
+        initAllSwipers();
+        initParallaxStack();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        initAllSwipers();
+        initParallaxStack();
+    });
+
+    function initParallaxStack() {
+        const container = document.getElementById('services-container');
+        if (!container) return;
+
+        const cards = container.querySelectorAll('.service-card');
+
+        const handleScroll = () => {
+            const windowHeight = window.innerHeight;
+            const windowCenter = windowHeight / 1.7;
+
+            cards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+                const cardCenter = rect.top + (rect.height / 2);
+
+                // Distance from center of viewport (signed)
+                const dist = cardCenter - windowCenter;
+                const absDist = Math.abs(dist);
+
+                // Progress: 0 at center, 1 at distance of 60% viewport height
+                let progress = absDist / (windowHeight * 0.6);
+                progress = Math.max(0, Math.min(progress, 1));
+
+                // Styles
+                const scale = 1 - (progress * 0.2); // 1 -> 0.8
+                const opacity = 1 - (progress * 0.5); // 1 -> 0.3
+                const blur = progress * 0; // 0px -> 5px
+                const rotateX = (dist / windowHeight) * 20; // Rotate based on scroll direction
+
+                // Apply
+                card.style.transform = `scale(${scale}) perspective(1000px) rotateX(${rotateX}deg)`;
+                card.style.opacity = opacity;
+                card.style.filter = `blur(${blur}px)`;
+
+                // Z-Index logic: Card closest to center gets highest Z
+                // We inverse the progress for Z-index
+                card.style.zIndex = Math.round((1 - progress) * 100);
+            });
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Init
+    }
 
     function initAllSwipers() {
         // Pricing Swiper (Coverflow)
@@ -848,6 +908,35 @@
                     slidesPerView: 'auto',
                 }
             }
+        });
+
+        // Services Swiper (3D Perspective Vertical)
+        new Swiper('.servicesSwiper', {
+            direction: 'vertical',
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 'auto',
+            spaceBetween: 30,
+            initialSlide: 0,
+            mousewheel: {
+                invert: false,
+                forceToAxis: true,
+                sensitivity: 1,
+                releaseOnEdges: true,
+            },
+            coverflowEffect: {
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2.5,
+                slideShadows: true,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
         });
 
         // Projects Swiper
