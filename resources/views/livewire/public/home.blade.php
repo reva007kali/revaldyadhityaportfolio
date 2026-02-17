@@ -42,7 +42,7 @@
 
                 {{-- Main Heading: Poster Style --}}
                 <h1
-                    class="text-6xl md:text-8xl lg:text-7xl font-black tracking-tighter leading-[0.85] text-white mb-4 md:mb-8">
+                    class="text-6xl md:text-7xl lg:text-7xl font-black tracking-tighter leading-[0.85] text-white mb-4 md:mb-8">
                     @php
                         $titleParts = explode(' ', $hero->title ?? 'Reva Adhitya');
                         $lastWord = array_pop($titleParts);
