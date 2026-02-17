@@ -1,17 +1,17 @@
 <div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 4000)">
 
     {{-- Loading Screen --}}
-    <div x-show="loading" x-transition:leave="transition ease-in-out duration-1000"
+    {{-- <div x-show="loading" x-transition:leave="transition ease-in-out duration-1000"
         x-transition:leave-start="opacity-100 transform translate-y-0"
         x-transition:leave-end="opacity-0 transform -translate-y-full"
         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0b0b0d] text-white">
 
-        {{-- Big Header Text --}}
+
         <h1 class="text-6xl md:text-9xl font-black tracking-tighter mb-8 animate-pulse">
             REVALDY<span class="text-orange-500">.</span>
         </h1>
 
-        {{-- Loading Indicator --}}
+
         <div class="w-64 h-1 bg-white/10 rounded-full overflow-hidden">
             <div class="h-full bg-orange-500 animate-loading-bar"></div>
         </div>
@@ -19,12 +19,15 @@
         <p class="mt-4 text-white/40 text-sm font-bold tracking-[0.2em] uppercase animate-pulse">
             Loading Experience...
         </p>
-    </div>
+    </div> --}}
 
     {{-- Global Ambient Glow - Orange --}}
     <div
         class="fixed inset-0 bg-gradient-to-br from-orange-500/[0.03] via-transparent to-transparent pointer-events-none">
     </div>
+
+    {{-- 3D Background Canvas --}}
+    <div id="canvas-container" class="fixed inset-0 z-[5] pointer-events-none"></div>
 
     <!-- ================= HERO ================= -->
     <section id="home" class="relative min-h-screen flex items-end md:items-center overflow-hidden">
@@ -114,7 +117,8 @@
         </div>
 
         {{-- Scroll Indicator --}}
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-4 opacity-30">
+        <div id="hero-scroll"
+            class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-4 opacity-30">
             <span class="text-[10px] font-black uppercase tracking-[0.4em] rotate-90 mb-8">Scroll</span>
             <div class="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
         </div>
@@ -157,7 +161,7 @@
                         class="absolute inset-y-0 right-0 z-10 w-12 md:w-32 bg-gradient-to-l from-[#111113] via-[#111113]/50 to-transparent pointer-events-none">
                     </div>
 
-                    <div class="swiper mySwiper !pb-14">
+                    <div class="swiper mySwiper !pb-14" id="works-swiper">
                         <div class="swiper-wrapper">
                             @foreach ($projects as $project)
                                 <div class="swiper-slide !h-auto">
@@ -245,7 +249,7 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="websites-grid">
                     @foreach ($websites as $website)
                         <div
                             class="group relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[#161618] border border-white/5 transition-all duration-500 hover:border-orange-500/50 hover:shadow-[0_0_30px_rgba(249,115,22,0.2)]">
@@ -529,7 +533,7 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center" id="about-grid">
 
                 {{-- 1. Image Side (Occupies 5 columns on desktop) --}}
                 <div class="lg:col-span-5 relative order-2 lg:order-1">
@@ -668,7 +672,7 @@
         </div>
 
         {{-- Pricing Bento Grid --}}
-        <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="max-w-7xl mx-auto px-4 py-12" id="pricing-grid">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
                 @foreach ($pricing_plans as $index => $plan)
                     @php
@@ -797,7 +801,7 @@
             </p>
         </div>
 
-        <div class="swiper testimonialSwiper !pb-12">
+        <div class="swiper testimonialSwiper !pb-12" id="testimonials-swiper">
             <div class="swiper-wrapper">
                 @foreach ($testimonials as $testimonial)
                     <div class="swiper-slide !h-auto py-10"> {{-- Added padding for hover lift --}}

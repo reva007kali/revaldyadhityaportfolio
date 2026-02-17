@@ -384,7 +384,6 @@
             });
         });
     </script>
-    <livewire:public.components.music-player />
     @livewireScripts
     @livewireScriptConfig
 </body>
