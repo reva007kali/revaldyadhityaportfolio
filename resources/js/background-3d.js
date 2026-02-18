@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import gsap from "gsap";
 
 let renderer, scene, camera, animationId;
@@ -33,235 +35,242 @@ export function init3DBackground() {
         0.1,
         1000,
     );
-    camera.position.z = 15;
+    camera.position.z = 50;
 
-    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace; // Enable SRGB for accurate colors
     container.appendChild(renderer.domElement);
 
+    // --- ENVIRONMENT MAP (For better reflections) ---
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(
+        new RoomEnvironment(),
+        0.04,
+    ).texture;
+
     // --- LIGHTING ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 2);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 3);
     mainLight.position.set(5, 10, 7);
     mainLight.castShadow = true;
+    mainLight.shadow.mapSize.width = 2048; // High quality shadows
+    mainLight.shadow.mapSize.height = 2048;
+    mainLight.shadow.bias = -0.0001; // Reduce artifacts
     scene.add(mainLight);
 
     const fillLight = new THREE.DirectionalLight(0x0088ff, 1);
     fillLight.position.set(-5, 0, 5);
     scene.add(fillLight);
 
-    // --- MATERIALS ---
-    // Skema Warna Baru: Dominan Oranye, Aksen Hitam Beragam Tekstur
-    const materials = {
-        // BODY: Oranye Industri (Industrial Orange Paint)
-        // Ini sekarang menjadi warna utama robot.
-        body: new THREE.MeshStandardMaterial({
-            color: 0xff7700, // Oranye yang kaya dan jenuh
-            roughness: 0.25, // Agak mengkilap, seperti cat mobil baru
-            metalness: 0.6,  // Terlihat seperti logam yang dicat, bukan plastik
-        }),
-
-        // WING: Hitam Chrome Mengkilap (Sleek Black Chrome Accent)
-        // Sayap berubah menjadi aksen hitam yang sangat reflektif.
-        wing: new THREE.MeshStandardMaterial({
-            color: 0x000000, // Hitam pekat
-            roughness: 0.05, // Sangat licin/sangat mengkilap
-            metalness: 1.0,  // Efek cermin hitam (black chrome)
-        }),
-
-        // WEAPON: Hitam Matte (Matte Black Tactical / Gunmetal)
-        // Senjata dibuat hitam yang lebih gelap dan tidak terlalu memantulkan cahaya agar kontras.
-        weapon: new THREE.MeshStandardMaterial({
-            color: 0x111111, // Hampir hitam sempurna
-            roughness: 0.6,  // Kasar/Matte (tidak mengkilap)
-            metalness: 0.8,  // Logam gelap yang berat
-        }),
-
-        // PISTON: Baja Gelap Dipoles (Polished Dark Steel Accent)
-        // Piston menjadi logam gelap yang licin untuk aksen mekanis.
-        piston: new THREE.MeshStandardMaterial({
-            color: 0x333333, // Abu-abu tua gelap
-            roughness: 0.1,  // Sangat dipoles
-            metalness: 1.0,  // Baja gelap
-        }),
-
-        // DEFAULT: Aksen Hitam Karet/Sendi (Dark Joint/Rubber Accent)
-        // Detail lainnya dibuat menjadi hitam gelap yang matte (seperti karet atau plastik keras).
-        default: new THREE.MeshStandardMaterial({
-            color: 0x222222, // Arang gelap
-            roughness: 0.8,  // Sangat matte (tidak memantulkan cahaya)
-            metalness: 0.2,  // Sedikit kesan plastik/karet keras
-        }),
-    };
     // --- LOAD MODEL ---
-    const loader = new OBJLoader();
-    loader.load(
-        "/DROID.obj",
-        (object) => {
-            activeModel = object;
+    const mtlLoader = new MTLLoader();
+    mtlLoader.load("/untitled.mtl", (materials) => {
+        materials.preload();
 
-            activeModel.traverse((child) => {
-                if (child.isMesh) {
-                    const name = child.name.toUpperCase();
+        const loader = new OBJLoader();
+        loader.setMaterials(materials);
+        loader.load(
+            "/untitled.obj",
+            (object) => {
+                activeModel = object;
 
-                    if (name.includes("FLOOR") || name.includes("ENV")) {
-                        child.visible = false;
-                        return;
+                activeModel.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
                     }
+                });
 
-                    if (name.includes("WING")) {
-                        child.material = materials.wing;
-                    } else if (name.includes("BODY")) {
-                        child.material = materials.body;
-                    } else if (
-                        name.includes("WEAPON") ||
-                        name.includes("GUN")
-                    ) {
-                        child.material = materials.weapon;
-                    } else if (name.includes("PISTON")) {
-                        child.material = materials.piston;
-                    } else {
-                        child.material = materials.default;
-                    }
+                // Center and Scale
+                activeModel.scale.set(1.6, 1.6, 1.6);
 
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
+                const box = new THREE.Box3().setFromObject(activeModel);
+                const center = box.getCenter(new THREE.Vector3());
+                activeModel.position.sub(center);
 
-            // Center and Scale
-            activeModel.scale.set(0.5, 0.5, 0.5);
+                // Set initial position (Home)
+                activeModel.position.set(0, 0, 8);
+                activeModel.rotation.set(0, 0, 0);
 
-            const box = new THREE.Box3().setFromObject(activeModel);
-            const center = box.getCenter(new THREE.Vector3());
-            activeModel.position.sub(center);
+                // Initialize target state
+                targetState.position.copy(activeModel.position);
+                targetState.rotation.copy(activeModel.rotation);
 
-            // Set initial position (Home)
-            activeModel.position.set(7, -3, 0);
-            activeModel.rotation.set(0, 4.5, 0);
-
-            // Initialize target state
-            targetState.position.copy(activeModel.position);
-            targetState.rotation.copy(activeModel.rotation);
-
-            scene.add(activeModel);
-        },
-        (xhr) => {
-            // console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        },
-        (error) => {
-            console.error("An error happened loading the DROID model:", error);
-        },
-    );
+                scene.add(activeModel);
+            },
+            (xhr) => {
+                // console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            (error) => {
+                console.error(
+                    "An error happened loading the DROID model:",
+                    error,
+                );
+            },
+        );
+    });
 
     // --- SCROLL INTERACTION ---
     const sections = [
         {
             id: "home",
             // Posisi Kanan, Menghadap Kiri (ke User)
-            pos: { x: 7, y: -3, z: 0 },
-            rot: { x: 0, y: 4.5, z: 0 },
+            pos: { x: 0, y: 0, z: 8 },
+            rot: { x: 0, y: 0, z: 0 },
+            text: "Hello! I'm your guide. Welcome to Revaldy's portfolio!",
         },
-        {
-            id: "hero-scroll",
-            // Transisi
-            pos: { x: 8, y: -4, z: -2 },
-            rot: { x: 0.2, y: 4.0, z: 0 },
-        },
-
-        {
-            id: "works",
-            // Posisi Kiri, Menghadap Kanan (ke User)
-            pos: { x: -9, y: 0, z: 0 },
-            rot: { x: 0, y: 2.0, z: 0 },
-        },
+        // {
+        //     id: "works",
+        //     // Posisi Kiri, Menghadap Kanan (ke User)
+        //     pos: { x: 0, y: 0, z: 0 },
+        //     rot: { x: 0, y: 0, z: 0 },
+        //     text: "Check out these cool projects!",
+        // },
         {
             id: "works-swiper",
             // Posisi Kanan, Menghadap Kiri
-            pos: { x: 9, y: 1, z: -1 },
-            rot: { x: 0.2, y: 4.5, z: 0 },
+            pos: { x: 30, y: 1, z: -1 },
+            rot: { x: 0, y: -7.3, z: 0 },
+            text: "Here are some highlighted projects.",
         },
 
-        {
-            id: "websites",
-            // Posisi Kiri
-            pos: { x: -9, y: -1, z: -2 },
-            rot: { x: 0.2, y: 2.5, z: 0.2 },
-        },
+        // {
+        //     id: "websites",
+        //     // Posisi Kiri
+        //     pos: { x: -9, y: -1, z: -2 },
+        //     rot: { x: 0.2, y: 2.5, z: 0.2 },
+        //     text: "Websites gallery incoming!",
+        // },
         {
             id: "websites-grid",
             // Posisi Kanan
-            pos: { x: 9, y: -2, z: -3 },
-            rot: { x: 0.5, y: 4.0, z: 0 },
+            pos: { x: -30, y: 2, z: 4 },
+            rot: { x: 0, y: 0.8, z: 0 },
+            text: "Explore these website designs.",
         },
 
         {
-            id: "services",
+            id: "servicesHeader",
             // Posisi Kiri
-            pos: { x: -9, y: 1.5, z: 0 },
-            rot: { x: 0, y: 2.2, z: 0.2 },
+            pos: { x: 30, y: 2.5, z: 4 },
+            rot: { x: 0, y: -0.9, z: -0.2 },
+            text: "We offer specialized solutions.",
+        },
+        {
+            id: "servicesScroll",
+            // Posisi Kiri
+            pos: { x: 30, y: 2.5, z: 4 },
+            rot: { x: 0, y: -0.9, z: -0.2 },
+            text: "We offer specialized solutions.",
         },
 
         {
             id: "features",
             // Posisi Kanan
-            pos: { x: 9, y: -1, z: 0 },
-            rot: { x: 0.1, y: 5.0, z: 0 },
+            pos: { x: 0, y: 0, z: -8 },
+            rot: { x: 0, y: 0, z: 0 },
+            text: "Why choose us? Here's why.",
         },
 
         {
             id: "about",
             // Posisi Kiri
-            pos: { x: -9, y: 0, z: -1 },
-            rot: { x: 0, y: 1.5, z: 0 },
+            pos: { x: -35, y: 0, z: -1 },
+            rot: { x: 0, y: 0.7, z: 0 },
+            text: "A little story about the journey.",
         },
-        {
-            id: "about-grid",
-            // Posisi Kanan
-            pos: { x: 9, y: 2, z: 0 },
-            rot: { x: 0.2, y: 4.8, z: 0 },
-        },
+        // {
+        //     id: "about-grid",
+        //     // Posisi Kanan
+        //     pos: { x: 9, y: 2, z: 0 },
+        //     rot: { x: 0.2, y: 4.8, z: 0 },
+        //     text: "More details about the background.",
+        // },
 
         {
             id: "pricing",
             // Posisi Kiri
-            pos: { x: -9, y: -1.5, z: 0 },
-            rot: { x: 0, y: 2.0, z: 0 },
+            pos: { x: 0, y: 0, z: 20 },
+            rot: { x: 0, y: 0, z: 0 },
+            text: "Transparent pricing plans for you.",
         },
-        {
-            id: "pricing-grid",
-            // Posisi Kanan
-            pos: { x: 9, y: 0, z: 0 },
-            rot: { x: 0, y: 4.2, z: 0 },
-        },
+        // {
+        //     id: "pricing-grid",
+        //     // Posisi Kanan
+        //     pos: { x: 9, y: 0, z: 0 },
+        //     rot: { x: 0, y: 4.2, z: 0 },
+        //     text: "Choose the best plan!",
+        // },
 
         {
             id: "testimonials",
             // Posisi Kiri
-            pos: { x: -9, y: 1, z: 0 },
-            rot: { x: 0, y: 1.8, z: 0 },
+            pos: { x: 30, y: 1, z: 0 },
+            rot: { x: 0, y: -0.8, z: 0 },
+            text: "See what clients say about us.",
         },
-        {
-            id: "testimonials-swiper",
-            // Posisi Kanan
-            pos: { x: 9, y: -1, z: 0 },
-            rot: { x: 0.2, y: 4.5, z: 0 },
-        },
+        // {
+        //     id: "testimonials-swiper",
+        //     // Posisi Kanan
+        //     pos: { x: 9, y: -1, z: 0 },
+        //     rot: { x: 0.2, y: 4.5, z: 0 },
+        //     text: "Real feedback from real people.",
+        // },
 
         {
             id: "contact",
             // Pojok Kanan Bawah
-            pos: { x: 8, y: -4, z: 2 },
-            rot: { x: -0.2, y: 4.0, z: 0 },
+            pos: { x: -15, y: -4, z: 30 },
+            rot: { x: 0, y: 7.3, z: 0 },
+            text: "Ready to connect? Drop a message!",
+        },
+        {
+            id: "footer",
+            // Pojok Kanan Bawah
+            pos: { x: 35, y: -4, z: 0 },
+            rot: { x: 0, y: -0.8, z: 0 },
+            text: "Thanks for visiting!",
         },
     ];
+
+    const bubbleEl = document.getElementById("robot-bubble");
+    const bubbleText = document.getElementById("robot-text");
+
+    const updateBubblePosition = () => {
+        if (!activeModel || !bubbleEl || !camera) return;
+
+        // Get robot's screen position
+        const vector = new THREE.Vector3();
+        activeModel.getWorldPosition(vector);
+
+        // Add offset to be above the robot's head
+        vector.y += 1.8; // Slightly higher to clear the model
+
+        vector.project(camera);
+
+        const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (-(vector.y * 0.5) + 0.5) * window.innerHeight;
+
+        // Use transform directly for better performance, no transition lag on movement
+        bubbleEl.style.transform = `translate3d(${x}px, ${y}px, 0) scale(1)`;
+
+        // Hide if behind camera
+        if (vector.z > 1) {
+            bubbleEl.style.opacity = 0;
+        }
+    };
 
     const observer = new IntersectionObserver(
         (entries) => {
@@ -282,6 +291,29 @@ export function init3DBackground() {
                             duration: 2,
                             ease: "power2.inOut",
                         });
+
+                        // UPDATE CHAT BUBBLE
+                        if (bubbleEl && bubbleText && config.text) {
+                            if (bubbleText.innerText !== config.text) {
+                                // Fade out old text
+                                bubbleEl.classList.remove("opacity-100");
+                                bubbleEl.classList.add("opacity-0");
+
+                                setTimeout(() => {
+                                    bubbleText.innerText = config.text;
+                                    // Fade in new text
+                                    bubbleEl.classList.remove("opacity-0");
+                                    bubbleEl.classList.add("opacity-100");
+                                }, 300);
+                            } else {
+                                // Ensure it's visible if text matches
+                                bubbleEl.classList.add("opacity-100");
+                                bubbleEl.classList.remove("opacity-0");
+                            }
+                        } else if (bubbleEl && !config.text) {
+                            bubbleEl.classList.remove("opacity-100");
+                            bubbleEl.classList.add("opacity-0");
+                        }
                     }
                 }
             });
@@ -337,13 +369,14 @@ export function init3DBackground() {
             // Apply Rotation + Mouse Parallax + Wobble
             // Note: We use rotation.set to ensure clean state
             activeModel.rotation.x =
-                targetState.rotation.x + rotWobbleX + mouseY * 0.2;
+                targetState.rotation.x + rotWobbleX + mouseY * 0.1;
             activeModel.rotation.y =
-                targetState.rotation.y + rotWobbleY + mouseX * 0.2;
+                targetState.rotation.y + rotWobbleY + mouseX * 0.1;
             activeModel.rotation.z = targetState.rotation.z + rotWobbleZ;
         }
 
         renderer.render(scene, camera);
+        updateBubblePosition(); // Update bubble position every frame
     }
 
     animate();

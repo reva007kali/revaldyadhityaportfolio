@@ -154,7 +154,7 @@
     </main>
 
     <!-- ================= FOOTER ================= -->
-    <footer class="relative bg-[#0b0b0d] pt-32 pb-12 overflow-hidden border-t border-white/5">
+    <footer id="footer" class="relative bg-[#0b0b0d] pt-32 pb-12 overflow-hidden border-t border-white/5">
         <div
             class="absolute bottom-0 left-1/2 -translate-x-1/2 text-[25vw] font-black text-white/[0.02] select-none pointer-events-none leading-none">
             REVALDY

@@ -1,4 +1,4 @@
-<div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 4000)">
+<div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 1000)">
 
     {{-- Loading Screen --}}
     <div x-show="loading" x-transition:leave="transition ease-in-out duration-1000"
@@ -27,7 +27,17 @@
     </div>
 
     {{-- 3D Background Canvas --}}
-    <div id="canvas-container" class="fixed inset-0 z-[5] pointer-events-none md:block hidden"></div>
+    <div id="canvas-container" class="fixed inset-0 z-[20] pointer-events-none md:block hidden"></div>
+
+    {{-- Robot Chat Bubble --}}
+    <div id="robot-bubble"
+        class="fixed z-[20] hidden max-w-[200px] lg:flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300 transform scale-90 origin-center will-change-transform"
+        style="left: -100px; top: -180px;">
+        <div
+            class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-4 rounded-[24px] shadow-2xl">
+            <p id="robot-text" class="text-[10px] text-center font-medium leading-relaxed"></p>
+        </div>
+    </div>
 
     <!-- ================= HERO ================= -->
     <section id="home" class="relative min-h-screen flex items-end md:items-center overflow-hidden">
@@ -47,7 +57,7 @@
             <div class="absolute top-1/4 -right-20 w-96 h-96 bg-orange-600/20 blur-[120px] rounded-full"></div>
         </div>
 
-        <div class="relative w-full max-w-7xl mx-auto px-6 md:px-6 pb-10 md:pb-12 md:pt-20">
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-6 pb-10 md:pb-12 md:pt-20">
 
             {{-- Glass Content Box --}}
             <div class="max-w-3xl p-2 md:p-0">
@@ -161,7 +171,7 @@
                         class="absolute inset-y-0 right-0 z-10 w-12 md:w-32 bg-gradient-to-l from-[#111113] via-[#111113]/50 to-transparent pointer-events-none">
                     </div>
 
-                    <div class="swiper mySwiper !pb-14" id="works-swiper">
+                    <div class="swiper mySwiper !pb-14 relative z-6" id="works-swiper">
                         <div class="swiper-wrapper">
                             @foreach ($projects as $project)
                                 <div class="swiper-slide !h-auto">
@@ -249,7 +259,7 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="websites-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10" id="websites-grid">
                     @foreach ($websites as $website)
                         <div
                             class="group relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[#161618] border border-white/5 transition-all duration-500 hover:border-orange-500/50 hover:shadow-[0_0_30px_rgba(249,115,22,0.2)]">
@@ -313,7 +323,7 @@
     <!-- ================= SERVICES ================= -->
     @if ($services->count() > 0)
         <section id="services" class="py-12 md:py-24 bg-[#0b0b0d] relative">
-            <div class="max-w-7xl mx-auto px-6 md:px-6">
+            <div id="servicesHeader" class="max-w-7xl mx-auto px-6 md:px-6">
 
                 {{-- Refined Header --}}
                 <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">
@@ -340,11 +350,11 @@
                 </div>
 
                 {{-- Services Scroll List (Parallax Stack) --}}
-                <div class="relative space-y-22" id="services-container">
+                <div class="relative z-10 space-y-22" id="services-container">
                     @foreach ($services as $index => $service)
                         <div class="service-card sticky top-32 transition-all duration-700 ease-out">
                             <a href="{{ route('services.show', $service->slug) }}"
-                                class="group relative block w-full max-w-7xl mx-auto">
+                                class="group relative block w-full max-w-7xl mx-auto z-[1]">
 
                                 {{-- The Card --}}
                                 <div
@@ -450,7 +460,7 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="features-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10" id="features-grid">
                     {{-- Feature Cards Grid --}}
                     @foreach ($features as $index => $feature)
                         <div
@@ -533,7 +543,7 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center" id="about-grid">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10" id="about-grid">
 
                 {{-- 1. Image Side (Occupies 5 columns on desktop) --}}
                 <div class="lg:col-span-5 relative order-2 lg:order-1">
@@ -635,7 +645,7 @@
 
 
 <!-- ================= PRICING / INVESTMENT ================= -->
-<section id="pricing" class="py-32 relative bg-[#0b0b0d] overflow-hidden">
+<section id="pricing" class="py-32 relative z-[25] overflow-hidden">
 
     {{-- Background Decorative Glows --}}
     <div
@@ -672,7 +682,7 @@
         </div>
 
         {{-- Pricing Bento Grid --}}
-        <div class="max-w-7xl mx-auto px-4 py-12" id="pricing-grid">
+        <div class="max-w-7xl mx-auto px-4 py-12 relative z-10" id="pricing-grid">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
                 @foreach ($pricing_plans as $index => $plan)
                     @php
@@ -776,7 +786,7 @@
 
 <!-- ================= TESTIMONIALS ================= -->
 <section id="testimonials"
-    class="py-24 bg-gradient-to-b from-zinc-900 to-transparent text-white rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
+    class="py-24 bg-gradient-to-b relative from-zinc-900 to-transparent text-white rounded-[40px] md:rounded-[60px] mx-4 shadow-2xl shadow-orange-500/5">
     <div class="max-w-7xl mx-auto px-6 md:px-6">
 
         {{-- Refined Header --}}
@@ -801,7 +811,7 @@
             </p>
         </div>
 
-        <div class="swiper testimonialSwiper !pb-12" id="testimonials-swiper">
+        <div class="swiper testimonialSwiper !pb-12 relative z-10" id="testimonials-swiper">
             <div class="swiper-wrapper">
                 @foreach ($testimonials as $testimonial)
                     <div class="swiper-slide !h-auto py-10"> {{-- Added padding for hover lift --}}
@@ -903,7 +913,7 @@
             </div>
 
             <h3 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white mb-8 leading-[0.9]">
-                Let's <span
+                Let's<span
                     class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Connect.</span>
             </h3>
 
@@ -922,7 +932,7 @@
             </div>
 
             <div
-                class="lg:col-span-2 max-w-3xl mx-auto w-full
+                class="lg:col-span-2 max-w-3xl mx-auto w-full relative z-10
                 bg-gradient-to-br from-orange-500/5 to-orange-600/5 p-8 md:p-12 rounded-[40px] border border-orange-500/20 backdrop-blur-xl">
                 @if (session()->has('message'))
                     <div
@@ -1020,7 +1030,7 @@
 
     function initRevealText() {
         const revealElements = document.querySelectorAll('.reveal-text');
-        
+
         // BREAKPOINT CHECK: 
         // If screen width is less than 1024px (Tablets/Mobile), 
         // show text immediately and stop the function.
@@ -1028,7 +1038,7 @@
             revealElements.forEach(el => {
                 el.classList.add('is-visible');
             });
-            return; 
+            return;
         }
 
         // EXISTING LOGIC (Only runs on large screens now)
@@ -1037,11 +1047,11 @@
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
                     // Optional: Stop observing once revealed to save performance
-                    observer.unobserve(entry.target); 
+                    observer.unobserve(entry.target);
                 }
             });
         }, {
-            threshold: 0.2, 
+            threshold: 0.2,
             rootMargin: '0px 0px -50px 0px'
         });
 
@@ -1238,7 +1248,7 @@
     }
 
     .animate-loading-bar {
-        animation: loading-bar 4s ease-in-out forwards;
+        animation: loading-bar 1s ease-in-out forwards;
     }
 
     @keyframes fade-in-up {
