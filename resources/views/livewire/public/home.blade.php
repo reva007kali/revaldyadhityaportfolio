@@ -1019,18 +1019,33 @@
     }
 
     function initRevealText() {
+        const revealElements = document.querySelectorAll('.reveal-text');
+        
+        // BREAKPOINT CHECK: 
+        // If screen width is less than 1024px (Tablets/Mobile), 
+        // show text immediately and stop the function.
+        if (window.innerWidth < 1024) {
+            revealElements.forEach(el => {
+                el.classList.add('is-visible');
+            });
+            return; 
+        }
+
+        // EXISTING LOGIC (Only runs on large screens now)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
+                    // Optional: Stop observing once revealed to save performance
+                    observer.unobserve(entry.target); 
                 }
             });
         }, {
-            threshold: 0.2, // Trigger when 20% visible
+            threshold: 0.2, 
             rootMargin: '0px 0px -50px 0px'
         });
 
-        document.querySelectorAll('.reveal-text').forEach(el => {
+        revealElements.forEach(el => {
             observer.observe(el);
         });
     }

@@ -33,7 +33,7 @@ export function init3DBackground() {
         0.1,
         1000,
     );
-    camera.position.z = 9;
+    camera.position.z = 15;
 
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -58,33 +58,43 @@ export function init3DBackground() {
     scene.add(fillLight);
 
     // --- MATERIALS ---
+    // Skema Warna Baru: Dominan Hitam & Oranye, Aksen Putih/Silver
     const materials = {
+        // BODY: Hitam Metalik (Sleek Black Metal)
         body: new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            roughness: 0.2,
-            metalness: 0.8,
+            color: 0x111111, // Hitam pekat (bukan 0x000000 agar tetap merespon cahaya)
+            roughness: 0.15, // Lebih halus, lebih mengkilap
+            metalness: 0.9,  // Sangat metalik
         }),
+
+        // WING: Oranye Menyala (Vibrant Orange Glow)
         wing: new THREE.MeshStandardMaterial({
-            color: 0xff6600,
+            color: 0xff4500, // Oranye kemerahan yang lebih tajam (OrangeRed)
             roughness: 0.2,
             metalness: 0.8,
-            emissive: 0xff3300,
-            emissiveIntensity: 0.2,
+            emissive: 0xff3300, // Cahaya berpendar oranye
+            emissiveIntensity: 0.5, // Intensitas cahaya ditingkatkan agar lebih "pop"
         }),
+
+        // WEAPON: Metal Gelap (Dark Gunmetal)
         weapon: new THREE.MeshStandardMaterial({
-            color: 0x333333,
-            roughness: 0.4,
-            metalness: 0.9,
+            color: 0x222222, // Abu-abu sangat tua, hampir hitam
+            roughness: 0.4,  // Sedikit kasar
+            metalness: 1.0,  // Full metal
         }),
+
+        // PISTON: Aksen Putih/Silver Mengkilap (Shiny White Chrome Accent)
         piston: new THREE.MeshStandardMaterial({
-            color: 0xaaaaaa,
-            roughness: 0.1,
-            metalness: 1.0,
+            color: 0xffffff, // Putih murni
+            roughness: 0.05, // Sangat licin/dipoles
+            metalness: 1.0,  // Efek chrome
         }),
+
+        // DEFAULT: Aksen Putih Matte untuk detail/sendi lainnya
         default: new THREE.MeshStandardMaterial({
-            color: 0xeeeeee,
-            roughness: 0.2,
-            metalness: 0.8,
+            color: 0xeeeeee, // Putih agak abu (off-white)
+            roughness: 0.4,  // Matte, tidak terlalu mengkilap
+            metalness: 0.3,  // Sedikit metalik
         }),
     };
 
@@ -132,8 +142,8 @@ export function init3DBackground() {
             activeModel.position.sub(center);
 
             // Set initial position (Home)
-            activeModel.position.set(0, -1.3, 0);
-            activeModel.rotation.set(0, Math.PI / 2, 0);
+            activeModel.position.set(7, -3, 0);
+            activeModel.rotation.set(0, 4.5, 0);
 
             // Initialize target state
             targetState.position.copy(activeModel.position);
@@ -153,87 +163,101 @@ export function init3DBackground() {
     const sections = [
         {
             id: "home",
-            pos: { x: 0, y: -1.3, z: 0 },
-            rot: { x: 0, y: 1.57, z: 0 },
+            // Posisi Kanan, Menghadap Kiri (ke User)
+            pos: { x: 7, y: -3, z: 0 },
+            rot: { x: 0, y: 4.5, z: 0 },
         },
         {
             id: "hero-scroll",
-            pos: { x: 0, y: -2.5, z: 1 },
-            rot: { x: 0.5, y: 1.57, z: 0 },
+            // Transisi
+            pos: { x: 8, y: -4, z: -2 },
+            rot: { x: 0.2, y: 4.0, z: 0 },
         },
 
         {
             id: "works",
-            pos: { x: -3.5, y: 0.8, z: 0 },
+            // Posisi Kiri, Menghadap Kanan (ke User)
+            pos: { x: -9, y: 0, z: 0 },
             rot: { x: 0, y: 2.0, z: 0 },
         },
         {
             id: "works-swiper",
-            pos: { x: 3.5, y: 0, z: -1 },
-            rot: { x: 0, y: 1.0, z: 0 },
-        }, // Move to right side
+            // Posisi Kanan, Menghadap Kiri
+            pos: { x: 9, y: 1, z: -1 },
+            rot: { x: 0.2, y: 4.5, z: 0 },
+        },
 
         {
             id: "websites",
-            pos: { x: 0, y: 0, z: -2 },
-            rot: { x: 0.2, y: 1.0, z: 0 },
+            // Posisi Kiri
+            pos: { x: -9, y: -1, z: -2 },
+            rot: { x: 0.2, y: 2.5, z: 0.2 },
         },
         {
             id: "websites-grid",
-            pos: { x: 0, y: -1, z: -3 },
-            rot: { x: 0.5, y: 1.57, z: 0 },
-        }, // Deep and looking up
+            // Posisi Kanan
+            pos: { x: 9, y: -2, z: -3 },
+            rot: { x: 0.5, y: 4.0, z: 0 },
+        },
 
         {
             id: "services",
-            pos: { x: 3.5, y: 0.8, z: 0 },
-            rot: { x: 0, y: 1.0, z: 0 },
+            // Posisi Kiri
+            pos: { x: -9, y: 1.5, z: 0 },
+            rot: { x: 0, y: 2.2, z: 0.2 },
         },
-        // Use services-container via existing id if possible, but we don't have it in array yet
 
         {
             id: "features",
-            pos: { x: -3.5, y: -0.5, z: 0 },
-            rot: { x: 0, y: 2.0, z: 0 },
+            // Posisi Kanan
+            pos: { x: 9, y: -1, z: 0 },
+            rot: { x: 0.1, y: 5.0, z: 0 },
         },
 
         {
             id: "about",
-            pos: { x: 4, y: 0, z: -1 },
-            rot: { x: 0, y: 0.5, z: 0 },
+            // Posisi Kiri
+            pos: { x: -9, y: 0, z: -1 },
+            rot: { x: 0, y: 1.5, z: 0 },
         },
         {
             id: "about-grid",
-            pos: { x: -3, y: 0, z: 0 },
-            rot: { x: 0, y: 2.5, z: 0 },
-        }, // Move left to look at image
+            // Posisi Kanan
+            pos: { x: 9, y: 2, z: 0 },
+            rot: { x: 0.2, y: 4.8, z: 0 },
+        },
 
         {
             id: "pricing",
-            pos: { x: -3.5, y: 1, z: 0 },
-            rot: { x: 0, y: 2.5, z: 0 },
+            // Posisi Kiri
+            pos: { x: -9, y: -1.5, z: 0 },
+            rot: { x: 0, y: 2.0, z: 0 },
         },
         {
             id: "pricing-grid",
-            pos: { x: 3.5, y: 0, z: 0 },
-            rot: { x: 0, y: 1.0, z: 0 },
-        }, // Right side
+            // Posisi Kanan
+            pos: { x: 9, y: 0, z: 0 },
+            rot: { x: 0, y: 4.2, z: 0 },
+        },
 
         {
             id: "testimonials",
-            pos: { x: 3.5, y: -0.5, z: 0 },
-            rot: { x: 0, y: 1.0, z: 0 },
+            // Posisi Kiri
+            pos: { x: -9, y: 1, z: 0 },
+            rot: { x: 0, y: 1.8, z: 0 },
         },
         {
             id: "testimonials-swiper",
-            pos: { x: -3.5, y: 0, z: 0 },
-            rot: { x: 0, y: 2.0, z: 0 },
-        }, // Left side
+            // Posisi Kanan
+            pos: { x: 9, y: -1, z: 0 },
+            rot: { x: 0.2, y: 4.5, z: 0 },
+        },
 
         {
             id: "contact",
-            pos: { x: 0, y: -0.5, z: 1.5 },
-            rot: { x: 0, y: 1.57, z: 0 },
+            // Pojok Kanan Bawah
+            pos: { x: 8, y: -4, z: 2 },
+            rot: { x: -0.2, y: 4.0, z: 0 },
         },
     ];
 
