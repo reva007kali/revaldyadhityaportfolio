@@ -58,46 +58,48 @@ export function init3DBackground() {
     scene.add(fillLight);
 
     // --- MATERIALS ---
-    // Skema Warna Baru: Dominan Hitam & Oranye, Aksen Putih/Silver
+    // Skema Warna Baru: Dominan Oranye, Aksen Hitam Beragam Tekstur
     const materials = {
-        // BODY: Hitam Metalik (Sleek Black Metal)
+        // BODY: Oranye Industri (Industrial Orange Paint)
+        // Ini sekarang menjadi warna utama robot.
         body: new THREE.MeshStandardMaterial({
-            color: 0x111111, // Hitam pekat (bukan 0x000000 agar tetap merespon cahaya)
-            roughness: 0.15, // Lebih halus, lebih mengkilap
-            metalness: 0.9,  // Sangat metalik
+            color: 0xff7700, // Oranye yang kaya dan jenuh
+            roughness: 0.25, // Agak mengkilap, seperti cat mobil baru
+            metalness: 0.6,  // Terlihat seperti logam yang dicat, bukan plastik
         }),
 
-        // WING: Oranye Menyala (Vibrant Orange Glow)
+        // WING: Hitam Chrome Mengkilap (Sleek Black Chrome Accent)
+        // Sayap berubah menjadi aksen hitam yang sangat reflektif.
         wing: new THREE.MeshStandardMaterial({
-            color: 0xff4500, // Oranye kemerahan yang lebih tajam (OrangeRed)
-            roughness: 0.2,
-            metalness: 0.8,
-            emissive: 0xff3300, // Cahaya berpendar oranye
-            emissiveIntensity: 0.5, // Intensitas cahaya ditingkatkan agar lebih "pop"
+            color: 0x000000, // Hitam pekat
+            roughness: 0.05, // Sangat licin/sangat mengkilap
+            metalness: 1.0,  // Efek cermin hitam (black chrome)
         }),
 
-        // WEAPON: Metal Gelap (Dark Gunmetal)
+        // WEAPON: Hitam Matte (Matte Black Tactical / Gunmetal)
+        // Senjata dibuat hitam yang lebih gelap dan tidak terlalu memantulkan cahaya agar kontras.
         weapon: new THREE.MeshStandardMaterial({
-            color: 0x222222, // Abu-abu sangat tua, hampir hitam
-            roughness: 0.4,  // Sedikit kasar
-            metalness: 1.0,  // Full metal
+            color: 0x111111, // Hampir hitam sempurna
+            roughness: 0.6,  // Kasar/Matte (tidak mengkilap)
+            metalness: 0.8,  // Logam gelap yang berat
         }),
 
-        // PISTON: Aksen Putih/Silver Mengkilap (Shiny White Chrome Accent)
+        // PISTON: Baja Gelap Dipoles (Polished Dark Steel Accent)
+        // Piston menjadi logam gelap yang licin untuk aksen mekanis.
         piston: new THREE.MeshStandardMaterial({
-            color: 0xffffff, // Putih murni
-            roughness: 0.05, // Sangat licin/dipoles
-            metalness: 1.0,  // Efek chrome
+            color: 0x333333, // Abu-abu tua gelap
+            roughness: 0.1,  // Sangat dipoles
+            metalness: 1.0,  // Baja gelap
         }),
 
-        // DEFAULT: Aksen Putih Matte untuk detail/sendi lainnya
+        // DEFAULT: Aksen Hitam Karet/Sendi (Dark Joint/Rubber Accent)
+        // Detail lainnya dibuat menjadi hitam gelap yang matte (seperti karet atau plastik keras).
         default: new THREE.MeshStandardMaterial({
-            color: 0xeeeeee, // Putih agak abu (off-white)
-            roughness: 0.4,  // Matte, tidak terlalu mengkilap
-            metalness: 0.3,  // Sedikit metalik
+            color: 0x222222, // Arang gelap
+            roughness: 0.8,  // Sangat matte (tidak memantulkan cahaya)
+            metalness: 0.2,  // Sedikit kesan plastik/karet keras
         }),
     };
-
     // --- LOAD MODEL ---
     const loader = new OBJLoader();
     loader.load(
