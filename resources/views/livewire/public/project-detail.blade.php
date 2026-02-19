@@ -12,26 +12,34 @@
     </div>
 
     {{-- 2. Cinematic Hero Section --}}
-    <header class="relative h-[70vh] md:h-[85vh] w-full overflow-hidden">
+    <header class="relative min-h-[60vh] flex items-end pt-24 pb-10 overflow-hidden">
         @if ($project->image)
-            <img src="{{ Str::startsWith($project->image, 'http') ? $project->image : asset('storage/' . $project->image) }}"
-                class="w-full h-full object-cover transform scale-105" id="hero-image">
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-full lg:w-1/2 h-full opacity-20 pointer-events-none">
+            <img src="{{ asset('storage/' . $project->image) }}"
+                class="w-full h-full object-cover blur-[4px] lg:blur-[2px]">
+        </div>
         @endif
 
-        {{-- High-End Overlays --}}
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0b0b0d] via-[#0b0b0d]/20 to-transparent"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent"></div>
+        {{-- Ambient Glows --}}
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-orange-600/10 blur-[120px] rounded-full"></div>
 
-        {{-- Title Area --}}
-        <div class="absolute bottom-0 left-0 w-full p-6 md:p-12 pb-20">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex items-center gap-3 mb-6 animate-fade-in">
+        <div class="relative w-full max-w-7xl mx-auto px-6 md:px-12">
+            <div class="max-w-4xl">
+                {{-- Breadcrumb Label --}}
+                <div class="flex items-center gap-3 mb-8">
                     <span class="w-12 h-[2px] bg-orange-500"></span>
-                    <span class="text-orange-500 text-xs font-black uppercase tracking-[0.4em]">Case Study</span>
+                    <span class="text-orange-500 text-xs font-black uppercase tracking-[0.4em]">
+                        {{ $project->title }}</span>
                 </div>
-                <h1 class="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] text-white mb-8">
+
+                <h1
+                    class="text-3xl md:text-6xl lg:text-6xl font-black tracking-tighter leading-[0.85] text-white mb-10">
                     {{ $project->title }}<span class="text-orange-500">.</span>
                 </h1>
+
+                <p class="text-xl md:text-xl text-white/40 font-medium leading-relaxed max-w-2xl">
+                    {{ Str::limit(strip_tags($project->description), 150) }}
+                </p>
             </div>
         </div>
     </header>

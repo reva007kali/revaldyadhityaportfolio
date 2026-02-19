@@ -12,7 +12,7 @@
     </div>
 
     {{-- 2. Atmospheric Hero Section --}}
-    <header class="relative min-h-[60vh] flex items-center pt-24 overflow-hidden">
+    <header class="relative min-h-[60vh] flex items-end pt-24 pb-10 overflow-hidden">
         {{-- Background Texture (Service Icon used as a large watermark) --}}
         @if ($service->icon)
             <div class="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-full opacity-20 pointer-events-none">
@@ -34,7 +34,7 @@
                 </div>
 
                 <h1
-                    class="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.85] text-white mb-10">
+                    class="text-5xl md:text-6xl lg:text-6xl font-black tracking-tighter leading-[0.85] text-white mb-10">
                     {{ $service->title }}<span class="text-orange-500">.</span>
                 </h1>
 
