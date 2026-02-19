@@ -29,16 +29,6 @@
     {{-- 3D Background Canvas --}}
     <div id="canvas-container" class="fixed inset-0 z-[20] pointer-events-none md:block hidden"></div>
 
-    {{-- Robot Chat Bubble --}}
-    <div id="robot-bubble"
-        class="fixed z-[20] hidden max-w-[200px] lg:flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300 transform scale-90 origin-center will-change-transform"
-        style="left: -100px; top: -180px;">
-        <div
-            class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-4 rounded-[24px] shadow-2xl">
-            <p id="robot-text" class="text-[10px] text-center font-medium leading-relaxed"></p>
-        </div>
-    </div>
-
     <!-- ================= HERO ================= -->
     <section id="home" class="relative min-h-screen flex items-end md:items-center overflow-hidden">
 
