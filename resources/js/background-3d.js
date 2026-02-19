@@ -122,7 +122,7 @@ export function init3DBackground() {
 
     // --- SCROLL INTERACTION ---
     const sections = [
-        { id: "home", pos: { x: 0, y: 0, z: 8 }, rot: { x: 0, y: 0, z: 0 }, text: "Hello! I'm your guide. Welcome to Revaldy's portfolio!" },
+        { id: "home", pos: { x: 0, y: 0, z: 8 }, rot: { x: 0, y: 0, z: 0 }},
         { id: "works-swiper", pos: { x: 30, y: 1, z: -1 }, rot: { x: 0, y: -7.3, z: 0 }, text: "Here are some highlighted projects." },
         { id: "websites-grid", pos: { x: -30, y: 2, z: 4 }, rot: { x: 0, y: 0.8, z: 0 }, text: "Explore these website designs." },
         { id: "servicesHeader", pos: { x: 30, y: 2.5, z: 4 }, rot: { x: 0, y: -0.9, z: -0.2 }, text: "We offer specialized solutions." },
@@ -130,7 +130,7 @@ export function init3DBackground() {
         { id: "features", pos: { x: 0, y: 0, z: -8 }, rot: { x: 0, y: 0, z: 0 } },
         { id: "about", pos: { x: -35, y: 0, z: -1 }, rot: { x: 0, y: 0.7, z: 0 }, text: "A little story about the journey." },
         { id: "pricing", pos: { x: 0, y: 0, z: 20 }, rot: { x: 0, y: 0, z: 0 } },
-        { id: "testimonials", pos: { x: 30, y: 1, z: 0 }, rot: { x: 0, y: -0.8, z: 0 }, text: "See what clients say about us." },
+        { id: "testimonials", pos: { x: 30, y: 1, z: 0 }, rot: { x: 0, y: -0.8, z: 0 }},
         { id: "contact", pos: { x: -15, y: -4, z: 30 }, rot: { x: 0, y: 7.3, z: 0 } },
         { id: "footer", pos: { x: 35, y: -4, z: 0 }, rot: { x: 0, y: -0.8, z: 0 }, text: "Thanks for visiting!" },
     ];
