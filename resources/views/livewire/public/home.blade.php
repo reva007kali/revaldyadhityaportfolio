@@ -187,12 +187,15 @@
                                             @endif
                                         @endif
                                         <div
-                                            class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-8 flex flex-col justify-end">
+                                            class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent p-8 lg:p-14 flex flex-col justify-end">
                                             <h4
-                                                class="text-2xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+                                                class="text-lg lg:text-4xl leading-[1] font-bold mb-2 group-hover:text-orange-500 transition-colors">
                                                 {{ $project->title }}</h4>
-                                            <p class="text-sm text-white/60 line-clamp-2">{{ $project->description }}
-                                            </p>
+                                                <div class="lg:max-w-[50%]">
+                                                    <p class="text-sm text-white/60 line-clamp-2">{{ $project->description }}
+                                                    </p>
+                                                </div>
+                                            
                                         </div>
                                     </a>
                                 </div>
@@ -348,7 +351,7 @@
 
                                 {{-- The Card --}}
                                 <div
-                                    class="relative h-full min-h-[500px] p-10 rounded-[40px] bg-[#161618] border border-white/5 overflow-hidden transition-all duration-700 group-hover:border-orange-500/30 shadow-2xl">
+                                    class="relative h-full lg:min-h-[500px] p-10 rounded-[40px] bg-[#161618] border border-white/5 overflow-hidden transition-all duration-700 group-hover:border-orange-500/30 shadow-2xl">
 
                                     {{-- 1. Background Image Layer (Service Icon) --}}
                                     @if ($service->icon)
@@ -1162,7 +1165,7 @@
             slidesPerView: 1.2,
             spaceBetween: 20,
             grabCursor: true,
-            speed: 1200,
+            speed: 500,
             effect: 'slide',
             easing: 'ease-in-out',
             pagination: {
@@ -1238,7 +1241,7 @@
     }
 
     .animate-loading-bar {
-        animation: loading-bar 1s ease-in-out forwards;
+        animation: loading-bar 0.5s ease-in-out forwards;
     }
 
     @keyframes fade-in-up {
