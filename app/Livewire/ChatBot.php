@@ -11,6 +11,13 @@ use App\Models\Service;
 use App\Models\PricingPlan;
 use App\Models\Lead;
 use App\Models\Website;
+use App\Models\ChatSession;
+use OpenAI;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Request;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewLeadNotification;
 
 class ChatBot extends Component
 {
@@ -18,13 +25,98 @@ class ChatBot extends Component
     public $userInput = '';
     public $messages = [];
     public $maxHistory = 15; // Sedikit lebih panjang untuk konteks yang lebih baik
+    public $sessionId;
 
     public function mount()
     {
-        $this->messages[] = [
-            'role' => 'assistant', 
-            'content' => 'Halo! Saya asisten AI Revaldy. Ada yang bisa saya bantu mengenai pembuatan website, katalog contoh, atau estimasi biaya?'
-        ];
+        $this->sessionId = Session::getId();
+        $this->loadChatHistory();
+    }
+
+    private function loadChatHistory()
+    {
+        $chatSession = ChatSession::where('session_id', $this->sessionId)->first();
+
+        if ($chatSession && !empty($chatSession->messages)) {
+            $this->messages = $chatSession->messages;
+        } else {
+            $this->messages[] = [
+                'role' => 'assistant', 
+                'content' => 'Halo! Saya asisten AI Revaldy. Ada yang bisa saya bantu mengenai pembuatan website, katalog contoh, atau estimasi biaya?'
+            ];
+            $this->saveChatHistory();
+        }
+    }
+
+    private function saveChatHistory()
+    {
+        ChatSession::updateOrCreate(
+            ['session_id' => $this->sessionId],
+            [
+                'ip_address' => Request::ip(),
+                'messages' => $this->messages
+            ]
+        );
+    }
+
+    // HANDLERS (LOGIC)
+    private function handleGetWebsiteExamples($tag = null, $color = null)
+    {
+        $q = Website::query();
+        if ($tag)
+            $q->where('tags', 'like', "%$tag%")->orWhere('description', 'like', "%$tag%");
+        if ($color)
+            $q->where('color', 'like', "%$color%");
+        return $q->limit(3)->get(['title', 'description', 'tags', 'color'])->toJson();
+    }
+
+    private function handleGetPortfolio($keyword = null)
+    {
+        return Project::when($keyword, fn($q) => $q->where('title', 'like', "%$keyword%"))
+            ->limit(3)->get(['title', 'description'])->toJson();
+    }
+
+    private function handleGetPricing($type)
+    {
+        return "Daftar Paket Harga Revaldy: " . PricingPlan::all()->toJson();
+    }
+
+    private function handleCaptureLead($data)
+    {
+        try {
+            // Sesuaikan mapping dengan kolom di migration kamu
+            $lead = Lead::create([
+                'name' => $data['name'] ?? 'Guest',
+                'contact' => $data['contact'] ?? 'Unknown',
+                'project_type' => 'AI Inquiry',
+                'budget_range' => $data['budget'] ?? 'TBD',
+                'project_description' => $data['description'] ?? 'No description provided',
+                'status' => 'new',
+                'ai_notes' => 'Captured automatically by Reva AI Assistant'
+            ]);
+
+            // Send Email Notification
+            try {
+                Mail::to('le.revaldy@gmail.com')->send(new NewLeadNotification($lead));
+            } catch (\Exception $e) {
+                Log::error("Failed to send lead email: " . $e->getMessage());
+            }
+
+            return "SUCCESS: Lead berhasil disimpan ke database Revaldy dengan ID #" . $lead->id;
+        } catch (\Exception $e) {
+            Log::error("Capture Lead Database Error: " . $e->getMessage());
+            return "ERROR: Gagal simpan ke database. Pastikan tidak ada kolom timestamps.";
+        }
+    }
+
+    public function sendMessage()
+    {
+        if (empty($this->userInput))
+            return;
+        $this->messages[] = ['role' => 'user', 'content' => $this->userInput];
+        $this->saveChatHistory(); // Save user message
+        $this->userInput = '';
+        $this->processAI();
     }
 
     private function getTools()
@@ -90,53 +182,9 @@ class ChatBot extends Component
         ];
     }
 
-    // HANDLERS (LOGIC)
-    private function handleGetWebsiteExamples($tag = null, $color = null) {
-        $q = Website::query();
-        if ($tag) $q->where('tags', 'like', "%$tag%")->orWhere('description', 'like', "%$tag%");
-        if ($color) $q->where('color', 'like', "%$color%");
-        return $q->limit(3)->get(['title', 'description', 'tags', 'color'])->toJson();
-    }
-
-    private function handleGetPortfolio($keyword = null) {
-        return Project::when($keyword, fn($q) => $q->where('title', 'like', "%$keyword%"))
-                ->limit(3)->get(['title', 'description'])->toJson();
-    }
-
-    private function handleGetPricing($type) {
-        return "Daftar Paket Harga Revaldy: " . PricingPlan::all()->toJson();
-    }
-
-    private function handleCaptureLead($data) {
-        try {
-            // Sesuaikan mapping dengan kolom di migration kamu
-            $lead = Lead::create([
-                'name'                => $data['name'] ?? 'Guest',
-                'contact'             => $data['contact'] ?? 'Unknown',
-                'project_type'        => 'AI Inquiry',
-                'budget_range'        => $data['budget'] ?? 'TBD',
-                'project_description' => $data['description'] ?? 'No description provided',
-                'status'              => 'new',
-                'ai_notes'            => 'Captured automatically by Reva AI Assistant'
-            ]);
-            return "SUCCESS: Lead berhasil disimpan ke database Revaldy dengan ID #" . $lead->id;
-        } catch (\Exception $e) {
-            Log::error("Capture Lead Database Error: " . $e->getMessage());
-            return "ERROR: Gagal simpan ke database. Pastikan tidak ada kolom timestamps.";
-        }
-    }
-
-    public function sendMessage()
-    {
-        if (empty($this->userInput)) return;
-        $this->messages[] = ['role' => 'user', 'content' => $this->userInput];
-        $this->userInput = '';
-        $this->processAI();
-    }
-
     protected function processAI($retryCount = 0)
     {
-        // Safety break untuk mencegah loop tak terbatas
+        // Safety break
         if ($retryCount > 3) {
             $this->messages[] = ['role' => 'assistant', 'content' => 'Aku sudah catat detailnya, tapi sistem perangkum lagi sibuk. Langsung WA Reva aja ya di 082260894009!'];
             return;
@@ -149,38 +197,53 @@ class ChatBot extends Component
             Identitas Reva: " . ($about->description ?? 'Expert Web Developer') . ". 
             WA: 082260894009.
             
-            Jika user (seperti Audrey) sudah memberikan nomor kontak dan detail budget, 
+            Jika user sudah memberikan nomor kontak dan detail budget, 
             panggil fungsi capture_lead SEKARANG JUGA untuk mengamankan data.";
 
-            // Kirim ke OpenAI dengan Timeout lebih lama
-            $response = Http::withToken(config('services.openai.key'))
-                ->timeout(120) 
-                ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-4o-mini',
-                    'messages' => array_merge([['role' => 'system', 'content' => $systemPrompt]], array_slice($this->messages, -$this->maxHistory)),
-                    'tools' => $this->getTools(),
-                    'tool_choice' => 'auto'
-                ]);
-
-            if ($response->failed()) {
-                Log::error("OpenAI API Error: " . $response->body());
-                throw new \Exception("API Timeout or Error");
+            $apiKey = config('services.openai.key');
+            if (empty($apiKey)) {
+                throw new \Exception("OpenAI API Key is missing.");
             }
 
-            $res = $response->json();
-            $aiMessage = $res['choices'][0]['message'] ?? null;
+            // --- USE OFFICIAL PHP CLIENT ---
+            $client = OpenAI::client($apiKey);
 
-            if (!$aiMessage) throw new \Exception("Empty AI Response");
+            $response = $client->chat()->create([
+                'model' => 'gpt-4o-mini',
+                'messages' => array_merge([['role' => 'system', 'content' => $systemPrompt]], array_slice($this->messages, -$this->maxHistory)),
+                'tools' => $this->getTools(),
+                'tool_choice' => 'auto',
+            ]);
 
-            // LOGIC TOOL CALLING
-            if (isset($aiMessage['tool_calls'])) {
-                $this->messages[] = $aiMessage; // Masukkan instruksi tool ke history
+            $aiMessage = $response->choices[0]->message;
 
-                foreach ($aiMessage['tool_calls'] as $tool) {
-                    $name = $tool['function']['name'];
-                    $args = json_decode($tool['function']['arguments'], true);
-                    
-                    $output = match($name) {
+            // --- LOGIC TOOL CALLING ---
+            if ($aiMessage->toolCalls) {
+                // Convert toolCalls object to array format for history
+                $toolCallsArray = [];
+                foreach ($aiMessage->toolCalls as $toolCall) {
+                    $toolCallsArray[] = [
+                        'id' => $toolCall->id,
+                        'type' => 'function',
+                        'function' => [
+                            'name' => $toolCall->function->name,
+                            'arguments' => $toolCall->function->arguments
+                        ]
+                    ];
+                }
+
+                // Append AI's intent to call tools to history
+                $this->messages[] = [
+                    'role' => 'assistant',
+                    'content' => null,
+                    'tool_calls' => $toolCallsArray
+                ];
+
+                foreach ($aiMessage->toolCalls as $tool) {
+                    $name = $tool->function->name;
+                    $args = json_decode($tool->function->arguments, true);
+
+                    $output = match ($name) {
                         'get_website_examples' => $this->handleGetWebsiteExamples($args['tag'] ?? null, $args['color'] ?? null),
                         'get_portfolio' => $this->handleGetPortfolio($args['keyword'] ?? null),
                         'get_pricing_and_estimate' => $this->handleGetPricing($args['type'] ?? ''),
@@ -189,37 +252,45 @@ class ChatBot extends Component
                     };
 
                     $this->messages[] = [
-                        'tool_call_id' => $tool['id'],
+                        'tool_call_id' => $tool->id,
                         'role' => 'tool',
                         'name' => $name,
                         'content' => $output
                     ];
                 }
-                
-                // Panggil kembali AI untuk merespon hasil fungsi (REKURSIF)
+
+                // Recursive call
+                $this->saveChatHistory(); // Save tool calls
                 return $this->processAI($retryCount + 1);
             }
 
-            // SIMPAN JAWABAN TEKS BIASA
-            if (isset($aiMessage['content']) && $aiMessage['content'] !== null) {
-                $this->messages[] = ['role' => 'assistant', 'content' => $aiMessage['content']];
+            // --- TEXT RESPONSE ---
+            if ($aiMessage->content) {
+                $this->messages[] = ['role' => 'assistant', 'content' => $aiMessage->content];
+                $this->saveChatHistory(); // Save AI response
             }
 
         } catch (\Exception $e) {
             Log::error("ChatBot Fatal Error: " . $e->getMessage());
             $this->messages[] = [
                 'role' => 'assistant', 
-                'content' => 'Aduh sorry Audrey, koneksi otak AI-ku lagi drop. Chat Reva langsung di WA 082260894009 aja ya, dia fast respon kok! 😊'
+                'content' => 'Aduh sorry, koneksi otak AI-ku lagi drop. Chat Reva langsung di WA 082260894009 aja ya, dia fast respon kok! 😊'
             ];
+            $this->saveChatHistory(); // Save error message
         }
 
         $this->dispatch('scroll-to-bottom');
     }
 
-    public function toggleChat() {
+    public function toggleChat()
+    {
         $this->isOpen = !$this->isOpen;
-        if ($this->isOpen) $this->dispatch('scroll-to-bottom');
+        if ($this->isOpen)
+            $this->dispatch('scroll-to-bottom');
     }
 
-    public function render() { return view('livewire.chat-bot'); }
+    public function render()
+    {
+        return view('livewire.chat-bot');
+    }
 }

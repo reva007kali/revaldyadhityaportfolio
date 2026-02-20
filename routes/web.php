@@ -21,6 +21,7 @@ use App\Livewire\Admin\Testimonials\Index as TestimonialsIndex;
 use App\Livewire\Admin\SocialLinks\Index as SocialLinksIndex;
 use App\Livewire\Admin\Navigation\Index as NavigationIndex;
 use App\Livewire\Admin\Websites\Index as WebsitesIndex;
+use App\Livewire\Admin\Leads\Index as LeadsIndex;
 use App\Livewire\Admin\Dashboard;
 
 use App\Livewire\Public\Websites;
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('social-links', SocialLinksIndex::class)->name('social-links');
     Route::get('navigation', NavigationIndex::class)->name('navigation');
     Route::get('messages', MessagesIndex::class)->name('messages');
+    Route::get('leads', LeadsIndex::class)->name('leads');
     Route::get('websites', WebsitesIndex::class)->name('websites');
     Route::get('websites/create', App\Livewire\Admin\Websites\Create::class)->name('websites.create');
     Route::get('websites/{id}/edit', App\Livewire\Admin\Websites\Edit::class)->name('websites.edit');

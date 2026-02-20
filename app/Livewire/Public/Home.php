@@ -15,6 +15,8 @@ use App\Models\SocialLink;
 use App\Models\Website;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewContactMessage;
 
 #[Layout('layouts.public')]
 class Home extends Component
@@ -55,12 +57,19 @@ class Home extends Component
             'message' => 'required|string',
         ]);
 
-        ContactMessage::create([
+        $contactMessage = ContactMessage::create([
             'name' => $this->name,
             'email' => $this->email,
             'subject' => $this->subject,
             'message' => $this->message,
         ]);
+
+        // Send Email Notification
+        try {
+            Mail::to('le.revaldy@gmail.com')->send(new NewContactMessage($contactMessage));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Failed to send contact email: " . $e->getMessage());
+        }
 
         $this->reset(['name', 'email', 'subject', 'message']);
         session()->flash('message', 'Thank you! Your message has been sent successfully.');

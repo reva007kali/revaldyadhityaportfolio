@@ -89,15 +89,35 @@
         </div>
 
         <!-- Input Area -->
-        <div class="p-5 border-t border-white/5">
-            <form wire:submit.prevent="sendMessage" class="relative">
+        <div class="p-5 border-t border-white/5 bg-white/[0.02]">
+            <form wire:submit.prevent="sendMessage" class="relative flex items-end gap-2">
                 <textarea wire:model="userInput" 
                     @keydown.enter.prevent.exact="$wire.sendMessage()"
+                    @keydown.ctrl.enter.prevent="$wire.sendMessage()"
                     placeholder="Tanya harga atau contoh web..." 
-                    class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-xs text-white focus:outline-none focus:border-orange-500 transition-all resize-none scrollbar-hide"
-                    rows="1"></textarea>
-                <button type="submit" class="absolute right-3 bottom-3 p-2 bg-orange-500 text-black rounded-xl">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    class="w-full bg-white/5 border border-white/10 rounded-2xl pl-5 pr-14 py-4 text-xs text-white focus:outline-none focus:border-orange-500 focus:bg-white/10 transition-all resize-none scrollbar-hide min-h-[50px] max-h-[120px]"
+                    rows="1"
+                    x-data="{ resize() { $el.style.height = '50px'; $el.style.height = $el.scrollHeight + 'px' } }"
+                    x-init="$nextTick(() => { $el.focus(); resize(); })"
+                    @input="resize()"
+                    autofocus
+                ></textarea>
+                
+                <button type="submit" 
+                    class="absolute right-3 bottom-3 p-2 bg-orange-500 hover:bg-orange-400 text-black rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20"
+                    wire:loading.attr="disabled"
+                    wire:target="sendMessage">
+                    
+                    <!-- Icon Send -->
+                    <svg wire:loading.remove wire:target="sendMessage" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+
+                    <!-- Loading Spinner -->
+                    <svg wire:loading wire:target="sendMessage" class="animate-spin w-4 h-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
                 </button>
             </form>
         </div>

@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('project_type')->nullable(); // Misal: E-commerce, Portofolio, SaaS
             $table->string('budget_range')->nullable(); // Estimasi budget
             $table->text('project_description')->nullable(); // Ringkasan project dari AI
-            $table->enum('status', ['new', 'contacted', 'deal', 'lost'])->default('new'); // Untuk CRM sederhana
+            $table->enum('status', ['new', 'read', 'contacted', 'deal', 'lost'])->default('new'); // Untuk CRM sederhana
             $table->text('ai_notes')->nullable(); // Catatan tambahan dari AI
+            $table->timestamps();
         });
     }
 
