@@ -30,10 +30,10 @@
     <div id="canvas-container" class="fixed inset-0 z-[20] pointer-events-none md:block hidden"></div>
 
     <!-- Tooltip Element -->
-<div id="robot-tooltip" class="robot-tooltip-hidden">
-    Chat with AI
-    <div class="tooltip-arrow"></div>
-</div>
+    <div id="robot-tooltip" class="robot-tooltip-hidden">
+        Chat with AI
+        <div class="tooltip-arrow"></div>
+    </div>
 
     <!-- ================= HERO ================= -->
     <section id="home" class="relative min-h-screen flex items-end md:items-center overflow-hidden">
@@ -102,16 +102,6 @@
                             <span
                                 class="relative z-10 text-black font-black uppercase tracking-widest text-xs group-hover:tracking-[0.25em] transition-all duration-500">
                                 {{ $hero->cta_text ?? 'Start a Project' }}
-                            </span>
-                        </a>
-
-                        {{-- 3D Showcase CTA --}}
-                        <a href="{{ route('showcase.3d') }}" wire:navigate
-                            class="group relative px-6 py-4 md:px-8 md:py-5 rounded-full overflow-hidden border border-white/20 hover:border-orange-500/50 transition-all duration-300 active:scale-95 bg-white/5 hover:bg-white/10 backdrop-blur-sm">
-                            <span
-                                class="relative z-10 text-white font-black uppercase tracking-widest text-xs group-hover:text-orange-500 transition-colors duration-300 flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/></svg>
-                                3D Showcase
                             </span>
                         </a>
                     </div>
@@ -209,11 +199,12 @@
                                             <h4
                                                 class="text-lg lg:text-4xl leading-[1] font-bold mb-2 group-hover:text-orange-500 transition-colors">
                                                 {{ $project->title }}</h4>
-                                                <div class="lg:max-w-[50%]">
-                                                    <p class="text-sm text-white/60 line-clamp-2">{{ $project->description }}
-                                                    </p>
-                                                </div>
-                                            
+                                            <div class="lg:max-w-[50%]">
+                                                <p class="text-sm text-white/60 line-clamp-2">
+                                                    {{ $project->description }}
+                                                </p>
+                                            </div>
+
                                         </div>
                                     </a>
                                 </div>
@@ -226,7 +217,8 @@
                     <button
                         class="swiper-button-prev-custom hidden md:flex absolute top-1/2 -left-4 md:-left-20 -translate-y-1/2 z-10 w-12 h-12 rounded-full border border-white/10 bg-[#111113] items-center justify-center text-white/50 hover:text-orange-500 hover:border-orange-500 transition-all disabled:opacity-0 disabled:pointer-events-none">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
                     <button
@@ -1330,45 +1322,46 @@
     }
 
     #robot-tooltip {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none; /* Supaya tidak menghalangi klik ke robot */
-    background: rgba(22, 22, 24, 0.9);
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    z-index: 9999;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    white-space: nowrap;
-}
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        /* Supaya tidak menghalangi klik ke robot */
+        background: rgba(22, 22, 24, 0.9);
+        color: white;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        white-space: nowrap;
+    }
 
-.robot-tooltip-hidden {
-    opacity: 0;
-    transform: translate(-50%, -100%) scale(0.8);
-}
+    .robot-tooltip-hidden {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(0.8);
+    }
 
-.robot-tooltip-visible {
-    opacity: 1;
-    transform: translate(-50%, -120%) scale(1);
-}
+    .robot-tooltip-visible {
+        opacity: 1;
+        transform: translate(-50%, -120%) scale(1);
+    }
 
-.tooltip-arrow {
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0; 
-    height: 0; 
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid rgba(22, 22, 24, 0.9);
-}
+    .tooltip-arrow {
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid rgba(22, 22, 24, 0.9);
+    }
 </style>
 </div>
