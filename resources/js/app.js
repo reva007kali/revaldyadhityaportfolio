@@ -1,23 +1,41 @@
 import './bootstrap';
 import { init3DBackground } from './background-3d';
+import { initShowcase3D, cleanupShowcase3D } from './showcase-3d';
 
 document.addEventListener('DOMContentLoaded', () => {
-    init3DBackground();
+    // Determine which 3D scene to load based on the page content
+    handle3DScene();
 });
 
 document.addEventListener('livewire:navigated', () => {
-    // Check if the container exists and isn't already populated
-    const container = document.getElementById('canvas-container');
-    
-    // If container exists but has no canvas, re-init
-    // If container doesn't exist (navigated to a page without it), cleanup
-    if (container) {
-        if (!container.querySelector('canvas')) {
+    handle3DScene();
+});
+
+function handle3DScene() {
+    const showcaseCanvas = document.getElementById('showcase-canvas');
+    const heroCanvas = document.getElementById('canvas-container');
+
+    // 1. Showcase Page Logic
+    if (showcaseCanvas) {
+        // Cleanup background if it exists (though it shouldn't be on this page)
+        if (window.cleanup3D) window.cleanup3D();
+        
+        // Initialize Showcase
+        initShowcase3D();
+    } 
+    // 2. Default/Home Page Logic
+    else if (heroCanvas) {
+        // Cleanup showcase if it was running
+        cleanupShowcase3D();
+
+        // Initialize Background if not already running
+        if (!heroCanvas.querySelector('canvas')) {
             init3DBackground();
         }
-    } else {
-        if (window.cleanup3D) {
-            window.cleanup3D();
-        }
+    } 
+    // 3. Other Pages (Cleanup all)
+    else {
+        if (window.cleanup3D) window.cleanup3D();
+        cleanupShowcase3D();
     }
-});
+}

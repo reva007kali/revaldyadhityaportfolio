@@ -27,7 +27,10 @@ use App\Livewire\Public\Works;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 
+use App\Livewire\Public\ThreeShowcase;
+
 Route::get('/', Home::class)->name('home');
+Route::get('/3d-showcase', ThreeShowcase::class)->name('showcase.3d');
 Route::get('/works', Works::class)->name('works');
 Route::get('/websites', Websites::class)->name('websites');
 Route::get('/archive', Archive::class)->name('archive');

@@ -93,16 +93,28 @@
                 {{-- Action Group --}}
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                     {{-- Main CTA --}}
-                    <a href="{{ $hero->cta_link ?? '#' }}"
-                        class="group relative px-10 py-5 rounded-full overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_20px_40px_-10px_rgba(255,107,0,0.3)] hover:shadow-[0_25px_50px_-10px_rgba(255,107,0,0.5)]">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:scale-110 transition-transform duration-500">
-                        </div>
-                        <span
-                            class="relative z-10 text-black font-black uppercase tracking-widest text-xs group-hover:tracking-[0.25em] transition-all duration-500">
-                            {{ $hero->cta_text ?? 'Start a Project' }}
-                        </span>
-                    </a>
+                    <div class="flex gap-4">
+                        <a href="{{ $hero->cta_link ?? '#' }}"
+                            class="group relative px-8 py-4 md:px-10 md:py-5 rounded-full overflow-hidden transition-all duration-300 active:scale-95 shadow-[0_20px_40px_-10px_rgba(255,107,0,0.3)] hover:shadow-[0_25px_50px_-10px_rgba(255,107,0,0.5)]">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-400 group-hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <span
+                                class="relative z-10 text-black font-black uppercase tracking-widest text-xs group-hover:tracking-[0.25em] transition-all duration-500">
+                                {{ $hero->cta_text ?? 'Start a Project' }}
+                            </span>
+                        </a>
+
+                        {{-- 3D Showcase CTA --}}
+                        <a href="{{ route('showcase.3d') }}" wire:navigate
+                            class="group relative px-6 py-4 md:px-8 md:py-5 rounded-full overflow-hidden border border-white/20 hover:border-orange-500/50 transition-all duration-300 active:scale-95 bg-white/5 hover:bg-white/10 backdrop-blur-sm">
+                            <span
+                                class="relative z-10 text-white font-black uppercase tracking-widest text-xs group-hover:text-orange-500 transition-colors duration-300 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/></svg>
+                                3D Showcase
+                            </span>
+                        </a>
+                    </div>
                     {{-- Social Icons: Refined --}}
                     <div class="flex items-center gap-5 pl-2 sm:border-l sm:border-white/10 sm:pl-8">
                         @foreach ($social_links as $link)
