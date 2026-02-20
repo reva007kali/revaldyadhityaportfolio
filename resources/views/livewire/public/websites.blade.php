@@ -113,6 +113,11 @@
             @endforeach
         </div>
 
+        <!-- 4. Add the pagination links -->
+    <div class="mt-4">
+        {{ $websites->links() }}
+    </div>
+
         @if($websites->isEmpty())
             <div class="text-center py-20 border border-dashed border-white/10 rounded-3xl">
                 <p class="text-white/30 text-lg">No websites available yet.</p>

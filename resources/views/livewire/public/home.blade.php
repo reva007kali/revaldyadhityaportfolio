@@ -29,6 +29,12 @@
     {{-- 3D Background Canvas --}}
     <div id="canvas-container" class="fixed inset-0 z-[20] pointer-events-none md:block hidden"></div>
 
+    <!-- Tooltip Element -->
+<div id="robot-tooltip" class="robot-tooltip-hidden">
+    Chat with AI
+    <div class="tooltip-arrow"></div>
+</div>
+
     <!-- ================= HERO ================= -->
     <section id="home" class="relative min-h-screen flex items-end md:items-center overflow-hidden">
 
@@ -1310,5 +1316,47 @@
     .swiper-pagination-bullet-active {
         background: rgb(249, 115, 22);
     }
+
+    #robot-tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none; /* Supaya tidak menghalangi klik ke robot */
+    background: rgba(22, 22, 24, 0.9);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    z-index: 9999;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+.robot-tooltip-hidden {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.8);
+}
+
+.robot-tooltip-visible {
+    opacity: 1;
+    transform: translate(-50%, -120%) scale(1);
+}
+
+.tooltip-arrow {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(22, 22, 24, 0.9);
+}
 </style>
 </div>
