@@ -40,7 +40,7 @@
 
         {{-- Hero Background Image logic preserved --}}
         <div class="absolute inset-0 overflow-hidden">
-            <img src="{{ asset('storage/' . ($hero->image ?? 'default.jpg')) }}" alt="Profile"
+            <img src="{{ asset('storage/' . ($hero->image ?? 'default.jpg')) }}" alt="Profile" 
                 class="hero-img w-full h-full object-cover object-[80%_center] md:object-center transition-transform duration-700">
 
             {{-- Layered Overlays for Depth --}}
@@ -217,8 +217,7 @@
                     <button
                         class="swiper-button-prev-custom hidden md:flex absolute top-1/2 -left-4 md:-left-20 -translate-y-1/2 z-10 w-12 h-12 rounded-full border border-white/10 bg-[#111113] items-center justify-center text-white/50 hover:text-orange-500 hover:border-orange-500 transition-all disabled:opacity-0 disabled:pointer-events-none">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 19l-7-7 7-7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
                     <button
