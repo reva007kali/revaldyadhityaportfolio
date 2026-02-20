@@ -1,30 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Livewire\Public\Home;
-use App\Livewire\Public\Works;
-use App\Livewire\Public\Archive;
-use App\Livewire\Public\About;
-use App\Livewire\Public\PrivacyPolicy;
-use App\Livewire\Public\TermsOfService;
-use App\Livewire\Public\ProjectDetail;
-use App\Livewire\Public\ServiceDetail;
-use App\Livewire\Admin\Services\Index as ServicesIndex;
-use App\Livewire\Admin\Projects\Index as ProjectsIndex;
+use App\Livewire\Admin\About as AboutSettings;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Features\Index as FeaturesIndex;
 use App\Livewire\Admin\Footer as FooterSettings;
 use App\Livewire\Admin\Hero as HeroSettings;
-use App\Livewire\Admin\About as AboutSettings;
-use App\Livewire\Admin\Features\Index as FeaturesIndex;
-use App\Livewire\Admin\Pricing\Index as PricingIndex;
-use App\Livewire\Admin\Messages\Index as MessagesIndex;
-use App\Livewire\Admin\Testimonials\Index as TestimonialsIndex;
-use App\Livewire\Admin\SocialLinks\Index as SocialLinksIndex;
-use App\Livewire\Admin\Navigation\Index as NavigationIndex;
-use App\Livewire\Admin\Websites\Index as WebsitesIndex;
 use App\Livewire\Admin\Leads\Index as LeadsIndex;
-use App\Livewire\Admin\Dashboard;
-
+use App\Livewire\Admin\Messages\Index as MessagesIndex;
+use App\Livewire\Admin\Navigation\Index as NavigationIndex;
+use App\Livewire\Admin\Pricing\Index as PricingIndex;
+use App\Livewire\Admin\Projects\Index as ProjectsIndex;
+use App\Livewire\Admin\Services\Index as ServicesIndex;
+use App\Livewire\Admin\SocialLinks\Index as SocialLinksIndex;
+use App\Livewire\Admin\Testimonials\Index as TestimonialsIndex;
+use App\Livewire\Admin\Websites\Index as WebsitesIndex;
+use App\Livewire\Public\About;
+use App\Livewire\Public\Archive;
+use App\Livewire\Public\Home;
+use App\Livewire\Public\PrivacyPolicy;
+use App\Livewire\Public\ProjectDetail;
+use App\Livewire\Public\ServiceDetail;
+use App\Livewire\Public\TermsOfService;
 use App\Livewire\Public\Websites;
+use App\Livewire\Public\Works;
+
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', Home::class)->name('home');
 Route::get('/works', Works::class)->name('works');
@@ -35,6 +36,10 @@ Route::get('/services/{slug}', ServiceDetail::class)->name('services.show');
 Route::get('/about', About::class)->name('about');
 Route::get('/privacy-policy', PrivacyPolicy::class)->name('privacy-policy');
 Route::get('/terms-of-service', TermsOfService::class)->name('terms-of-service');
+
+Route::get('/redis-check', function () {
+    return Redis::connection()->ping();
+});
 
 
 Route::get('dashboard', Dashboard::class)
