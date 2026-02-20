@@ -17,7 +17,7 @@ class ChatBot extends Component
     public $isOpen = false;
     public $userInput = '';
     public $messages = [];
-    public $maxHistory = 12;
+    public $maxHistory = 15; // Sedikit lebih panjang untuk konteks yang lebih baik
 
     public function mount()
     {
@@ -34,11 +34,11 @@ class ChatBot extends Component
                 'type' => 'function',
                 'function' => [
                     'name' => 'get_portfolio',
-                    'description' => 'Cari project yang pernah dikerjakan Revaldy.',
+                    'description' => 'Cari project yang pernah dikerjakan Revaldy untuk meyakinkan user.',
                     'parameters' => [
                         'type' => 'object',
                         'properties' => [
-                            'keyword' => ['type' => 'string']
+                            'keyword' => ['type' => 'string', 'description' => 'Contoh: landing page, sekolah, fintech']
                         ]
                     ]
                 ]
@@ -47,7 +47,7 @@ class ChatBot extends Component
                 'type' => 'function',
                 'function' => [
                     'name' => 'get_website_examples',
-                    'description' => 'Cari contoh website dari katalog berdasarkan tag atau warna.',
+                    'description' => 'Cari contoh website dari katalog berdasarkan tag atau warna (seperti pink, dark, clean).',
                     'parameters' => [
                         'type' => 'object',
                         'properties' => [
@@ -61,11 +61,11 @@ class ChatBot extends Component
                 'type' => 'function',
                 'function' => [
                     'name' => 'get_pricing_and_estimate',
-                    'description' => 'Ambil data harga dan estimasi.',
+                    'description' => 'Ambil data harga untuk memberikan estimasi kepada user.',
                     'parameters' => [
                         'type' => 'object',
                         'properties' => [
-                            'type' => ['type' => 'string']
+                            'type' => ['type' => 'string', 'description' => 'Tipe website']
                         ]
                     ]
                 ]
@@ -74,23 +74,23 @@ class ChatBot extends Component
                 'type' => 'function',
                 'function' => [
                     'name' => 'capture_lead',
-                    'description' => 'Simpan data jika user serius ingin order atau tanya harga detail.',
+                    'description' => 'WAJIB digunakan jika user serius ingin order, tanya harga detail, atau memberikan nomor kontak.',
                     'parameters' => [
                         'type' => 'object',
                         'properties' => [
-                            'name' => ['type' => 'string'],
-                            'contact' => ['type' => 'string'],
-                            'description' => ['type' => 'string'],
-                            'budget' => ['type' => 'string']
+                            'name' => ['type' => 'string', 'description' => 'Nama user'],
+                            'contact' => ['type' => 'string', 'description' => 'Nomor WhatsApp atau email user'],
+                            'description' => ['type' => 'string', 'description' => 'Ringkasan keinginan user'],
+                            'budget' => ['type' => 'string', 'description' => 'Budget user']
                         ],
-                        'required' => ['description']
+                        'required' => ['description', 'contact']
                     ]
                 ]
             ]
         ];
     }
 
-    // HANDLERS
+    // HANDLERS (LOGIC)
     private function handleGetWebsiteExamples($tag = null, $color = null) {
         $q = Website::query();
         if ($tag) $q->where('tags', 'like', "%$tag%")->orWhere('description', 'like', "%$tag%");
@@ -104,23 +104,25 @@ class ChatBot extends Component
     }
 
     private function handleGetPricing($type) {
-        return "Daftar Harga: " . PricingPlan::all()->toJson();
+        return "Daftar Paket Harga Revaldy: " . PricingPlan::all()->toJson();
     }
 
     private function handleCaptureLead($data) {
         try {
+            // Sesuaikan mapping dengan kolom di migration kamu
             $lead = Lead::create([
-                'name' => $data['name'] ?? 'Guest',
-                'contact' => $data['contact'] ?? 'Unknown',
-                'project_type' => 'AI Inquiry',
-                'budget_range' => $data['budget'] ?? 'TBD',
-                'project_description' => $data['description'],
-                'status' => 'new'
+                'name'                => $data['name'] ?? 'Guest',
+                'contact'             => $data['contact'] ?? 'Unknown',
+                'project_type'        => 'AI Inquiry',
+                'budget_range'        => $data['budget'] ?? 'TBD',
+                'project_description' => $data['description'] ?? 'No description provided',
+                'status'              => 'new',
+                'ai_notes'            => 'Captured automatically by Reva AI Assistant'
             ]);
-            return "SUCCESS: Lead tersimpan ID #{$lead->id}.";
+            return "SUCCESS: Lead berhasil disimpan ke database Revaldy dengan ID #" . $lead->id;
         } catch (\Exception $e) {
-            Log::error("Capture Lead Error: " . $e->getMessage());
-            return "ERROR: Gagal menyimpan data.";
+            Log::error("Capture Lead Database Error: " . $e->getMessage());
+            return "ERROR: Gagal simpan ke database. Pastikan tidak ada kolom timestamps.";
         }
     }
 
@@ -132,15 +134,27 @@ class ChatBot extends Component
         $this->processAI();
     }
 
-    protected function processAI()
+    protected function processAI($retryCount = 0)
     {
+        // Safety break untuk mencegah loop tak terbatas
+        if ($retryCount > 3) {
+            $this->messages[] = ['role' => 'assistant', 'content' => 'Aku sudah catat detailnya, tapi sistem perangkum lagi sibuk. Langsung WA Reva aja ya di 082260894009!'];
+            return;
+        }
+
         try {
             $about = AboutSection::first();
-            $systemPrompt = "Anda adalah AI Sales Consultant Revaldy Adhitya. Gunakan bahasa gaul/kekinian yang sopan (pake 'aku-kamu' atau 'gue-lo' jika dirasa cocok dengan tone user). 
-            Identitas Reva: " . ($about->description ?? 'Web Developer Expert') . ". WA: 082260894009.
-            Jika user serius (tanya harga, mau buat web), WAJIB simpan data ke capture_lead.";
+            $systemPrompt = "Anda adalah AI Sales Consultant Revaldy Adhitya (Web Developer).
+            Gunakan bahasa gaul/kekinian yang sopan (pake 'aku-kamu'). 
+            Identitas Reva: " . ($about->description ?? 'Expert Web Developer') . ". 
+            WA: 082260894009.
+            
+            Jika user (seperti Audrey) sudah memberikan nomor kontak dan detail budget, 
+            panggil fungsi capture_lead SEKARANG JUGA untuk mengamankan data.";
 
+            // Kirim ke OpenAI dengan Timeout lebih lama
             $response = Http::withToken(config('services.openai.key'))
+                ->timeout(120) 
                 ->post('https://api.openai.com/v1/chat/completions', [
                     'model' => 'gpt-4o-mini',
                     'messages' => array_merge([['role' => 'system', 'content' => $systemPrompt]], array_slice($this->messages, -$this->maxHistory)),
@@ -148,17 +162,24 @@ class ChatBot extends Component
                     'tool_choice' => 'auto'
                 ]);
 
+            if ($response->failed()) {
+                Log::error("OpenAI API Error: " . $response->body());
+                throw new \Exception("API Timeout or Error");
+            }
+
             $res = $response->json();
-            if (!isset($res['choices'][0]['message'])) throw new \Exception("API Error");
+            $aiMessage = $res['choices'][0]['message'] ?? null;
 
-            $aiMessage = $res['choices'][0]['message'];
+            if (!$aiMessage) throw new \Exception("Empty AI Response");
 
-            // Cek Tool Call
+            // LOGIC TOOL CALLING
             if (isset($aiMessage['tool_calls'])) {
-                $this->messages[] = $aiMessage;
+                $this->messages[] = $aiMessage; // Masukkan instruksi tool ke history
+
                 foreach ($aiMessage['tool_calls'] as $tool) {
                     $name = $tool['function']['name'];
                     $args = json_decode($tool['function']['arguments'], true);
+                    
                     $output = match($name) {
                         'get_website_examples' => $this->handleGetWebsiteExamples($args['tag'] ?? null, $args['color'] ?? null),
                         'get_portfolio' => $this->handleGetPortfolio($args['keyword'] ?? null),
@@ -166,18 +187,32 @@ class ChatBot extends Component
                         'capture_lead' => $this->handleCaptureLead($args),
                         default => 'Function not found'
                     };
-                    $this->messages[] = ['tool_call_id' => $tool['id'], 'role' => 'tool', 'name' => $name, 'content' => $output];
+
+                    $this->messages[] = [
+                        'tool_call_id' => $tool['id'],
+                        'role' => 'tool',
+                        'name' => $name,
+                        'content' => $output
+                    ];
                 }
-                return $this->processAI();
+                
+                // Panggil kembali AI untuk merespon hasil fungsi (REKURSIF)
+                return $this->processAI($retryCount + 1);
             }
 
+            // SIMPAN JAWABAN TEKS BIASA
             if (isset($aiMessage['content']) && $aiMessage['content'] !== null) {
                 $this->messages[] = ['role' => 'assistant', 'content' => $aiMessage['content']];
             }
+
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            $this->messages[] = ['role' => 'assistant', 'content' => 'Aduh sorry banget, koneksi lagi drop. Chat Reva di WA aja ya!'];
+            Log::error("ChatBot Fatal Error: " . $e->getMessage());
+            $this->messages[] = [
+                'role' => 'assistant', 
+                'content' => 'Aduh sorry Audrey, koneksi otak AI-ku lagi drop. Chat Reva langsung di WA 082260894009 aja ya, dia fast respon kok! 😊'
+            ];
         }
+
         $this->dispatch('scroll-to-bottom');
     }
 
