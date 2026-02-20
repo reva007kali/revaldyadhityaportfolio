@@ -4,136 +4,187 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-// Import semua model
+use Illuminate\Support\Facades\Log;
 use App\Models\AboutSection;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\PricingPlan;
+use App\Models\Lead;
+use App\Models\Website;
 
 class ChatBot extends Component
 {
     public $isOpen = false;
     public $userInput = '';
     public $messages = [];
+    public $maxHistory = 12;
 
-    /**
-     * Inisialisasi pesan sambutan saat komponen dimuat
-     */
     public function mount()
     {
         $this->messages[] = [
             'role' => 'assistant', 
-            'content' => 'Halo! Saya asisten virtual Revaldy. Ada yang bisa saya bantu terkait project, layanan, atau harga jasa saya?'
+            'content' => 'Halo! Saya asisten AI Revaldy. Ada yang bisa saya bantu mengenai pembuatan website, katalog contoh, atau estimasi biaya?'
         ];
     }
 
-    /**
-     * Membuka dan menutup jendela chat
-     */
-    public function toggleChat()
+    private function getTools()
     {
-        $this->isOpen = !$this->isOpen;
-        
-        // Dispatch event untuk memastikan scroll ke bawah saat dibuka
-        if ($this->isOpen) {
-            $this->dispatch('scroll-to-bottom');
+        return [
+            [
+                'type' => 'function',
+                'function' => [
+                    'name' => 'get_portfolio',
+                    'description' => 'Cari project yang pernah dikerjakan Revaldy.',
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'keyword' => ['type' => 'string']
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'type' => 'function',
+                'function' => [
+                    'name' => 'get_website_examples',
+                    'description' => 'Cari contoh website dari katalog berdasarkan tag atau warna.',
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'tag' => ['type' => 'string'],
+                            'color' => ['type' => 'string']
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'type' => 'function',
+                'function' => [
+                    'name' => 'get_pricing_and_estimate',
+                    'description' => 'Ambil data harga dan estimasi.',
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'type' => ['type' => 'string']
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'type' => 'function',
+                'function' => [
+                    'name' => 'capture_lead',
+                    'description' => 'Simpan data jika user serius ingin order atau tanya harga detail.',
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => ['type' => 'string'],
+                            'contact' => ['type' => 'string'],
+                            'description' => ['type' => 'string'],
+                            'budget' => ['type' => 'string']
+                        ],
+                        'required' => ['description']
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    // HANDLERS
+    private function handleGetWebsiteExamples($tag = null, $color = null) {
+        $q = Website::query();
+        if ($tag) $q->where('tags', 'like', "%$tag%")->orWhere('description', 'like', "%$tag%");
+        if ($color) $q->where('color', 'like', "%$color%");
+        return $q->limit(3)->get(['title', 'description', 'tags', 'color'])->toJson();
+    }
+
+    private function handleGetPortfolio($keyword = null) {
+        return Project::when($keyword, fn($q) => $q->where('title', 'like', "%$keyword%"))
+                ->limit(3)->get(['title', 'description'])->toJson();
+    }
+
+    private function handleGetPricing($type) {
+        return "Daftar Harga: " . PricingPlan::all()->toJson();
+    }
+
+    private function handleCaptureLead($data) {
+        try {
+            $lead = Lead::create([
+                'name' => $data['name'] ?? 'Guest',
+                'contact' => $data['contact'] ?? 'Unknown',
+                'project_type' => 'AI Inquiry',
+                'budget_range' => $data['budget'] ?? 'TBD',
+                'project_description' => $data['description'],
+                'status' => 'new'
+            ]);
+            return "SUCCESS: Lead tersimpan ID #{$lead->id}.";
+        } catch (\Exception $e) {
+            Log::error("Capture Lead Error: " . $e->getMessage());
+            return "ERROR: Gagal menyimpan data.";
         }
     }
 
-    /**
-     * Logika utama pengiriman pesan dan pengambilan data database
-     */
     public function sendMessage()
     {
         if (empty($this->userInput)) return;
-
-        $userQuestion = $this->userInput;
-        $this->messages[] = ['role' => 'user', 'content' => $userQuestion];
+        $this->messages[] = ['role' => 'user', 'content' => $this->userInput];
         $this->userInput = '';
+        $this->processAI();
+    }
 
-        // --- 1. AMBIL DATA DASAR (Selalu dikirim sebagai identitas) ---
-        $aboutMe = AboutSection::first();
-        $context = "IDENTITAS PEMILIK WEBSITE:\n";
-        $context .= "Nama: Revaldy Adhitya\n";
-        $context .= "WhatsApp atau telepon: [+6282260894009](https://wa.me/6282260894009)\n";
-        $context .= "email: le.revaldy@gmail.com\n";
-        $context .= "Tentang: " . ($aboutMe->description ?? 'Seorang Web Developer Professional') . "\n\n";
-
-        // --- 2. PENCARIAN DATA BERDASARKAN KATA KUNCI (Smart Context) ---
-        $inputLower = strtolower($userQuestion);
-
-        // Cari Data Project
-        if (Str::contains($inputLower, ['project', 'karya', 'portofolio', 'hasil', 'buat', 'bikin'])) {
-            $projects = Project::limit(5)->get();
-            $context .= "DAFTAR PROJECT/PORTOFOLIO:\n";
-            foreach ($projects as $p) {
-                $context .= "- {$p->title}: {$p->description}\n";
-            }
-            $context .= "\n";
-        }
-
-        // Cari Data Layanan
-        if (Str::contains($inputLower, ['layanan', 'service', 'jasa', 'bisa apa', 'keahlian'])) {
-            $services = Service::all();
-            $context .= "LAYANAN YANG TERSEDIA:\n";
-            foreach ($services as $s) {
-                $context .= "- {$s->title}: {$s->description}\n";
-            }
-            $context .= "\n";
-        }
-
-        // Cari Data Harga (Pricing)
-        if (Str::contains($inputLower, ['harga', 'biaya', 'price', 'paket', 'bayar', 'murah', 'mahal', 'pricing'])) {
-            $pricing = PricingPlan::all();
-            $context .= "DAFTAR HARGA DAN PAKET JASA:\n";
-            foreach ($pricing as $pr) {
-                // Menangani error Array to String conversion pada kolom features
-                $features = is_array($pr->features) ? implode(', ', $pr->features) : $pr->features;
-                
-                $context .= "- Paket {$pr->name}: Harga {$pr->price}. Fitur: {$features}. Info: {$pr->description}\n";
-            }
-            $context .= "\n";
-        }
-
-        // --- 3. KIRIM KE OPENAI VIA HTTP CLIENT ---
+    protected function processAI()
+    {
         try {
+            $about = AboutSection::first();
+            $systemPrompt = "Anda adalah AI Sales Consultant Revaldy Adhitya. Gunakan bahasa gaul/kekinian yang sopan (pake 'aku-kamu' atau 'gue-lo' jika dirasa cocok dengan tone user). 
+            Identitas Reva: " . ($about->description ?? 'Web Developer Expert') . ". WA: 082260894009.
+            Jika user serius (tanya harga, mau buat web), WAJIB simpan data ke capture_lead.";
+
             $response = Http::withToken(config('services.openai.key'))
-                ->timeout(60)
                 ->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-3.5-turbo',
-                    'messages' => array_merge([
-                        [
-                            'role' => 'system', 
-                            'content' => "Anda adalah asisten virtual Revaldy Adhitya (seorang Web Developer). 
-                            Tugas Anda adalah menjawab pertanyaan pengunjung website menggunakan data berikut:\n\n" . $context . "
-                            \nINSTRUKSI TAMBAHAN:
-                            1. Jawablah dengan ramah dan profesional.
-                            2. Gunakan bahasa Indonesia yang santai tapi sopan.
-                            3. Jika data yang ditanyakan tidak ada di teks di atas, sarankan user untuk menghubungi Reva langsung via WhatsApp atau Email.
-                            4. Jangan memberikan informasi palsu di luar data yang diberikan.
-                            5. berikan nomor telefon & email dengan format link agar bisa langsung di klik oleh user"
-                        ]
-                    ], $this->messages),
-                    'temperature' => 0.7,
+                    'model' => 'gpt-4o-mini',
+                    'messages' => array_merge([['role' => 'system', 'content' => $systemPrompt]], array_slice($this->messages, -$this->maxHistory)),
+                    'tools' => $this->getTools(),
+                    'tool_choice' => 'auto'
                 ]);
 
-            if ($response->successful()) {
-                $aiMessage = $response->json()['choices'][0]['message']['content'];
-                $this->messages[] = ['role' => 'assistant', 'content' => $aiMessage];
-            } else {
-                $this->messages[] = ['role' => 'assistant', 'content' => 'Maaf, saya mengalami kendala teknis saat menghubungi server AI.'];
+            $res = $response->json();
+            if (!isset($res['choices'][0]['message'])) throw new \Exception("API Error");
+
+            $aiMessage = $res['choices'][0]['message'];
+
+            // Cek Tool Call
+            if (isset($aiMessage['tool_calls'])) {
+                $this->messages[] = $aiMessage;
+                foreach ($aiMessage['tool_calls'] as $tool) {
+                    $name = $tool['function']['name'];
+                    $args = json_decode($tool['function']['arguments'], true);
+                    $output = match($name) {
+                        'get_website_examples' => $this->handleGetWebsiteExamples($args['tag'] ?? null, $args['color'] ?? null),
+                        'get_portfolio' => $this->handleGetPortfolio($args['keyword'] ?? null),
+                        'get_pricing_and_estimate' => $this->handleGetPricing($args['type'] ?? ''),
+                        'capture_lead' => $this->handleCaptureLead($args),
+                        default => 'Function not found'
+                    };
+                    $this->messages[] = ['tool_call_id' => $tool['id'], 'role' => 'tool', 'name' => $name, 'content' => $output];
+                }
+                return $this->processAI();
+            }
+
+            if (isset($aiMessage['content']) && $aiMessage['content'] !== null) {
+                $this->messages[] = ['role' => 'assistant', 'content' => $aiMessage['content']];
             }
         } catch (\Exception $e) {
-            $this->messages[] = ['role' => 'assistant', 'content' => 'Koneksi terputus. Silakan coba beberapa saat lagi.'];
+            Log::error($e->getMessage());
+            $this->messages[] = ['role' => 'assistant', 'content' => 'Aduh sorry banget, koneksi lagi drop. Chat Reva di WA aja ya!'];
         }
-
-        // Trigger scroll ke bawah di sisi frontend
         $this->dispatch('scroll-to-bottom');
     }
 
-    public function render()
-    {
-        return view('livewire.chat-bot');
+    public function toggleChat() {
+        $this->isOpen = !$this->isOpen;
+        if ($this->isOpen) $this->dispatch('scroll-to-bottom');
     }
+
+    public function render() { return view('livewire.chat-bot'); }
 }
