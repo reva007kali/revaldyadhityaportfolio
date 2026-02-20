@@ -27,10 +27,47 @@ class ChatBot extends Component
     public $maxHistory = 15; // Sedikit lebih panjang untuk konteks yang lebih baik
     public $sessionId;
 
+    // FORM STATES
+    public $showLeadForm = false;
+    public $leadForm = [
+        'name' => '',
+        'contact' => '',
+        'budget' => '',
+        'description' => '',
+    ];
+
     public function mount()
     {
         $this->sessionId = Session::getId();
         $this->loadChatHistory();
+    }
+
+    public function submitLeadForm()
+    {
+        $this->validate([
+            'leadForm.name' => 'required|string|min:2',
+            'leadForm.contact' => 'required|string|min:8',
+            'leadForm.description' => 'required|string|min:10',
+            'leadForm.budget' => 'required|string',
+        ]);
+
+        $result = $this->handleCaptureLead($this->leadForm);
+
+        $this->showLeadForm = false;
+        $this->messages[] = [
+            'role' => 'assistant',
+            'content' => 'Terima kasih! Datamu sudah aku simpan. Reva akan segera menghubungi kamu via WhatsApp/Email ya! 👌'
+        ];
+        $this->saveChatHistory();
+
+        // Reset form
+        $this->leadForm = ['name' => '', 'contact' => '', 'budget' => '', 'description' => ''];
+    }
+
+    public function triggerLeadForm()
+    {
+        $this->showLeadForm = true;
+        $this->dispatch('scroll-to-bottom');
     }
 
     private function loadChatHistory()
@@ -41,7 +78,7 @@ class ChatBot extends Component
             $this->messages = $chatSession->messages;
         } else {
             $this->messages[] = [
-                'role' => 'assistant', 
+                'role' => 'assistant',
                 'content' => 'Halo! Saya asisten AI Revaldy. Ada yang bisa saya bantu mengenai pembuatan website, katalog contoh, atau estimasi biaya?'
             ];
             $this->saveChatHistory();
@@ -84,6 +121,14 @@ class ChatBot extends Component
     private function handleCaptureLead($data)
     {
         try {
+            // Check if contact already exists recently (simple spam prevention)
+            $existing = Lead::where('contact', $data['contact'] ?? '')
+                ->where('created_at', '>=', now()->subMinutes(10))
+                ->first();
+
+            if ($existing)
+                return "DATA_ALREADY_EXISTS";
+
             // Sesuaikan mapping dengan kolom di migration kamu
             $lead = Lead::create([
                 'name' => $data['name'] ?? 'Guest',
@@ -92,7 +137,7 @@ class ChatBot extends Component
                 'budget_range' => $data['budget'] ?? 'TBD',
                 'project_description' => $data['description'] ?? 'No description provided',
                 'status' => 'new',
-                'ai_notes' => 'Captured automatically by Reva AI Assistant'
+                'ai_notes' => 'Captured via Chat Form'
             ]);
 
             // Send Email Notification
@@ -165,15 +210,28 @@ class ChatBot extends Component
             [
                 'type' => 'function',
                 'function' => [
-                    'name' => 'capture_lead',
-                    'description' => 'WAJIB digunakan jika user serius ingin order, tanya harga detail, atau memberikan nomor kontak.',
+                    'name' => 'trigger_lead_form',
+                    'description' => 'Tampilkan formulir pemesanan/konsultasi agar user bisa isi data sendiri dengan mudah. Gunakan ini jika user ingin order atau konsultasi.',
                     'parameters' => [
                         'type' => 'object',
                         'properties' => [
-                            'name' => ['type' => 'string', 'description' => 'Nama user'],
-                            'contact' => ['type' => 'string', 'description' => 'Nomor WhatsApp atau email user'],
-                            'description' => ['type' => 'string', 'description' => 'Ringkasan keinginan user'],
-                            'budget' => ['type' => 'string', 'description' => 'Budget user']
+                            'dummy' => ['type' => 'string', 'description' => 'Field dummy wajib ada karena OpenAI tidak suka object kosong.']
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'type' => 'function',
+                'function' => [
+                    'name' => 'capture_lead',
+                    'description' => 'DEPRECATED: Gunakan trigger_lead_form saja.',
+                    'parameters' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'name' => ['type' => 'string'],
+                            'contact' => ['type' => 'string'],
+                            'description' => ['type' => 'string'],
+                            'budget' => ['type' => 'string']
                         ],
                         'required' => ['description', 'contact']
                     ]
@@ -197,8 +255,11 @@ class ChatBot extends Component
             Identitas Reva: " . ($about->description ?? 'Expert Web Developer') . ". 
             WA: 082260894009.
             
-            Jika user sudah memberikan nomor kontak dan detail budget, 
-            panggil fungsi capture_lead SEKARANG JUGA untuk mengamankan data.";
+            Jika user tertarik memesan, ingin konsultasi serius, atau tanya harga detail:
+            JANGAN tanya data manual satu-satu.
+            PANGGIL fungsi 'trigger_lead_form' untuk menampilkan formulir ke user.
+            
+            Jika user sudah mengisi formulir sebelumnya dan ingin order lagi, panggil lagi formnya.";
 
             $apiKey = config('services.openai.key');
             if (empty($apiKey)) {
@@ -248,6 +309,7 @@ class ChatBot extends Component
                         'get_portfolio' => $this->handleGetPortfolio($args['keyword'] ?? null),
                         'get_pricing_and_estimate' => $this->handleGetPricing($args['type'] ?? ''),
                         'capture_lead' => $this->handleCaptureLead($args),
+                        'trigger_lead_form' => $this->triggerLeadForm() ?? 'Formulir ditampilkan.',
                         default => 'Function not found'
                     };
 
@@ -273,7 +335,7 @@ class ChatBot extends Component
         } catch (\Exception $e) {
             Log::error("ChatBot Fatal Error: " . $e->getMessage());
             $this->messages[] = [
-                'role' => 'assistant', 
+                'role' => 'assistant',
                 'content' => 'Aduh sorry, koneksi otak AI-ku lagi drop. Chat Reva langsung di WA 082260894009 aja ya, dia fast respon kok! 😊'
             ];
             $this->saveChatHistory(); // Save error message
