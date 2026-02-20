@@ -19,7 +19,7 @@
         </div>
 
         <h1 class="text-5xl md:text-8xl font-black tracking-tighter text-white mb-6 text-center leading-none">
-            Web <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">Gallery.</span>
+            Web <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Gallery.</span>
         </h1>
 
         <p class="text-lg md:text-xl text-white/40 text-center max-w-xl leading-relaxed mb-12">
