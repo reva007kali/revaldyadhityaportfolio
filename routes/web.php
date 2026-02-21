@@ -34,6 +34,7 @@ use App\Livewire\Public\ThreeShowcase;
 Route::get('/', Home::class)->name('home');
 Route::get('/3d-showcase', ThreeShowcase::class)->name('showcase.3d');
 Route::get('/works', Works::class)->name('works');
+Route::get('/gallery', Gallery::class)->name('gallery');
 Route::get('/websites', Websites::class)->name('websites');
 Route::get('/archive', Archive::class)->name('archive');
 Route::get('/works/{slug}', ProjectDetail::class)->name('works.show');
@@ -72,7 +73,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('websites', WebsitesIndex::class)->name('websites');
     Route::get('websites/create', App\Livewire\Admin\Websites\Create::class)->name('websites.create');
     Route::get('websites/{id}/edit', App\Livewire\Admin\Websites\Edit::class)->name('websites.edit');
-
+    Route::get('gallery', App\Livewire\Admin\Gallery\Index::class)->name('gallery');
+    
     Route::get('music', App\Livewire\Admin\Music\Index::class)->name('music.index');
     Route::get('music/create', App\Livewire\Admin\Music\Create::class)->name('music.create');
     Route::get('music/{music}/edit', App\Livewire\Admin\Music\Edit::class)->name('music.edit');
