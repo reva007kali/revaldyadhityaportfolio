@@ -6,39 +6,40 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 trait HandlesFileUploads
 {
-                    public function handleFileUpload($file, $path = 'uploads', $disk = 'public')
-                    {
-                                        if (!$file) {
-                                                            return null;
-                                        }
+    public function handleFileUpload($file, $path = 'uploads', $disk = 'public')
+    {
+        if (!$file) {
+            return null;
+        }
 
-                                        // Handle video files (no compression)
-                                        if ($this->isVideo($file)) {
-                                                            return $file->store($path, $disk);
-                                        }
+        // Handle video files (no compression)
+        if ($this->isVideo($file)) {
+            return $file->store($path, $disk);
+        }
 
-                                        // Handle image files (with compression)
-                                        if ($this->isImage($file)) {
-                                                            return $this->compressAndStoreImage($file, $path, $disk);
-                                        }
+        // Handle image files (with compression to WebP)
+        if ($this->isImage($file)) {
+            return $this->compressAndStoreImage($file, $path, $disk);
+        }
 
-                                        return null;
-                    }
+        return null;
+    }
 
-                    protected function isVideo($file)
-                    {
-                                        $mimeTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/webm'];
-                                        return in_array($file->getMimeType(), $mimeTypes);
-                    }
+    protected function isVideo($file)
+    {
+        $mimeTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/webm'];
+        return in_array($file->getMimeType(), $mimeTypes);
+    }
 
-                    protected function isImage($file)
-                    {
-                                        $mimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
-                                        return in_array($file->getMimeType(), $mimeTypes);
-                    }
+    protected function isImage($file)
+    {
+        $mimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+        return in_array($file->getMimeType(), $mimeTypes);
+    }
 
     protected function compressAndStoreImage($file, $path, $disk)
     {
@@ -61,11 +62,11 @@ trait HandlesFileUploads
                 $image->scale(width: 1920);
             }
 
-            // Generate unique filename
-            $filename = $file->hashName();
+            // Generate unique filename with .webp
+            $filename = Str::uuid()->toString() . '.webp';
             $fullPath = $path . '/' . $filename;
 
-            // Encode to WebP with 80% quality for better compression
+            // Encode to WebP with 80% quality
             $encoded = $image->toWebp(quality: 80);
 
             // Store the compressed image
