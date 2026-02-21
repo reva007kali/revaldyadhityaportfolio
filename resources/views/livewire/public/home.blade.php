@@ -55,7 +55,7 @@
 
         <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-6 pb-10 md:pb-12 md:pt-20">
 
-            {{-- Glass Content Box --}}
+         {{-- Glass Content Box --}}
             <div class="max-w-3xl p-2 md:p-0">
 
                 {{-- Status Badge --}}
