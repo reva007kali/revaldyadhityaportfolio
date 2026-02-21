@@ -93,21 +93,31 @@
                     {{-- Files --}}
                     @foreach($files as $file)
                         @php
-                            $fileName = basename($file);
+                            $fileName = $file['name'];
+                            $filePath = $file['path'];
+                            $fileSize = $file['size'];
+                            $fileDate = $file['last_modified'];
                             $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                             $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
                         @endphp
                         <div class="group relative p-2 bg-gray-50 dark:bg-gray-800 rounded-lg flex flex-col items-center hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                            <div class="w-full aspect-square mb-2 overflow-hidden rounded-md bg-gray-200 dark:bg-gray-900 flex items-center justify-center">
+                            <div class="w-full aspect-square mb-2 overflow-hidden rounded-md bg-gray-200 dark:bg-gray-900 flex items-center justify-center relative">
                                 @if($isImage)
-                                    <img src="{{ Storage::url($file) }}" alt="{{ $fileName }}" class="object-cover w-full h-full cursor-pointer" onclick="window.open('{{ Storage::url($file) }}', '_blank')">
+                                    <img src="{{ Storage::url($filePath) }}" alt="{{ $fileName }}" class="object-cover w-full h-full cursor-pointer" onclick="window.open('{{ Storage::url($filePath) }}', '_blank')">
                                 @else
                                     <span class="text-xs uppercase font-bold text-gray-500">{{ $ext }}</span>
                                 @endif
+                                
+                                <div class="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] p-1 opacity-0 group-hover:opacity-100 transition text-center">
+                                    {{ $fileSize }}
+                                </div>
                             </div>
-                            <span class="text-xs text-center truncate w-full text-gray-600 dark:text-gray-300" title="{{ $fileName }}">{{ $fileName }}</span>
+                            <div class="w-full text-center">
+                                <span class="text-xs font-medium truncate block w-full text-gray-700 dark:text-gray-200" title="{{ $fileName }}">{{ $fileName }}</span>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400 block">{{ $fileDate }}</span>
+                            </div>
                             
-                            <button wire:click="deleteFile('{{ $file }}')" wire:confirm="Are you sure you want to delete this file?" class="absolute top-2 right-2 bg-white/80 dark:bg-black/80 rounded-full p-1 text-red-500 opacity-0 group-hover:opacity-100 transition shadow-sm">
+                            <button wire:click="deleteFile('{{ $filePath }}')" wire:confirm="Are you sure you want to delete this file?" class="absolute top-2 right-2 bg-white/80 dark:bg-black/80 rounded-full p-1 text-red-500 opacity-0 group-hover:opacity-100 transition shadow-sm z-10">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>

@@ -27,8 +27,27 @@ class Index extends Component
     public function refreshFiles()
     {
         $this->directories = Storage::disk('public')->directories($this->currentPath);
-        $this->files = Storage::disk('public')->files($this->currentPath);
+
+        $files = Storage::disk('public')->files($this->currentPath);
+        $this->files = array_map(function ($file) {
+            return [
+                'path' => $file,
+                'name' => basename($file),
+                'size' => $this->formatSize(Storage::disk('public')->size($file)),
+                'last_modified' => date('Y-m-d H:i:s', Storage::disk('public')->lastModified($file)),
+            ];
+        }, $files);
+
         $this->generateBreadcrumbs();
+    }
+
+    private function formatSize($bytes)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        for ($i = 0; $bytes > 1024; $i++) {
+            $bytes /= 1024;
+        }
+        return round($bytes, 2) . ' ' . $units[$i];
     }
 
     public function navigate($path)
