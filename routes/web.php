@@ -23,6 +23,8 @@ use App\Livewire\Public\ServiceDetail;
 use App\Livewire\Public\TermsOfService;
 use App\Livewire\Public\Websites;
 use App\Livewire\Public\Works;
+use App\Livewire\Public\Gallery;
+use App\Http\Controllers\SitemapController;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
