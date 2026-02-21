@@ -33,12 +33,13 @@ class Create extends Component
             'content' => 'nullable|string',
             'features' => 'nullable|string', // Comma separated
             'turnaround_time' => 'nullable|string|max:255',
-            'icon' => 'nullable|image|max:5120',
+            'icon' => 'nullable|image|max:5120', // allow images
         ]);
 
         $iconPath = null;
         if ($this->icon) {
-            $iconPath = $this->icon->store('services', 'public');
+            // ✅ Compress image to WebP using trait
+            $iconPath = $this->handleFileUpload($this->icon, 'services', 'public');
         }
 
         // Convert comma-separated string to array
@@ -56,7 +57,7 @@ class Create extends Component
         session()->flash('message', 'Service created successfully.');
         return redirect()->route('admin.services');
     }
-    
+
     public function cancel()
     {
         return redirect()->route('admin.services');
