@@ -7,6 +7,20 @@ import { initShowcase3D, cleanupShowcase3D } from './showcase-3d';
 let scroll;
 
 function initScroll() {
+    // Disable Locomotive Scroll for Admin/Dashboard pages
+    if (window.location.pathname.startsWith('/admin') || 
+        window.location.pathname.startsWith('/dashboard') || 
+        window.location.pathname.startsWith('/profile')) {
+        
+        if (scroll) {
+            scroll.destroy();
+            scroll = undefined;
+        }
+        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = 'auto';
+        return;
+    }
+
     if (scroll) {
         scroll.destroy();
     }
