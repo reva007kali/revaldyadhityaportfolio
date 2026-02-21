@@ -3,9 +3,10 @@
 namespace App\Livewire\Admin\Music;
 
 use App\Models\Music;
-use Livewire\Component;
 use App\Traits\HandlesFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
