@@ -6,11 +6,12 @@ use App\Models\Feature;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
+use App\Traits\HandlesFileUploads;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HandlesFileUploads;
 
     public $title;
     public $description;
@@ -36,7 +37,7 @@ class Index extends Component
 
         $iconPath = null;
         if ($this->icon) {
-            $iconPath = $this->icon->store('features', 'public');
+            $iconPath = $this->handleFileUpload($this->icon, 'features', 'public');
         }
 
         Feature::create([
@@ -76,7 +77,7 @@ class Index extends Component
         ];
 
         if ($this->icon) {
-            $data['icon'] = $this->icon->store('features', 'public');
+            $data['icon'] = $this->handleFileUpload($this->icon, 'features', 'public');
         }
 
         $feature->update($data);

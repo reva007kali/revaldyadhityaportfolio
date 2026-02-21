@@ -4,12 +4,12 @@ namespace App\Livewire\Admin\Music;
 
 use App\Models\Music;
 use Livewire\Component;
-use Livewire\WithFileUploads;
+use App\Traits\HandlesFileUploads;
 use Illuminate\Support\Facades\Storage;
 
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HandlesFileUploads;
 
     public $music;
     public $title;
@@ -54,7 +54,7 @@ class Edit extends Component
             if ($this->music->audio_path) {
                 Storage::disk('public')->delete($this->music->audio_path);
             }
-            $data['audio_path'] = $this->audio_file->store('music', 'public');
+            $data['audio_path'] = $this->handleFileUpload($this->audio_file, 'music', 'public');
         }
 
         if ($this->cover_image) {
@@ -62,7 +62,7 @@ class Edit extends Component
             if ($this->music->cover_path) {
                 Storage::disk('public')->delete($this->music->cover_path);
             }
-            $data['cover_path'] = $this->cover_image->store('music/covers', 'public');
+            $data['cover_path'] = $this->handleFileUpload($this->cover_image, 'music/covers', 'public');
         }
 
         $this->music->update($data);

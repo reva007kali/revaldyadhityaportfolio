@@ -6,11 +6,12 @@ use App\Models\Testimonial;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
+use App\Traits\HandlesFileUploads;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HandlesFileUploads;
 
     public $name;
     public $position;
@@ -38,7 +39,7 @@ class Index extends Component
 
         $avatarPath = null;
         if ($this->avatar) {
-            $avatarPath = $this->avatar->store('testimonials', 'public');
+            $avatarPath = $this->handleFileUpload($this->avatar, 'testimonials', 'public');
         }
 
         Testimonial::create([
@@ -83,7 +84,7 @@ class Index extends Component
         ];
 
         if ($this->avatar) {
-            $data['avatar'] = $this->avatar->store('testimonials', 'public');
+            $data['avatar'] = $this->handleFileUpload($this->avatar, 'testimonials', 'public');
         }
 
         $testimonial->update($data);

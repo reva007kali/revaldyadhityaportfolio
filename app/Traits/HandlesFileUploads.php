@@ -16,17 +16,13 @@ trait HandlesFileUploads
             return null;
         }
 
-        // Handle video files (no compression)
-        if ($this->isVideo($file)) {
-            return $file->store($path, $disk);
-        }
-
         // Handle image files (with compression to WebP)
         if ($this->isImage($file)) {
             return $this->compressAndStoreImage($file, $path, $disk);
         }
 
-        return null;
+        // Handle all other files (video, audio, docs) without compression
+        return $file->store($path, $disk);
     }
 
     protected function isVideo($file)

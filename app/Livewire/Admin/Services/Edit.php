@@ -61,7 +61,7 @@ class Edit extends Component
         ];
 
         if ($this->icon) {
-            $data['icon'] = $this->icon->store('services', 'public');
+            $data['icon'] = $this->handleFileUpload($this->icon, 'services', 'public');
         }
 
         $service->update($data);

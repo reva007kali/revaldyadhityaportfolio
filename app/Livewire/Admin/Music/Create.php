@@ -5,10 +5,11 @@ namespace App\Livewire\Admin\Music;
 use App\Models\Music;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use App\Traits\HandlesFileUploads;
 
 class Create extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HandlesFileUploads;
 
     public $title;
     public $audio_file;
@@ -28,8 +29,8 @@ class Create extends Component
     {
         $this->validate();
 
-        $audioPath = $this->audio_file->store('music', 'public');
-        $coverPath = $this->cover_image ? $this->cover_image->store('music/covers', 'public') : null;
+        $audioPath = $this->handleFileUpload($this->audio_file, 'music', 'public');
+        $coverPath = $this->cover_image ? $this->handleFileUpload($this->cover_image, 'music/covers', 'public') : null;
 
         Music::create([
             'user_id' => auth()->id(),

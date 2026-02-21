@@ -43,7 +43,7 @@ class Create extends Component
 
         $imagePath = null;
         if ($this->image) {
-            $imagePath = $this->image->store('websites', 'public');
+            $imagePath = $this->handleFileUpload($this->image, 'websites', 'public');
         }
 
         $tagsArray = $this->tags ? array_map('trim', explode(',', $this->tags)) : null;

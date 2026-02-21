@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Livewire\Attributes\Layout;
 use App\Traits\WithAIWebsiteGenerator;
+use App\Traits\HandlesFileUploads;
 
 #[Layout('layouts.app')]
 class Edit extends Component
 {
-    use WithFileUploads, WithAIWebsiteGenerator;
+    use WithFileUploads, WithAIWebsiteGenerator, HandlesFileUploads;
 
     public $title;
     public $slug;
@@ -73,7 +74,7 @@ class Edit extends Component
             if ($website->image) {
                 Storage::disk('public')->delete($website->image);
             }
-            $data['image'] = $this->image->store('websites', 'public');
+            $data['image'] = $this->handleFileUpload($this->image, 'websites', 'public');
         }
 
         $website->update($data);

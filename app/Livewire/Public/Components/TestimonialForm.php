@@ -5,10 +5,11 @@ namespace App\Livewire\Public\Components;
 use Livewire\Component;
 use App\Models\Testimonial;
 use Livewire\WithFileUploads;
+use App\Traits\HandlesFileUploads;
 
 class TestimonialForm extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HandlesFileUploads;
 
     public $name;
     public $position;
@@ -28,7 +29,7 @@ class TestimonialForm extends Component
 
         $avatarPath = null;
         if ($this->avatar) {
-            $avatarPath = $this->avatar->store('testimonials', 'public');
+            $avatarPath = $this->handleFileUpload($this->avatar, 'testimonials', 'public');
         }
 
         Testimonial::create([

@@ -6,11 +6,12 @@ use App\Models\PricingPlan;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
+use App\Traits\HandlesFileUploads;
 
 #[Layout('layouts.app')]
 class Index extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HandlesFileUploads;
 
     public $name;
     public $price;
@@ -46,7 +47,7 @@ class Index extends Component
 
         $imagePath = null;
         if ($this->image) {
-            $imagePath = $this->image->store('pricing', 'public');
+            $imagePath = $this->handleFileUpload($this->image, 'pricing', 'public');
         }
 
         PricingPlan::create([
@@ -94,7 +95,7 @@ class Index extends Component
 
         $imagePath = $plan->image;
         if ($this->image) {
-            $imagePath = $this->image->store('pricing', 'public');
+            $imagePath = $this->handleFileUpload($this->image, 'pricing', 'public');
         }
 
         $plan->update([
