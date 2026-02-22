@@ -25,18 +25,18 @@
         </div>
 
         {{-- Gallery Grid --}}
-        <div class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+        <div class="flex flex-wrap gap-2 md:gap-4 justify-center">
             @foreach($media as $item)
-                <div class="break-inside-avoid relative group rounded-2xl overflow-hidden bg-[#161618] border border-white/5 hover:border-orange-500/50 transition-all duration-500">
+                <div class="relative group h-32 md:h-48 lg:h-56 flex-shrink-0 rounded-lg overflow-hidden bg-[#161618] border border-white/5 hover:border-orange-500/50 transition-all duration-500">
                     @if($item['type'] === 'image')
-                        <img src="{{ $item['url'] }}" alt="{{ $item['name'] }}" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in" 
+                        <img src="{{ $item['url'] }}" alt="{{ $item['name'] }}" class="h-full w-auto object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in" 
                              onclick="window.open('{{ $item['url'] }}', '_blank')" loading="lazy">
                     @else
-                        <video src="{{ $item['url'] }}" controls class="w-full h-auto rounded-xl"></video>
+                        <video src="{{ $item['url'] }}" controls class="h-full w-auto min-w-[200px]"></video>
                     @endif
 
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none">
-                        <p class="text-white text-sm font-bold truncate opacity-80">{{ $item['name'] }}</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 pointer-events-none">
+                        <p class="text-white text-xs font-bold truncate opacity-80">{{ $item['name'] }}</p>
                     </div>
                 </div>
             @endforeach
