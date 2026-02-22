@@ -52,7 +52,7 @@
                         <img src="{{ $item['url'] }}" alt="{{ $item['name'] }}" class="h-full w-auto object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in" 
                              onclick="window.open('{{ $item['url'] }}', '_blank')" loading="lazy">
                     @else
-                        <video src="{{ $item['url'] }}" controls class="h-full w-auto min-w-[200px]"></video>
+                        <video src="{{ $item['url'] }}" controls class="h-full w-auto object-cover"></video>
                     @endif
 
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 pointer-events-none">
