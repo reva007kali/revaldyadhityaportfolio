@@ -113,11 +113,19 @@
                             $fileDate = $file['last_modified'];
                             $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                             $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
+                            $isVideo = in_array($ext, ['mp4', 'webm', 'ogg', 'mov', 'avi']);
                         @endphp
                         <div class="group relative p-2 bg-gray-50 dark:bg-gray-800 rounded-lg flex flex-col items-center hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                             <div class="w-full aspect-square mb-2 overflow-hidden rounded-md bg-gray-200 dark:bg-gray-900 flex items-center justify-center relative">
                                 @if($isImage)
                                     <img src="{{ Storage::url($filePath) }}" alt="{{ $fileName }}" class="object-cover w-full h-full cursor-pointer" onclick="window.open('{{ Storage::url($filePath) }}', '_blank')">
+                                @elseif($isVideo)
+                                    <div class="relative w-full h-full cursor-pointer" onclick="window.open('{{ Storage::url($filePath) }}', '_blank')">
+                                        <video src="{{ Storage::url($filePath) }}" class="object-cover w-full h-full"></video>
+                                        <div class="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition">
+                                            <svg class="w-8 h-8 text-white opacity-80" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                                        </div>
+                                    </div>
                                 @else
                                     <span class="text-xs uppercase font-bold text-gray-500">{{ $ext }}</span>
                                 @endif

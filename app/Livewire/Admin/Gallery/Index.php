@@ -137,7 +137,7 @@ class Index extends Component
     public function updatedUploadedFiles()
     {
         $this->validate([
-            'uploadedFiles.*' => 'image|max:10240', // 10MB Max
+            'uploadedFiles.*' => 'file|max:51200', // 50MB Max, allow all file types
         ]);
 
         foreach ($this->uploadedFiles as $file) {
