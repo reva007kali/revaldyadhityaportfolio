@@ -3,14 +3,17 @@
 
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RHN7H3NJS9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RHN7H3NJS9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-RHN7H3NJS9');
-</script>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-RHN7H3NJS9');
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -75,27 +78,46 @@
             color: white;
         }
 
-        .prose-chat ul { list-style-type: disc; margin-left: 1rem; margin-bottom: 0.5rem; color: #d1d5db; }
-        .prose-chat ol { list-style-type: decimal; margin-left: 1rem; margin-bottom: 0.5rem; color: #d1d5db; }
-        .prose-chat p { margin-bottom: 0.5rem; line-height: 1.6; }
+        .prose-chat ul {
+            list-style-type: disc;
+            margin-left: 1rem;
+            margin-bottom: 0.5rem;
+            color: #d1d5db;
+        }
+
+        .prose-chat ol {
+            list-style-type: decimal;
+            margin-left: 1rem;
+            margin-bottom: 0.5rem;
+            color: #d1d5db;
+        }
+
+        .prose-chat p {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
         /* Efek Glassmorphism khusus Desktop */
         @media (min-width: 768px) {
-        .glass-panel {
-            background: rgba(22, 22, 24, 0.7) !important;
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            .glass-panel {
+                background: rgba(22, 22, 24, 0.7) !important;
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
         }
-        }
+
         .prose-chat a {
-    color: #f97316; /* Warna orange-500 */
-    text-decoration: underline;
-    font-weight: bold;
-    transition: opacity 0.2s;
-}
-.prose-chat a:hover {
-    opacity: 0.8;
-}
+            color: #f97316;
+            /* Warna orange-500 */
+            text-decoration: underline;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .prose-chat a:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 

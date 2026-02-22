@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /nova/
+Allow: /
+
+Sitemap: https://revaldy.com/sitemap.xml

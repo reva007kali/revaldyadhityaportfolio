@@ -1,5 +1,12 @@
 <div class="min-h-screen bg-[#0b0b0d] text-white antialiased selection:bg-orange-500 selection:text-white">
 
+    @section('meta_title', 'About Me | Reva Adhitya')
+    @section('meta_description', Str::limit(strip_tags($about->description), 160))
+    @section('meta_keywords', 'About, Biography, Reva Adhitya, Designer, Developer')
+    @if($about->image)
+        @section('meta_image', asset('storage/' . $about->image))
+    @endif
+
     {{-- 1. Floating Navigation --}}
     <div class="fixed bottom-8 left-6 md:left-12 z-[100]">
         <a href="{{ route('home') }}"

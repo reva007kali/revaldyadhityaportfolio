@@ -1,5 +1,12 @@
 <div class="w-full bg-[#0b0b0d] text-white overflow-x-hidden relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 1000)">
 
+    @section('meta_title', 'Reva Adhitya | Creative Developer & Designer')
+    @section('meta_description', $hero->subtitle ?? 'Crafting high-performance digital experiences that merge aesthetic precision with technical excellence.')
+    @section('meta_keywords', 'Portfolio, Web Developer, Laravel, Livewire, Creative Developer, Indonesia, Reva Adhitya')
+    @if($hero->image)
+        @section('meta_image', asset('storage/' . $hero->image))
+    @endif
+
     {{-- Loading Screen --}}
     <div x-show="loading" x-transition:leave="transition ease-in-out duration-1000"
         x-transition:leave-start="opacity-100 transform translate-y-0"

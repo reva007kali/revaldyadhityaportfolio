@@ -1,4 +1,9 @@
 <div class="bg-[#0b0b0d] min-h-screen text-white pt-32 pb-24">
+
+    @section('meta_title', 'Visual Gallery | Reva Adhitya')
+    @section('meta_description', 'A curated selection of moments, designs, and visual experiments by Reva Adhitya.')
+    @section('meta_keywords', 'Gallery, Photography, Design, Visuals, Reva Adhitya')
+
     <div class="max-w-7xl mx-auto px-6 md:px-12">
         {{-- Header --}}
         <div class="text-center max-w-4xl mx-auto mb-24 reveal-text">

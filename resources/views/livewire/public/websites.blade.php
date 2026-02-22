@@ -1,5 +1,9 @@
 <div class="min-h-screen bg-[#0b0b0d] text-white antialiased selection:bg-orange-500 selection:text-white">
 
+    @section('meta_title', 'Websites Gallery | Reva Adhitya')
+    @section('meta_description', 'A showcase of static websites and landing pages, designed for performance and aesthetic impact.')
+    @section('meta_keywords', 'Websites, Landing Pages, Web Design, Reva Adhitya, Portfolio')
+
     {{-- 1. Premium Ambient Background --}}
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div class="absolute -top-[10%] -left-[10%] w-[70%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full"></div>

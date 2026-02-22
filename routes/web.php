@@ -42,6 +42,7 @@ Route::get('/services/{slug}', ServiceDetail::class)->name('services.show');
 Route::get('/about', About::class)->name('about');
 Route::get('/privacy-policy', PrivacyPolicy::class)->name('privacy-policy');
 Route::get('/terms-of-service', TermsOfService::class)->name('terms-of-service');
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::get('/redis-check', function () {
     return Redis::connection()->ping();
