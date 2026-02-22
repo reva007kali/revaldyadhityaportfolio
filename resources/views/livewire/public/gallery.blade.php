@@ -24,6 +24,26 @@
             </p>
         </div>
 
+        {{-- Sorting Controls --}}
+        <div class="flex justify-center items-center gap-6 mb-12">
+            <span class="text-white/40 text-xs font-black uppercase tracking-widest">Sort By:</span>
+            
+            <button wire:click="sortBy('date')" 
+                    class="text-xs font-black uppercase tracking-widest transition-colors {{ $sortField === 'date' ? 'text-orange-500' : 'text-white/60 hover:text-white' }}">
+                Date {!! $sortField === 'date' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+            </button>
+            
+            <button wire:click="sortBy('name')" 
+                    class="text-xs font-black uppercase tracking-widest transition-colors {{ $sortField === 'name' ? 'text-orange-500' : 'text-white/60 hover:text-white' }}">
+                Name {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+            </button>
+            
+            <button wire:click="sortBy('size')" 
+                    class="text-xs font-black uppercase tracking-widest transition-colors {{ $sortField === 'size' ? 'text-orange-500' : 'text-white/60 hover:text-white' }}">
+                Size {!! $sortField === 'size' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+            </button>
+        </div>
+
         {{-- Gallery Grid --}}
         <div class="flex flex-wrap gap-2 md:gap-4 justify-center">
             @foreach($media as $item)
