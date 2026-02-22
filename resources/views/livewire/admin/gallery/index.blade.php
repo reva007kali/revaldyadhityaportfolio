@@ -56,6 +56,20 @@
                 @error('newFolderName') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                 @error('uploadedFiles.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
+                {{-- Sorting Controls --}}
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</span>
+                    <button wire:click="sortBy('last_modified')" class="text-xs font-bold uppercase tracking-wider {{ $sortField === 'last_modified' ? 'text-orange-500' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}">
+                        Date {!! $sortField === 'last_modified' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                    </button>
+                    <button wire:click="sortBy('name')" class="text-xs font-bold uppercase tracking-wider {{ $sortField === 'name' ? 'text-orange-500' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}">
+                        Name {!! $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                    </button>
+                    <button wire:click="sortBy('size')" class="text-xs font-bold uppercase tracking-wider {{ $sortField === 'size' ? 'text-orange-500' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}">
+                        Size {!! $sortField === 'size' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                    </button>
+                </div>
+
                 {{-- File Grid --}}
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
                      x-data

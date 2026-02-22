@@ -18,9 +18,22 @@ class Index extends Component
     public $newFolderName = '';
     public $uploadedFiles = [];
     public $breadcrumbs = [];
+    public $sortField = 'last_modified'; // Default sort field
+    public $sortDirection = 'desc'; // Default sort direction
 
     public function mount()
     {
+        $this->refreshFiles();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
         $this->refreshFiles();
     }
 
@@ -29,14 +42,33 @@ class Index extends Component
         $this->directories = Storage::disk('public')->directories($this->currentPath);
 
         $files = Storage::disk('public')->files($this->currentPath);
-        $this->files = array_map(function ($file) {
+        $fileData = array_map(function ($file) {
             return [
                 'path' => $file,
                 'name' => basename($file),
                 'size' => $this->formatSize(Storage::disk('public')->size($file)),
+                'size_bytes' => Storage::disk('public')->size($file), // For sorting
                 'last_modified' => date('Y-m-d H:i:s', Storage::disk('public')->lastModified($file)),
+                'timestamp' => Storage::disk('public')->lastModified($file), // For sorting
             ];
         }, $files);
+
+        // Sorting logic
+        usort($fileData, function ($a, $b) {
+            $key = $this->sortField === 'size' ? 'size_bytes' : ($this->sortField === 'last_modified' ? 'timestamp' : $this->sortField);
+            $valA = $a[$key];
+            $valB = $b[$key];
+
+            if ($valA == $valB) return 0;
+
+            if ($this->sortDirection === 'asc') {
+                return $valA < $valB ? -1 : 1;
+            } else {
+                return $valA > $valB ? -1 : 1;
+            }
+        });
+
+        $this->files = $fileData;
 
         $this->generateBreadcrumbs();
     }
